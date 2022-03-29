@@ -5,7 +5,6 @@ from reportlab.lib.styles import getSampleStyleSheet
 
 
 nameField = '<para alignment="center"> Paul Groskopf</para>'
-# nameField = '<para alignment="center">' + 'Paul Groskopf'
 
 pageWidth=76*mm
 pageHight=103*mm
