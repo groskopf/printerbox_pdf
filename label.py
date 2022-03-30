@@ -24,6 +24,7 @@ normal = styles['Normal']
 nameParagraph = [Paragraph(nameField, normal)]
 nameFrame = KeepInFrame(frameWidth, frameHight, nameParagraph)
 frame1.addFromList([nameFrame], c)
+c.rotate(180)
 
 c.drawCentredString(pageWidth/2, 10 * mm, "Paul Groskopf")
 c.line(20 * mm, 3 * mm, pageWidth - 20 * mm, 3 * mm)
