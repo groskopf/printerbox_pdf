@@ -55,30 +55,39 @@ def makeLabel(topFieldText, middleFieldText, bottomFieldText):
     topFieldParagraph = Paragraph(topFieldText, normalCenterStyle)
     middleFieldParagraph = Paragraph(middleFieldText, headingCenterStyle)
     bottomFieldParagraph = Paragraph(bottomFieldText, normalCenterStyle)
-    bottomFieldImage = Image('Kongresartikler.jpg', width=bottomFieldHeight, height=bottomFieldHeight)
+    # bottomFieldImage = Image('Kongresartikler.jpg', width=bottomFieldHeight, height=bottomFieldHeight)
+    bottomFieldImage = Image('Kongresartikler.jpg')
+    bottomFieldImage._restrictSize(bottomFieldHeight, bottomFieldHeight)
     bottomFieldImage.hAlign = 'LEFT'
     bottomFieldTable = Table([[bottomFieldImage, bottomFieldParagraph]],
-                       [bottomFieldHeight, fieldWidth-bottomFieldHeight], 
-                       [bottomFieldHeight])
+                              [bottomFieldHeight, fieldWidth-bottomFieldHeight], 
+                              [bottomFieldHeight])
     
     bottomFieldTableStyle = TableStyle()
     bottomFieldTableStyle.add('VALIGN', (0, 0), (-1, -1), 'RIGHT')
     bottomFieldTableStyle.add('INNERGRID', (0, 0), (-1, -1), 1, colors.black)
     bottomFieldTableStyle.add('BOX', (0, 0), (-1, -1), 1, colors.black)
+    bottomFieldTableStyle.add('TOPPADDING', (0, 0), (-1, -1), 0)
+    bottomFieldTableStyle.add('BOTTOMPADDING', (0, 0), (-1, -1), 0)
+    bottomFieldTableStyle.add('LEFTPADDING', (0, 0), (-1, -1), 0)
+    bottomFieldTableStyle.add('RIGHTPADDING', (0, 0), (-1, -1), 0)
     bottomFieldTable.setStyle(bottomFieldTableStyle)
     
-    allFieldParagraphs = [[KeepInFrame(fieldWidth, topFieldHeight, [topFieldParagraph])], 
-                          [KeepInFrame(fieldWidth, middleFieldHeight, [middleFieldParagraph])], 
-                          [KeepInFrame(fieldWidth, bottomFieldHeight, [bottomFieldTable])]] 
+    allFields = [[KeepInFrame(fieldWidth, topFieldHeight, [topFieldParagraph])], 
+                 [KeepInFrame(fieldWidth, middleFieldHeight, [middleFieldParagraph])], 
+                 [KeepInFrame(fieldWidth, bottomFieldHeight, [bottomFieldTable])]] 
     
-    labelTable = Table(allFieldParagraphs, 
+    labelTable = Table(allFields,
                        [fieldWidth], 
-                       [topFieldHeight, middleFieldHeight, bottomFieldHeight],
-                       spaceBefore=0, spaceAfter=0)
+                       [topFieldHeight, middleFieldHeight, bottomFieldHeight])
     labelStyle = TableStyle()
     labelStyle.add('VALIGN', (0, 0), (-1, -1), 'MIDDLE')
     labelStyle.add('INNERGRID', (0, 0), (-1, -1), 1, colors.black)
     labelStyle.add('BOX', (0, 0), (-1, -1), 1, colors.black)
+    labelStyle.add('TOPPADDING', (0, 0), (-1, -1), 0)
+    labelStyle.add('BOTTOMPADDING', (0, 0), (-1, -1), 0)
+    labelStyle.add('LEFTPADDING', (0, 0), (-1, -1), 0)
+    labelStyle.add('RIGHTPADDING', (0, 0), (-1, -1), 0)
     labelTable.setStyle(labelStyle)
     
     return labelTable
@@ -113,10 +122,10 @@ tableStyle.add('ALIGN', (-1, -1), (-1,-1), 'RIGHT')
 tableStyle.add('VALIGN', (-1, -1), (-1, -1), 'MIDDLE')
 tableStyle.add('INNERGRID', (0, 0), (-1, -1), 1, colors.black)
 tableStyle.add('BOX', (0, 0), (-1, -1), 1, colors.black)
-tableStyle.add('TOPPADDING', (0, 0), (-1, -1), 1)
-tableStyle.add('BOTTOMPADDING', (0, 0), (-1, -1), 1)
-tableStyle.add('LEFTPADDING', (0, 0), (-1, -1), 1)
-tableStyle.add('RIGHTPADDING', (0, 0), (-1, -1), 1)
+tableStyle.add('TOPPADDING', (0, 0), (-1, -1), 0)
+tableStyle.add('BOTTOMPADDING', (0, 0), (-1, -1), 0)
+tableStyle.add('LEFTPADDING', (0, 0), (-1, -1), 0)
+tableStyle.add('RIGHTPADDING', (0, 0), (-1, -1), 0)
 t.setStyle(tableStyle)
 
 # t.setStyle(TableStyle([('ALIGN',(1,1),(-2,-2),'RIGHT'),
