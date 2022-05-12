@@ -4,22 +4,19 @@ Created on 31. mar. 2022
 
 @author: paul
 '''
+
+from enum import Enum, auto 
 from reportlab.platypus import Table, TableStyle
 from reportlab.platypus.para import Paragraph
 from reportlab.platypus.flowables import KeepInFrame, Image
 from reportlab.lib import colors
-from typing import Optional
-from pydantic import BaseModel
 
-from pdf.Styles import normalCenterStyle, heading1CenterStyle
-
-class NameData(BaseModel):
-    name: str
-    description1: Optional[str] = None
-    description2: Optional[str] = None
-    description3: Optional[str] = None
-    description4: Optional[str] = None
-    imageName: Optional[str] = None
+from endpoint.name_data import NameData
+from pdf.styles import normalCenterStyle, heading1CenterStyle
+    
+class Layout(Enum):
+    LAYOUT_1 = auto()    
+    LAYOUT_2 = auto()    
 
 class LeftImageAndParagraphTable(Table):
     def __init__(self, width, height, text, imageName):

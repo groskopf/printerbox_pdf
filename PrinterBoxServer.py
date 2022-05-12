@@ -9,10 +9,11 @@ from fastapi import FastAPI, UploadFile
 from fastapi.staticfiles import StaticFiles
 from typing import List
 
-from pdf.Layouts import NameData
+from endpoint.name_data import NameData
 from endpoint.images import postImage
 from endpoint.name_tag import postNameTag
 from endpoint.name_tag_sheet import postNameTagSheet
+from pdf.layouts import Layout
 
 app = FastAPI()
   
@@ -24,7 +25,7 @@ def postImageUpload(file: UploadFile):
     return postImage(file)
 
 @app.post('/name_tag')
-def nameTag(layout : str, nameData : NameData ):
+def nameTag(layout : Layout, nameData : NameData ):
     return postNameTag(layout, nameData)
     
 @app.post('/name_tag_sheet')

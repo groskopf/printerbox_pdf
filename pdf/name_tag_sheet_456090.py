@@ -7,18 +7,17 @@ Created on 31. mar. 2022
 from reportlab.lib.units import mm
 from typing import List
 
-from pdf.DocTemplates import NameTagSheet456090DocTemplate
-from pdf.Layouts import NameData
-from pdf.Layouts import NameTagLayout1Table
-from pdf.Layouts import NameTagSheetTable
+from pdf.doc_templates import NameTagSheet456090DocTemplate
+from endpoint.name_data import NameData
+from pdf.layouts import Layout, NameTagLayout1Table, NameTagSheetTable
 
 labelWidth=90*mm
 labelHeight=60*mm
 
-def createNameTagSheet456090(fileName, layout : str, nameDataList: List[NameData]):
+def createNameTagSheet456090(fileName, layout : Layout, nameDataList: List[NameData]):
         labels = []
         
-        if(layout == "layout_1"):
+        if(layout == Layout.LAYOUT_1):
             for nameData in nameDataList:
                 labels.append(NameTagLayout1Table(labelWidth,
                                                   labelHeight,

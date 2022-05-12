@@ -5,8 +5,8 @@ Created on 8. maj 2022
 '''
 from typing import List
 
-from pdf.Layouts import NameData
-from pdf.NameTagSheet456090 import createNameTagSheet456090
+from endpoint.name_data import NameData
+from pdf.name_tag_sheet_456090 import createNameTagSheet456090
 
 def postNameTagSheet(layout : str, nameDataList: List[NameData]):
     filename =  'printer_queue/' + '456090.pdf'
