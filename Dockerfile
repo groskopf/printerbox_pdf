@@ -1,13 +1,18 @@
 FROM python:3.9
 
-RUN pip install -r requirements.txt
-
 WORKDIR /app
 
-COPY ./requirements.txt /code/requirements.txt
+# TODO add user
 
-RUN pip install --no-cache-dir --upgrade -r /app/requirements.txt
+COPY requirements.txt /tmp/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /tmp/requirements.txt
 
-COPY ./printerbox_pdf /app/printerbox_pdf
+COPY endpoint endpoint/
+COPY *.py .
+COPY pdf pdf/
+COPY test test/
 
-CMD ["uvicorn", "printerbox_pdf.main:app", "--host", "0.0.0.0", "--port", "80"]
+VOLUME /app/images
+VOLUME /app/printer_queue
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
