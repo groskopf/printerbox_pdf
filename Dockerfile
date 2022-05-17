@@ -8,7 +8,7 @@ COPY requirements.txt /tmp/requirements.txt
 RUN pip install --no-cache-dir --upgrade -r /tmp/requirements.txt
 
 COPY endpoint endpoint/
-COPY *.py .
+COPY *.py ./
 COPY pdf pdf/
 COPY test test/
 
