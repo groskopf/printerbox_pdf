@@ -16,9 +16,9 @@ from endpoint.name_tag_sheet import postNameTagSheet
 from pdf.layouts import Layout
 
 app = FastAPI()
-  
-app.mount('/images', StaticFiles(directory="images"), name="images")
-app.mount('/printer_queue', StaticFiles(directory="printer_queue"), name="printer_queue")
+
+app.mount('/images', StaticFiles(directory="./images"), name="images")
+app.mount('/printer_queue', StaticFiles(directory="./printer_queue"), name="printer_queue")
 
 @app.post('/image_upload')    
 def postImageUpload(file: UploadFile = File(...)):
