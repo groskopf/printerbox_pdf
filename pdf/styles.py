@@ -1,9 +1,3 @@
-
-'''
-Created on 31. mar. 2022
-
-@author: paul
-'''
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.enums import TA_CENTER
 
@@ -16,4 +10,3 @@ normalCenterStyle.wordWrap = 1
 heading1CenterStyle = styleSheet["Heading1"]
 heading1CenterStyle.alignment = TA_CENTER
 heading1CenterStyle.splitLongWords = 1
-
