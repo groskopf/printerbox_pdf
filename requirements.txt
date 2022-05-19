@@ -11,3 +11,4 @@ typing_extensions
 python-multipart
 uvicorn
 Werkzeug
+autopep8
