@@ -1,9 +1,3 @@
-'''
-Created on 10. maj 2022
-
-@author: paul
-'''
-
 from typing import Optional
 from pydantic import BaseModel
 

@@ -1,4 +1,4 @@
-from enum import Enum, auto
+from enum import Enum
 from reportlab.platypus import Table, TableStyle
 from reportlab.platypus.para import Paragraph
 from reportlab.platypus.flowables import KeepInFrame, Image
