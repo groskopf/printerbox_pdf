@@ -1,5 +1,5 @@
 
-bookingsPath = './bookings/'
-imagesPath = './images/'
-queuesPath = './queues/'
-labelsPath = './labels/'
+bookingsPath = 'bookings/'
+imagesPath = 'images/'
+queuesPath = 'queues/'
+labelsPath = 'labels/'
