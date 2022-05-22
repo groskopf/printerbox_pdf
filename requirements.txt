@@ -9,6 +9,6 @@ reportlab
 starlette
 typing_extensions
 python-multipart
-uvicorn
+uvicorn[standart]
 Werkzeug
 autopep8

@@ -11,13 +11,19 @@ from test.test_upload import uploadImage
 
 client = TestClient(app)
 
-@pytest.fixture
-def removeOldPrints():
+
+def deleteAllFilesInQueues():
     for root, dirs, files in os.walk(queuesPath, topdown=False):
         for name in files:
             os.remove(os.path.join(root, name))
         for name in dirs:
             os.rmdir(os.path.join(root, name))
+
+
+@pytest.fixture
+def removeOldPrints():
+    deleteAllFilesInQueues()
+
 
 def createNameTag(bookingCode: str):
     uploadImage('./test/images/logo.jpg')
@@ -32,6 +38,14 @@ def createNameTag(bookingCode: str):
     return response
 
 
+def newNameTag(bookingCode: str):
+    response = createNameTag(bookingCode)
+    assert response.status_code == 201
+    filename = response.json()['filename']
+    assert filename
+    return filename
+
+
 def test_new_name_tag(clearBookingList, removeOldPrints):
     # Today
     bookingCode = createBooking(date.today(),
@@ -39,14 +53,12 @@ def test_new_name_tag(clearBookingList, removeOldPrints):
                                 PrinterCode._XDESP95271_p)
 
     # Create a name tag
-    response = createNameTag(bookingCode)
-    assert response.status_code == 201
+    filename = newNameTag(bookingCode)
 
     # Do file exist locally
-    filename = response.json()['filename']
     assert os.path.exists(filename) and os.path.isfile(filename)
 
-    # TODO can we download it? 
+    # TODO can we download it?
 
 
 def test_booking_wrong_dates(clearBookingList, removeOldPrints):
@@ -59,7 +71,7 @@ def test_booking_wrong_dates(clearBookingList, removeOldPrints):
     response = createNameTag(bookingCode)
     assert response.status_code == 400
     assert not response
-    
+
     # Too late
     bookingCode = createBooking(date.today()-timedelta(days=1),
                                 date.today()-timedelta(days=1),
@@ -78,4 +90,3 @@ def test_bad_booking(clearBookingList, removeOldPrints):
     response = createNameTag(bookingCode)
     assert response.status_code == 404
     assert not response
-
