@@ -32,7 +32,7 @@ class NameTagSheet456090DocTemplate(NameTagDocTemplate):
         pageWidth, pageHeight = A4
         NameTagDocTemplate.__init__(self, filename,
                                     pagesize=A4,
-                                    title='Navneskilte ' + filename,
+                                    title='Navneskilte 456090',
                                     subject="Foldbart navneskilt 86x103mm")
         pageFrame = Frame(0, 0, pageWidth, pageHeight,
                           topPadding=0, bottomPadding=0)

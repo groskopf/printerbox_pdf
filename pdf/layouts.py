@@ -4,7 +4,7 @@ from reportlab.platypus.para import Paragraph
 from reportlab.platypus.flowables import KeepInFrame, Image
 from reportlab.lib import colors
 
-from endpoint.name_data import NameData
+from name_data import NameData
 from pdf.styles import normalCenterStyle, heading1CenterStyle
 
 

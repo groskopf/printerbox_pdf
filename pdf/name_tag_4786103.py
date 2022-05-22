@@ -1,11 +1,11 @@
 from reportlab.lib.units import mm
 
 from pdf.doc_templates import NameTag4786103DocTemplate
-from endpoint.name_data import NameData
+from name_data import NameData
 from pdf.layouts import Layout, NameTagLayout1Table, ReversedNameTagLayout1Table
 
 
-def createNameTag4786103(fileName, layout: Layout, nameData: NameData):
+def create(fileName : str, layout: Layout, nameData: NameData):
     doc = NameTag4786103DocTemplate(fileName)
 
     story = []
