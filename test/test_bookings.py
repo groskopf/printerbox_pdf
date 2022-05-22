@@ -1,13 +1,15 @@
 from fastapi.testclient import TestClient
 from datetime import date as date
 
+import pytest
+
 from main import app
 from printer_code import PrinterCode
 from endpoint.bookings import calendar
 
 client = TestClient(app)
 
-
+@pytest.fixture
 def clearBookingList():
     # Get all bookings
     response = client.get('/bookings')
@@ -43,20 +45,14 @@ def getBookingList():
     bookings = response.json()
     return bookings['list']
 
-def test_clean_booking_list():
-    clearBookingList()
-
-    # Test that booking list are empty
+def test_clean_booking_list(clearBookingList):
     response = client.get("/bookings")
     assert response.status_code == 200
     bookings = response.json()
     assert bookings['list'] == []
 
 
-def test_add_booking():
-    clearBookingList()
-
-    # Create a new booking
+def test_add_booking(clearBookingList):
     bookingCode = createBooking(date.fromisoformat('1974-08-22'),
                                 date.fromisoformat('1974-09-22'),
                                 PrinterCode._XDESP95271_p)
@@ -101,10 +97,7 @@ def test_add_booking():
     assert response.status_code == 400
 
 
-def test_update_booking():
-    clearBookingList()
-
-    # Create a new booking
+def test_update_booking(clearBookingList):
     bookingCode = createBooking(date.fromisoformat('1984-08-22'),
                                 date.fromisoformat('1984-09-22'),
                                 PrinterCode._XDESP95271_p)
@@ -137,10 +130,7 @@ def test_update_booking():
     assert response.status_code == 404
 
 
-def test_delete_booking():
-    clearBookingList()
-
-    # Create a new booking
+def test_delete_booking(clearBookingList):
     bookingCode = createBooking(date.fromisoformat('1984-08-22'),
                                 date.fromisoformat('1984-09-22'),
                                 PrinterCode._XDESP95271_p)
