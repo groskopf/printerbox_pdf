@@ -3,12 +3,13 @@ import base64
 import uuid
 from typing import List
 
+from filePaths import bookingsPath
 from pydantic import BaseModel
 from fastapi import APIRouter, HTTPException, status
 from datetime import date as date
 from printer_code import PrinterCode
 
-
+defaultBookingFile = bookingsPath + 'bookings.json'
 class Booking(BaseModel):
     startDate: date
     endDate: date
@@ -21,11 +22,11 @@ class Bookings(BaseModel):
 class Calendar(BaseModel):
     bookings: Bookings = Bookings()
 
-    def save(self, filename: str = 'bookings.json'):
+    def save(self, filename: str = defaultBookingFile):
         with open(filename, 'w') as file:
             file.write(self.bookings.json())
 
-    def load(self, filename: str = 'bookings.json'):
+    def load(self, filename: str = defaultBookingFile):
         if os.path.exists(filename):
             with open(filename, 'r') as file:
                 rawJson: str = file.read()

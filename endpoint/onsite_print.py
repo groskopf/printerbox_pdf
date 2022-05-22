@@ -2,7 +2,9 @@ import os
 from uuid import uuid4
 from datetime import date as date
 from fastapi import APIRouter, HTTPException, status
+from werkzeug.utils import secure_filename
 
+from filePaths import imagesPath, queuesPath
 from endpoint.bookings import calendar
 from endpoint.bookings import Booking
 from name_data import NameData
@@ -14,7 +16,7 @@ from printer_code import PrinterCode
 router = APIRouter()
 
 def checkImageFileExist(nameData: NameData):
-    imageName = './images/' + nameData.imageName
+    imageName = imagesPath + nameData.imageName
     if imageName:
         if not os.path.exists(imageName) or not os.path.isfile(imageName):
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Image not found")
@@ -31,12 +33,12 @@ def findPrinterFromBooking(bookingCode):
 
 @router.post('/{nameTagType}/{layout}', status_code=status.HTTP_201_CREATED)
 def nameTag(bookingCode: str, nameTagType: NameTagType, layout: Layout, nameData: NameData):
-
+    nameData.imageName = secure_filename(nameData.imageName)
     checkImageFileExist(nameData)
     
     printerCode : PrinterCode = findPrinterFromBooking(bookingCode)
 
-    outputPath = 'queues/' + printerCode + '/'
+    outputPath = queuesPath + printerCode + '/'
     outputFilename =  outputPath+ nameTagType + '_' + uuid4().hex + '.pdf'
 
     if not os.path.exists(outputPath):

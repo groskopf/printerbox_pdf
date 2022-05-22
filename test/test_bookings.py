@@ -27,7 +27,7 @@ def clearBookingList():
 def createBooking(startDate: date, endDate: date, printerCode: PrinterCode):
 
     # Create a new booking
-    response = client.post('bookings/?startDate=' + startDate.isoformat() +
+    response = client.post('/bookings/?startDate=' + startDate.isoformat() +
                            '&endDate=' + endDate.isoformat() + '&printerCode=' + printerCode)
     assert response.status_code == 201
 

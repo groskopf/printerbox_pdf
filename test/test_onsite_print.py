@@ -4,6 +4,7 @@ from fastapi.testclient import TestClient
 import pytest
 
 from main import app
+from filePaths import queuesPath
 from printer_code import PrinterCode
 from test.test_bookings import createBooking, clearBookingList
 from test.test_upload import uploadImage
@@ -12,7 +13,7 @@ client = TestClient(app)
 
 @pytest.fixture
 def removeOldPrints():
-    for root, dirs, files in os.walk('./queues', topdown=False):
+    for root, dirs, files in os.walk(queuesPath, topdown=False):
         for name in files:
             os.remove(os.path.join(root, name))
         for name in dirs:

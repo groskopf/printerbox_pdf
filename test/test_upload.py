@@ -4,6 +4,7 @@ from fastapi.testclient import TestClient
 import pytest
 
 from main import app
+from filePaths import imagesPath
 from printer_code import PrinterCode
 from test.test_bookings import createBooking, clearBookingList
 
@@ -11,7 +12,7 @@ client = TestClient(app)
 
 @pytest.fixture
 def removeOldImages():
-    for root, dirs, files in os.walk('./images', topdown=False):
+    for root, dirs, files in os.walk(imagesPath, topdown=False):
         for name in files:
             os.remove(os.path.join(root, name))
         for name in dirs:
@@ -28,7 +29,7 @@ def test_upload_image(removeOldImages):
         uploadImage(imageName)
 
     for imageName in imageList:
-        uploadName = './images/' + os.path.basename(imageName)
+        uploadName = imagesPath + os.path.basename(imageName)
         assert os.path.exists(uploadName)    
         assert os.path.isfile(uploadName)    
 

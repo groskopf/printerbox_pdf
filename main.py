@@ -3,12 +3,13 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
+from filePaths import queuesPath, labelsPath
 from endpoint import upload, bookings, onsite_print, label_designer
 
 app = FastAPI()
 
-app.mount('/queues', StaticFiles(directory="./queues"),  name="queues")
-app.mount('/labels', StaticFiles(directory="./labels"),  name="labels")
+app.mount('/queues', StaticFiles(directory=queuesPath),  name="queues")
+app.mount('/labels', StaticFiles(directory=labelsPath),  name="labels")
 
 app.include_router(upload.router, prefix='/upload')
 app.include_router(bookings.router, prefix='/bookings', tags=['admin'])
