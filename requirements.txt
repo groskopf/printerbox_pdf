@@ -11,4 +11,6 @@ typing_extensions
 python-multipart
 uvicorn[standart]
 Werkzeug
+websocket-client
 autopep8
+rel
