@@ -1,7 +1,7 @@
 import os
 from typing import List
 from uuid import uuid4
-from fastapi import APIRouter, status
+from fastapi import APIRouter, HTTPException, status
 
 from filePaths import labelsPath
 from name_data import NameData
@@ -19,6 +19,6 @@ def nameTagSheet(nameTagSheetType : NameTagSheetType, layout : Layout, nameDataL
         case NameTagSheetType._456090:
             name_tag_sheet_456090.create(outputFilename, layout, nameDataList)
         case _:
-            filename = None
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="NameTagSheetType not supported")
 
     return {"filename": outputFilename}
