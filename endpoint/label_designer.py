@@ -22,4 +22,4 @@ def nameTagSheet(nameTagSheetType : NameTagSheetType, layout : Layout, nameDataL
         case _:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="NameTagSheetType not supported")
 
-    return Filename(outputFilename)
+    return Filename(filename=outputFilename)
