@@ -2,6 +2,7 @@ import os
 from typing import List
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 from pydantic import BaseModel
+from werkzeug.utils import secure_filename
 
 from filePaths import queuesPath
 from printer_code import PrinterCode
@@ -58,6 +59,17 @@ wsConnectionManager = WSConnectionManager()
 @router.get('/{printer_code}')
 def printerboxQueue(printer_code : PrinterCode):
     return allFilesInPrinterQueue(printer_code)
+
+@router.delete('/{printer_code}/{filename}')
+def deleteNameTag(printer_code : PrinterCode, filename : str):
+    securedFileName = secure_filename(filename)
+    nameTagFilename = queuesPath + printer_code + '/' + os.path.basename(securedFileName)
+    
+    os.path.exists(nameTagFilename)
+    if os.path.isfile(nameTagFilename):
+        os.remove(nameTagFilename)
+
+    return { 'filename' : nameTagFilename }
 
 @router.websocket("/ws/{printer_code}")
 async def websocket_endpoint(websocket: WebSocket, printer_code: PrinterCode):

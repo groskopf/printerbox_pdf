@@ -22,22 +22,22 @@ def checkImageFileExist(nameData: NameData):
         if not os.path.exists(imageName) or not os.path.isfile(imageName):
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Image not found")
 
-def findPrinterFromBooking(bookingCode):
+def findBooking(bookingCode):
     booking : Booking = calendar.getBooking(bookingCode)
     if not booking:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Booking not found")
     if booking.startDate > date.today() or date.today() > booking.endDate:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Booking not valid today")
-    return booking.printerCode 
+    return booking.printerCode, booking.nameTagType
 
 
 
-@router.post('/{nameTagType}/{layout}', status_code=status.HTTP_201_CREATED)
+@router.post('/{layout}', status_code=status.HTTP_201_CREATED)
 async def nameTag(bookingCode: str, nameTagType: NameTagType, layout: Layout, nameData: NameData):
     nameData.imageName = secure_filename(nameData.imageName)
     checkImageFileExist(nameData)
     
-    printerCode : PrinterCode = findPrinterFromBooking(bookingCode)
+    printerCode, nameTagType = findBooking(bookingCode)
 
     outputPath = queuesPath + printerCode + '/'
     outputFilename =  outputPath+ nameTagType + '_' + uuid4().hex + '.pdf'
