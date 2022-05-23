@@ -68,7 +68,7 @@ def postNameTagSheet(startDate: date, endDate: date, printerCode: PrinterCode, n
     booking = Booking(startDate=startDate,
                       endDate=endDate,
                       printerCode=printerCode,
-                      code=base64.urlsafe_b64encode(uuid.uuid4().bytes)[0:15].upper()
+                      code=base64.urlsafe_b64encode(uuid.uuid4().bytes)[0:15].upper(),
                       nameTagType=nameTagType)
     if(not calendar.isOverlappingExitingBooking(booking)):
         calendar.bookings.list.append(booking)

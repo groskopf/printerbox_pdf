@@ -6,6 +6,7 @@ import pytest
 
 from main import app
 from filePaths import imagesPath
+from pdf.name_tag_type import NameTagType
 from printer_code import PrinterCode
 from test.test_bookings import createBooking, clearBookingList
 from test.test_onsite_print import deleteAllFilesInQueues, newNameTag, removeOldPrints
@@ -20,7 +21,8 @@ def test_get_name_tags(clearBookingList, removeOldPrints, removeOldImages):
         bookingCode = createBooking(
             date.today(),
             date.today(),
-            printerCode)
+            printerCode,
+            NameTagType._4786103)
 
         numOfNewNameTags = 10
         newNameTags : List[str] = []

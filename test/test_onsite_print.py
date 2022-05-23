@@ -5,6 +5,7 @@ import pytest
 
 from main import app
 from filePaths import queuesPath
+from pdf.name_tag_type import NameTagType
 from printer_code import PrinterCode
 from test.test_bookings import createBooking, clearBookingList
 from test.test_upload import uploadImage
@@ -33,8 +34,7 @@ def createNameTag(bookingCode: str):
             "description3": "string",
             "description4": "string",
             "imageName": "logo.jpg"}
-    response = client.post('/onsite_print/4786103/layout_1?bookingCode=' + bookingCode,
-                           json=body)
+    response = client.post('/onsite_print/layout_1?bookingCode=' + bookingCode, json=body)
     return response
 
 
@@ -50,7 +50,8 @@ def test_new_name_tag(clearBookingList, removeOldPrints):
     # Today
     bookingCode = createBooking(date.today(),
                                 date.today(),
-                                PrinterCode._XDESP95271_p)
+                                PrinterCode._XDESP95271_p,
+                                NameTagType._4786103)
 
     # Create a name tag
     filename = newNameTag(bookingCode)
@@ -65,7 +66,8 @@ def test_booking_wrong_dates(clearBookingList, removeOldPrints):
     # Too early
     bookingCode = createBooking(date.today()+timedelta(days=1),
                                 date.today()+timedelta(days=1),
-                                PrinterCode._XDESP95271_p)
+                                PrinterCode._XDESP95271_p,
+                                NameTagType._4786103)
 
     # Create a name tag
     response = createNameTag(bookingCode)
@@ -75,7 +77,8 @@ def test_booking_wrong_dates(clearBookingList, removeOldPrints):
     # Too late
     bookingCode = createBooking(date.today()-timedelta(days=1),
                                 date.today()-timedelta(days=1),
-                                PrinterCode._XDESP95271_p)
+                                PrinterCode._XDESP95271_p,
+                                NameTagType._4786103)
 
     # Create a name tag
     response = createNameTag(bookingCode)
