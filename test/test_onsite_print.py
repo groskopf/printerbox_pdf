@@ -27,13 +27,13 @@ def removeOldPrints():
 
 
 def createNameTag(bookingCode: str):
-    uploadImage('./test/images/logo.jpg')
+    image = os.path.basename(uploadImage('./test/images/logo.jpg'))
     body = {"name": "string",
             "description1": "string",
             "description2": "string",
             "description3": "string",
             "description4": "string",
-            "imageName": "logo.jpg"}
+            "imageName": image}
     response = client.post('/onsite_print/layout_1?booking_code=' + bookingCode, json=body)
     return response
 

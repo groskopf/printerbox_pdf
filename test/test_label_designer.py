@@ -20,21 +20,21 @@ def removeOldSheets():
 
 
 def createNameTagSheet():
-    uploadImage('./test/images/Kongresartikler.jpg')
-    uploadImage('./test/images/logo.jpg')
+    image1 = os.path.basename(uploadImage('./test/images/Kongresartikler.jpg'))
+    image2 = os.path.basename(uploadImage('./test/images/logo.jpg'))
     body = [
         {"name": "string",
          "description1": "string",
          "description2": "string",
          "description3": "string",
          "description4": "string",
-         "imageName": "Kongresartikler.jpg"},
+         "imageName": image1},
         {"name": "string",
          "description1": "string",
          "description2": "string",
          "description3": "string",
          "description4": "string",
-         "imageName": "logo.jpg"}
+         "imageName": image2}
     ]
     response = client.post('/label_designer/456090/layout_1', json=body)
     return response
