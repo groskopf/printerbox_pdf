@@ -19,7 +19,7 @@ def clearBookingList():
 
     # Delete all bookings
     bookings = response.json()
-    for booking in bookings['list']:
+    for booking in bookings:
         response = client.delete('/bookings/' + booking['code'])
         assert response.status_code == 200
 
@@ -49,14 +49,14 @@ def getBookingList():
     response = client.get('/bookings')
     assert response.status_code == 200
     bookings = response.json()
-    return bookings['list']
+    return bookings
 
 
 def test_clean_booking_list(clearBookingList):
     response = client.get("/bookings")
     assert response.status_code == 200
     bookings = response.json()
-    assert bookings['list'] == []
+    assert bookings == []
 
 
 def test_add_booking(clearBookingList):
@@ -65,11 +65,11 @@ def test_add_booking(clearBookingList):
                                 PrinterCode._XDESP95271_p,
                                 NameTagType._4786103)
 
-    list = getBookingList()
-    assert len(list) == 1
+    bookings = getBookingList()
+    assert len(bookings) == 1
 
     # Test that we have the date we need
-    booking = list[0]
+    booking = bookings[0]
     assert booking['startDate'] == '1974-08-22'
     assert booking['endDate'] == '1974-09-22'
     assert booking['printerCode'] == 'XDESP95271_p'
@@ -83,8 +83,8 @@ def test_add_booking(clearBookingList):
                                 NameTagType._4786103)
 
     # Test that we got the new booking
-    list = getBookingList()
-    assert len(list) == 2
+    bookings = getBookingList()
+    assert len(bookings) == 2
 
     # Fail creating an overlapping booking
     response = client.post(
@@ -129,11 +129,11 @@ def test_update_booking(clearBookingList):
     assert booking['nameTagType'] == NameTagType._4786103
 
     # Test that we got the new booking
-    list = getBookingList()
-    assert len(list) == 1
+    bookings = getBookingList()
+    assert len(bookings) == 1
 
     # Test that we have the date we need
-    booking = list[0]
+    booking = bookings[0]
     assert booking['startDate'] == '1984-08-22'
     assert booking['endDate'] == '1984-09-22'
     assert booking['printerCode'] == 'XDESP95271_p'

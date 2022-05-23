@@ -1,10 +1,12 @@
+import json
 import os
 import base64
 import uuid
 from typing import List
 
 from filePaths import bookingsPath
-from pydantic import BaseModel
+from pydantic import BaseModel, parse_raw_as
+from pydantic.json import pydantic_encoder
 from fastapi import APIRouter, HTTPException, status
 from datetime import date as date
 from pdf.name_tag_type import NameTagType
@@ -18,32 +20,29 @@ class Booking(BaseModel):
     code: str
     nameTagType: NameTagType
 
-class Bookings(BaseModel):
-    list: List[Booking] = []
-
 class Calendar(BaseModel):
-    bookings: Bookings = Bookings()
+    bookings: List[Booking] = []
 
     def save(self, filename: str = defaultBookingFile):
         with open(filename, 'w') as file:
-            file.write(self.bookings.json())
+            file.write(json.dumps(self.bookings, default=pydantic_encoder))
 
     def load(self, filename: str = defaultBookingFile):
         if os.path.exists(filename):
             with open(filename, 'r') as file:
                 rawJson: str = file.read()
                 if rawJson:
-                    self.bookings = Bookings.parse_raw(rawJson)
+                    self.bookings = parse_raw_as(List[Booking], rawJson)
 
     def isOverlappingExitingBooking(self, newBooking: Booking):
-        for existingBooking in self.bookings.list:
+        for existingBooking in self.bookings:
             if existingBooking.printerCode == newBooking.printerCode:
                 if (newBooking.startDate <= existingBooking.endDate) and (existingBooking.startDate <= newBooking.endDate):
                     return True
         return False
 
     def getBooking(self, bookingCode: str):
-        for booking in self.bookings.list:
+        for booking in self.bookings:
             if booking.code == bookingCode:
                 return booking
         return None
@@ -71,7 +70,7 @@ def postNameTagSheet(startDate: date, endDate: date, printerCode: PrinterCode, n
                       code=base64.urlsafe_b64encode(uuid.uuid4().bytes)[0:15].upper(),
                       nameTagType=nameTagType)
     if(not calendar.isOverlappingExitingBooking(booking)):
-        calendar.bookings.list.append(booking)
+        calendar.bookings.append(booking)
         calendar.save()
         return booking
     raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Printer has booking in same period")
@@ -79,10 +78,10 @@ def postNameTagSheet(startDate: date, endDate: date, printerCode: PrinterCode, n
 
 @router.put('/{bookingCode}', response_model=Booking)
 def putNameTagSheet(bookingCode: str, startDate: date, endDate: date, printerCode: PrinterCode, nameTagType : NameTagType):
-    for i in range(len(calendar.bookings.list)):
-        if calendar.bookings.list[i].code == bookingCode:
+    for i in range(len(calendar.bookings)):
+        if calendar.bookings[i].code == bookingCode:
             booking = Booking(startDate=startDate, endDate=endDate, printerCode=printerCode, code=bookingCode, nameTagType=nameTagType)
-            calendar.bookings.list[i] = booking
+            calendar.bookings[i] = booking
             calendar.save()
             return booking
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not found")
@@ -90,9 +89,9 @@ def putNameTagSheet(bookingCode: str, startDate: date, endDate: date, printerCod
 
 @router.delete('/{bookingCode}', response_model=Booking)
 def deleteNameTagSheet(bookingCode: str):
-    for i in range(len(calendar.bookings.list)):
-        if calendar.bookings.list[i].code == bookingCode:
-            booking = calendar.bookings.list[i]
-            del calendar.bookings.list[i]
+    for i in range(len(calendar.bookings)):
+        if calendar.bookings[i].code == bookingCode:
+            booking = calendar.bookings[i]
+            del calendar.bookings[i]
             return booking
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not found")
