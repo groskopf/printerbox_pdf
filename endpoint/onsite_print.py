@@ -26,18 +26,18 @@ def findBooking(bookingCode):
     booking : Booking = calendar.getBooking(bookingCode)
     if not booking:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Booking not found")
-    if booking.startDate > date.today() or date.today() > booking.endDate:
+    if booking.start_date > date.today() or date.today() > booking.end_date:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Booking not valid today")
-    return booking.printerCode, booking.nameTagType
+    return booking.printer_code, booking.name_tag_type
 
 
 
 @router.post('/{layout}', response_model=Filename, status_code=status.HTTP_201_CREATED)
-async def nameTag(bookingCode: str, layout: Layout, nameData: NameData):
-    nameData.imageName = secure_filename(nameData.imageName)
-    checkImageFileExist(nameData)
+async def nameTag(booking_code: str, layout: Layout, name_data: NameData):
+    name_data.imageName = secure_filename(name_data.imageName)
+    checkImageFileExist(name_data)
     
-    printerCode, nameTagType = findBooking(bookingCode)
+    printerCode, nameTagType = findBooking(booking_code)
 
     outputPath = queuesPath + printerCode + '/'
     outputFilename =  outputPath+ nameTagType + '_' + uuid4().hex + '.pdf'
@@ -47,7 +47,7 @@ async def nameTag(bookingCode: str, layout: Layout, nameData: NameData):
 
     match nameTagType:
         case NameTagType._4786103:
-            name_tag_4786103.create(outputFilename, layout, nameData)
+            name_tag_4786103.create(outputFilename, layout, name_data)
         case _:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="NameTagType not supported")
 

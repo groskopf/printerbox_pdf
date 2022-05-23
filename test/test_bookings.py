@@ -29,17 +29,17 @@ def clearBookingList():
 def createBooking(startDate: date, endDate: date, printerCode: PrinterCode, nameTagType: NameTagType):
 
     # Create a new booking
-    response = client.post('/bookings/?startDate=' + startDate.isoformat() +
-                           '&endDate=' + endDate.isoformat() +
-                           '&printerCode=' + printerCode +
-                           '&nameTagType=' + nameTagType)
+    response = client.post('/bookings/?start_date=' + startDate.isoformat() +
+                           '&end_date=' + endDate.isoformat() +
+                           '&printer_code=' + printerCode +
+                           '&name_tag_type=' + nameTagType)
     assert response.status_code == 201
 
     booking = response.json()
-    assert booking['startDate'] == startDate.isoformat()
-    assert booking['endDate'] == endDate.isoformat()
-    assert booking['printerCode'] == printerCode
-    assert booking['nameTagType'] == nameTagType
+    assert booking['start_date'] == startDate.isoformat()
+    assert booking['end_date'] == endDate.isoformat()
+    assert booking['printer_code'] == printerCode
+    assert booking['name_tag_type'] == nameTagType
     bookingCode = booking['code']
     assert bookingCode
     return bookingCode
@@ -70,11 +70,11 @@ def test_add_booking(clearBookingList):
 
     # Test that we have the date we need
     booking = bookings[0]
-    assert booking['startDate'] == '1974-08-22'
-    assert booking['endDate'] == '1974-09-22'
-    assert booking['printerCode'] == 'XDESP95271_p'
+    assert booking['start_date'] == '1974-08-22'
+    assert booking['end_date'] == '1974-09-22'
+    assert booking['printer_code'] == 'XDESP95271_p'
     assert booking['code'] == bookingCode
-    assert booking['nameTagType'] == NameTagType._4786103
+    assert booking['name_tag_type'] == NameTagType._4786103
 
     # Create another booking
     bookingCode = createBooking(date.fromisoformat('1984-08-22'),
@@ -88,22 +88,22 @@ def test_add_booking(clearBookingList):
 
     # Fail creating an overlapping booking
     response = client.post(
-        'bookings/?startDate=1984-08-21&endDate=1984-08-22&printerCode=XDESP95271_p&nameTagType=4786103')
+        'bookings/?start_date=1984-08-21&end_date=1984-08-22&printer_code=XDESP95271_p&name_tag_type=4786103')
     assert response.status_code == 409
 
     # Fail creating an overlapping booking
     response = client.post(
-        'bookings/?startDate=1984-08-26&endDate=1984-08-29&printerCode=XDESP95271_p&nameTagType=4786103')
+        'bookings/?start_date=1984-08-26&end_date=1984-08-29&printer_code=XDESP95271_p&name_tag_type=4786103')
     assert response.status_code == 409
 
     # Fail creating an overlapping booking
     response = client.post(
-        'bookings/?startDate=1984-08-23&endDate=1984-08-25&printerCode=XDESP95271_p&nameTagType=4786103')
+        'bookings/?start_date=1984-08-23&end_date=1984-08-25&printer_code=XDESP95271_p&name_tag_type=4786103')
     assert response.status_code == 409
 
     # Fail creating mixed around date order
     response = client.post(
-        'bookings/?startDate=1984-08-29&endDate=1984-08-25&printerCode=XDESP95271_p&nameTagType=4786103')
+        'bookings/?start_date=1984-08-29&end_date=1984-08-25&printer_code=XDESP95271_p&name_tag_type=4786103')
     assert response.status_code == 400
 
 
@@ -115,18 +115,18 @@ def test_update_booking(clearBookingList):
 
     # Update booking
     response = client.put('bookings/' + bookingCode +
-                          '?startDate=1984-08-22' +
-                          '&endDate=1984-09-22' +
-                          '&printerCode=XDESP95271_p' +
-                          '&nameTagType=' + NameTagType._4786103)
+                          '?start_date=1984-08-22' +
+                          '&end_date=1984-09-22' +
+                          '&printer_code=XDESP95271_p' +
+                          '&name_tag_type=' + NameTagType._4786103)
     assert response.status_code == 200
 
     booking = response.json()
-    assert booking['startDate'] == '1984-08-22'
-    assert booking['endDate'] == '1984-09-22'
-    assert booking['printerCode'] == 'XDESP95271_p'
+    assert booking['start_date'] == '1984-08-22'
+    assert booking['end_date'] == '1984-09-22'
+    assert booking['printer_code'] == 'XDESP95271_p'
     bookingCode = booking['code']
-    assert booking['nameTagType'] == NameTagType._4786103
+    assert booking['name_tag_type'] == NameTagType._4786103
 
     # Test that we got the new booking
     bookings = getBookingList()
@@ -134,18 +134,18 @@ def test_update_booking(clearBookingList):
 
     # Test that we have the date we need
     booking = bookings[0]
-    assert booking['startDate'] == '1984-08-22'
-    assert booking['endDate'] == '1984-09-22'
-    assert booking['printerCode'] == 'XDESP95271_p'
+    assert booking['start_date'] == '1984-08-22'
+    assert booking['end_date'] == '1984-09-22'
+    assert booking['printer_code'] == 'XDESP95271_p'
     assert booking['code'] == bookingCode
-    assert booking['nameTagType'] == NameTagType._4786103
+    assert booking['name_tag_type'] == NameTagType._4786103
 
     # Fail update non existing booking
     response = client.put('bookings/' + 'FAKE_CODE' +
-                          '?startDate=1984-08-22' +
-                          '&endDate=1984-09-22' +
-                          '&printerCode=XDESP95271_p' +
-                          '&nameTagType=' + NameTagType._4786103)
+                          '?start_date=1984-08-22' +
+                          '&end_date=1984-09-22' +
+                          '&printer_code=XDESP95271_p' +
+                          '&name_tag_type=' + NameTagType._4786103)
     assert response.status_code == 404
 
 

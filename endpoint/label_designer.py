@@ -12,13 +12,13 @@ from pdf import name_tag_sheet_456090
 
 router = APIRouter()
 
-@router.post('/{nameTagSheetType}/{layout}', response_model=Filename, status_code=status.HTTP_201_CREATED)
-def nameTagSheet(nameTagSheetType : NameTagSheetType, layout : Layout, nameDataList: List[NameData]):
-    outputFilename = labelsPath + nameTagSheetType + '_' + uuid4().hex + '.pdf'
+@router.post('/{name_tag_sheet_type}/{layout}', response_model=Filename, status_code=status.HTTP_201_CREATED)
+def nameTagSheet(name_tag_sheet_type : NameTagSheetType, layout : Layout, name_data_list: List[NameData]):
+    outputFilename = labelsPath + name_tag_sheet_type + '_' + uuid4().hex + '.pdf'
 
-    match nameTagSheetType:
+    match name_tag_sheet_type:
         case NameTagSheetType._456090:
-            name_tag_sheet_456090.create(outputFilename, layout, nameDataList)
+            name_tag_sheet_456090.create(outputFilename, layout, name_data_list)
         case _:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="NameTagSheetType not supported")
 

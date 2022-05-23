@@ -34,7 +34,7 @@ def createNameTag(bookingCode: str):
             "description3": "string",
             "description4": "string",
             "imageName": "logo.jpg"}
-    response = client.post('/onsite_print/layout_1?bookingCode=' + bookingCode, json=body)
+    response = client.post('/onsite_print/layout_1?booking_code=' + bookingCode, json=body)
     return response
 
 
