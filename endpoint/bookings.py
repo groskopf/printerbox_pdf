@@ -7,6 +7,7 @@ from filePaths import bookingsPath
 from pydantic import BaseModel
 from fastapi import APIRouter, HTTPException, status
 from datetime import date as date
+from pdf.name_tag_type import NameTagType
 from printer_code import PrinterCode
 
 defaultBookingFile = bookingsPath + 'bookings.json'
@@ -15,6 +16,7 @@ class Booking(BaseModel):
     endDate: date
     printerCode: PrinterCode
     code: str
+    nameTagType: NameTagType
 
 class Bookings(BaseModel):
     list: List[Booking] = []
@@ -59,14 +61,15 @@ def getNameTagSheet():
 
 
 @router.post('/', status_code=status.HTTP_201_CREATED)
-def postNameTagSheet(startDate: date, endDate: date, printerCode: PrinterCode):
+def postNameTagSheet(startDate: date, endDate: date, printerCode: PrinterCode, nameTagType : NameTagType):
     if startDate > endDate:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Dates are in wrong order")
 
     booking = Booking(startDate=startDate,
                       endDate=endDate,
                       printerCode=printerCode,
-                      code=base64.urlsafe_b64encode(uuid.uuid4().bytes)[0:15].upper())
+                      code=base64.urlsafe_b64encode(uuid.uuid4().bytes)[0:15].upper()
+                      nameTagType=nameTagType)
     if(not calendar.isOverlappingExitingBooking(booking)):
         calendar.bookings.list.append(booking)
         calendar.save()
@@ -75,10 +78,10 @@ def postNameTagSheet(startDate: date, endDate: date, printerCode: PrinterCode):
 
 
 @router.put('/{bookingCode}')
-def putNameTagSheet(bookingCode: str, startDate: date, endDate: date, printerCode: PrinterCode):
+def putNameTagSheet(bookingCode: str, startDate: date, endDate: date, printerCode: PrinterCode, nameTagType : NameTagType):
     for i in range(len(calendar.bookings.list)):
         if calendar.bookings.list[i].code == bookingCode:
-            booking = Booking(startDate=startDate, endDate=endDate, printerCode=printerCode, code=bookingCode)
+            booking = Booking(startDate=startDate, endDate=endDate, printerCode=printerCode, code=bookingCode, nameTagType=nameTagType)
             calendar.bookings.list[i] = booking
             calendar.save()
             return booking
