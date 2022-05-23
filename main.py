@@ -3,7 +3,7 @@ import uvicorn
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
-from filePaths import queuesPath, labelsPath
+from site_paths import queuesPath, labelsPath
 from endpoint import upload, bookings, label_designer, onsite_print, printerbox 
 
 app = FastAPI()

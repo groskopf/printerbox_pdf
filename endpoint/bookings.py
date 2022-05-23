@@ -4,7 +4,7 @@ import base64
 import uuid
 from typing import List
 
-from filePaths import bookingsPath
+from site_paths import bookingsPath
 from pydantic import BaseModel, parse_raw_as
 from pydantic.json import pydantic_encoder
 from fastapi import APIRouter, HTTPException, status

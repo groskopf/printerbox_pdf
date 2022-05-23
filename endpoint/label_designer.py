@@ -2,9 +2,9 @@ import os
 from typing import List
 from uuid import uuid4
 from fastapi import APIRouter, HTTPException, status
-from endpoint.printerbox import Filename
+from file_path import FilePath
 
-from filePaths import labelsPath
+from site_paths import labelsPath
 from name_data import NameData
 from pdf.layouts import Layout
 from pdf.name_tag_sheet_type import NameTagSheetType
@@ -12,7 +12,7 @@ from pdf import name_tag_sheet_456090
 
 router = APIRouter()
 
-@router.post('/{name_tag_sheet_type}/{layout}', response_model=Filename, status_code=status.HTTP_201_CREATED)
+@router.post('/{name_tag_sheet_type}/{layout}', response_model=FilePath, status_code=status.HTTP_201_CREATED)
 def nameTagSheet(name_tag_sheet_type : NameTagSheetType, layout : Layout, name_data_list: List[NameData]):
     outputFilename = labelsPath + name_tag_sheet_type + '_' + uuid4().hex + '.pdf'
 
@@ -22,4 +22,4 @@ def nameTagSheet(name_tag_sheet_type : NameTagSheetType, layout : Layout, name_d
         case _:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="NameTagSheetType not supported")
 
-    return Filename(filename=outputFilename)
+    return FilePath(filename=outputFilename)

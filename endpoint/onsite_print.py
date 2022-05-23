@@ -4,11 +4,12 @@ from datetime import date as date
 from fastapi import APIRouter, HTTPException, status
 from werkzeug.utils import secure_filename
 
-from filePaths import imagesPath, queuesPath
+from site_paths import imagesPath, queuesPath
 from printer_code import PrinterCode
 from endpoint.bookings import calendar
 from endpoint.bookings import Booking
-from endpoint.printerbox import Filename, wsConnectionManager
+from endpoint.printerbox import wsConnectionManager
+from file_path import FilePath
 from name_data import NameData
 from pdf.layouts import Layout
 from pdf.name_tag_type import NameTagType
@@ -32,7 +33,7 @@ def findBooking(bookingCode):
 
 
 
-@router.post('/{layout}', response_model=Filename, status_code=status.HTTP_201_CREATED)
+@router.post('/{layout}', response_model=FilePath, status_code=status.HTTP_201_CREATED)
 async def nameTag(booking_code: str, layout: Layout, name_data: NameData):
     name_data.imageName = secure_filename(name_data.imageName)
     checkImageFileExist(name_data)
@@ -51,7 +52,7 @@ async def nameTag(booking_code: str, layout: Layout, name_data: NameData):
         case _:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="NameTagType not supported")
 
-    response = Filename(filename=outputFilename)
+    response = FilePath(filename=outputFilename)
 
     await wsConnectionManager.sendToPrinter(printerCode, response.json())
     

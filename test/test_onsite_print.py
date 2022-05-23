@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 import pytest
 
 from main import app
-from filePaths import queuesPath
+from site_paths import queuesPath
 from pdf.name_tag_type import NameTagType
 from printer_code import PrinterCode
 from test.test_bookings import createBooking, clearBookingList

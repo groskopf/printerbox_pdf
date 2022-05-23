@@ -1,10 +1,10 @@
 import os
 import pytest
 from fastapi.testclient import TestClient
-from endpoint.printerbox import Filename
 
 from main import app
-from filePaths import labelsPath
+from file_path import FilePath
+from site_paths import labelsPath
 from test.test_upload import uploadImage
 
 client = TestClient(app)
