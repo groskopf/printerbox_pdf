@@ -55,12 +55,12 @@ calendar.load()
 router = APIRouter()
 
 
-@router.get('/')
+@router.get('/', response_model=List[Booking])
 def getNameTagSheet():
     return calendar.bookings
 
 
-@router.post('/', status_code=status.HTTP_201_CREATED)
+@router.post('/', response_model=Booking, status_code=status.HTTP_201_CREATED)
 def postNameTagSheet(startDate: date, endDate: date, printerCode: PrinterCode, nameTagType : NameTagType):
     if startDate > endDate:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Dates are in wrong order")
@@ -77,7 +77,7 @@ def postNameTagSheet(startDate: date, endDate: date, printerCode: PrinterCode, n
     raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Printer has booking in same period")
 
 
-@router.put('/{bookingCode}')
+@router.put('/{bookingCode}', response_model=Booking)
 def putNameTagSheet(bookingCode: str, startDate: date, endDate: date, printerCode: PrinterCode, nameTagType : NameTagType):
     for i in range(len(calendar.bookings.list)):
         if calendar.bookings.list[i].code == bookingCode:
@@ -88,7 +88,7 @@ def putNameTagSheet(bookingCode: str, startDate: date, endDate: date, printerCod
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not found")
 
 
-@router.delete('/{bookingCode}')
+@router.delete('/{bookingCode}', response_model=Booking)
 def deleteNameTagSheet(bookingCode: str):
     for i in range(len(calendar.bookings.list)):
         if calendar.bookings.list[i].code == bookingCode:

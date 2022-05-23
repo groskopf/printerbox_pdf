@@ -32,7 +32,7 @@ def findBooking(bookingCode):
 
 
 
-@router.post('/{layout}', status_code=status.HTTP_201_CREATED)
+@router.post('/{layout}', response_model=Filename, status_code=status.HTTP_201_CREATED)
 async def nameTag(bookingCode: str, layout: Layout, nameData: NameData):
     nameData.imageName = secure_filename(nameData.imageName)
     checkImageFileExist(nameData)

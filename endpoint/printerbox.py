@@ -56,11 +56,11 @@ router = APIRouter()
 wsConnectionManager = WSConnectionManager()
 
 
-@router.get('/{printer_code}')
+@router.get('/{printer_code}', response_model=List[Filename])
 def printerboxQueue(printer_code : PrinterCode):
     return allFilesInPrinterQueue(printer_code)
 
-@router.delete('/{printer_code}/{filename}')
+@router.delete('/{printer_code}/{filename}', response_model=Filename)
 def deleteNameTag(printer_code : PrinterCode, filename : str):
     securedFileName = secure_filename(filename)
     nameTagFilename = queuesPath + printer_code + '/' + os.path.basename(securedFileName)
@@ -69,7 +69,7 @@ def deleteNameTag(printer_code : PrinterCode, filename : str):
     if os.path.isfile(nameTagFilename):
         os.remove(nameTagFilename)
 
-    return { 'filename' : nameTagFilename }
+    return Filename(nameTagFilename)
 
 @router.websocket("/ws/{printer_code}")
 async def websocket_endpoint(websocket: WebSocket, printer_code: PrinterCode):
