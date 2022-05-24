@@ -4,6 +4,7 @@ import base64
 import uuid
 from typing import List
 
+from details import Details
 from site_paths import bookingsPath
 from pydantic import BaseModel, parse_raw_as
 from pydantic.json import pydantic_encoder
@@ -13,12 +14,15 @@ from pdf.name_tag_type import NameTagType
 from printer_code import PrinterCode
 
 defaultBookingFile = bookingsPath + 'bookings.json'
+
+
 class Booking(BaseModel):
     start_date: date
     end_date: date
     printer_code: PrinterCode
     code: str
     name_tag_type: NameTagType
+
 
 class Calendar(BaseModel):
     bookings: List[Booking] = []
@@ -59,39 +63,59 @@ def getNameTagSheet():
     return calendar.bookings
 
 
-@router.post('/', response_model=Booking, status_code=status.HTTP_201_CREATED)
-def postNameTagSheet(start_date: date, end_date: date, printer_code: PrinterCode, name_tag_type : NameTagType):
+@router.post('/',
+             response_model=Booking,
+             status_code=status.HTTP_201_CREATED,
+             responses={
+                 status.HTTP_400_BAD_REQUEST: {"model": Details},
+                 status.HTTP_409_CONFLICT: {"model": Details}
+             })
+def postNameTagSheet(start_date: date, end_date: date, printer_code: PrinterCode, name_tag_type: NameTagType):
     if start_date > end_date:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Dates are in wrong order")
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Dates are in wrong order")
 
     booking = Booking(start_date=start_date,
                       end_date=end_date,
                       printer_code=printer_code,
-                      code=base64.urlsafe_b64encode(uuid.uuid4().bytes)[0:15].upper(),
+                      code=base64.urlsafe_b64encode(uuid.uuid4().bytes)[
+                          0:15].upper(),
                       name_tag_type=name_tag_type)
     if(not calendar.isOverlappingExitingBooking(booking)):
         calendar.bookings.append(booking)
         calendar.save()
         return booking
-    raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Printer has booking in same period")
+    raise HTTPException(status_code=status.HTTP_409_CONFLICT,
+                        detail="Printer has booking in same period")
 
 
-@router.put('/{booking_code}', response_model=Booking)
-def putNameTagSheet(booking_code: str, start_date: date, end_date: date, printer_code: PrinterCode, name_tag_type : NameTagType):
+@router.put('/{booking_code}',
+            response_model=Booking,
+            responses={
+                status.HTTP_404_NOT_FOUND: {"model": Details},
+            })
+def putNameTagSheet(booking_code: str, start_date: date, end_date: date, printer_code: PrinterCode, name_tag_type: NameTagType):
     for i in range(len(calendar.bookings)):
         if calendar.bookings[i].code == booking_code:
-            booking = Booking(start_date=start_date, end_date=end_date, printer_code=printer_code, code=booking_code, name_tag_type=name_tag_type)
+            booking = Booking(start_date=start_date, end_date=end_date,
+                              printer_code=printer_code, code=booking_code, name_tag_type=name_tag_type)
             calendar.bookings[i] = booking
             calendar.save()
             return booking
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not found")
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                        detail="Item not found")
 
 
-@router.delete('/{booking_code}', response_model=Booking)
+@router.delete('/{booking_code}',
+               response_model=Booking,
+               responses={
+                   status.HTTP_404_NOT_FOUND: {"model": Details},
+               })
 def deleteNameTagSheet(booking_code: str):
     for i in range(len(calendar.bookings)):
         if calendar.bookings[i].code == booking_code:
             booking = calendar.bookings[i]
             del calendar.bookings[i]
             return booking
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not found")
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                        detail="Item not found")
