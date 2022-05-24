@@ -5,8 +5,24 @@ from fastapi.staticfiles import StaticFiles
 
 from site_paths import queuesPath, labelsPath
 from endpoint import upload, bookings, label_designer, onsite_print, printerbox 
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+
+origins = [
+    "*",   
+    #  FIXME add more origins 
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 app.mount('/queues', StaticFiles(directory=queuesPath),  name="queues")
 app.mount('/labels', StaticFiles(directory=labelsPath),  name="labels")
