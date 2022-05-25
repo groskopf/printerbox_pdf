@@ -3,6 +3,7 @@ from typing import List
 from uuid import uuid4
 from datetime import date as date
 from fastapi import HTTPException, status
+from fastapi.responses import FileResponse
 from werkzeug.utils import secure_filename
 
 from details import Details
@@ -30,7 +31,8 @@ def findBooking(bookingCode):
     if not booking:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Booking not found")
-    if booking.start_date > date.today() or date.today() > booking.end_date:
+    today = date.today()  # FIXME today is not working correctly 
+    if booking.start_date > today or today > booking.end_date:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Booking not valid today")
     return booking.printer_code, booking.name_tag_type
@@ -67,7 +69,7 @@ async def new_name_tag(booking_code: str, layout : Layout, name_data: NameData):
     await wsConnectionManager.sendToPrinter(printerCode, response.json())
 
     return response
-    
+
 
 @router.get('/{printer_code}', response_model=List[FilePath])
 def get_name_tags(printer_code: PrinterCode):
@@ -75,15 +77,17 @@ def get_name_tags(printer_code: PrinterCode):
 
 
 @router.get('/{printer_code}/{filename}',
-            response_model=List[FilePath],
+            response_class=FileResponse,
             responses={
                 status.HTTP_404_NOT_FOUND: {"model": Details},
             })
-def get_name_tag(filename : str):
-    nameTagFilename = imagesPath + secure_filename(filename)
+def get_name_tag(printer_code : PrinterCode, filename : str):
+    securedFileName = secure_filename(filename)
+    nameTagFilename = printersPath + printer_code + \
+        '/' + os.path.basename(securedFileName)
+        
     if os.path.exists(nameTagFilename) and os.path.isfile(nameTagFilename):
-        os.remove(nameTagFilename)
-        return FilePath(filename=nameTagFilename)
+        return FileResponse(path=nameTagFilename)
 
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Name tag not found")
 

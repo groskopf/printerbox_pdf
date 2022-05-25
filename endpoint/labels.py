@@ -2,6 +2,7 @@ import os
 from typing import List
 from uuid import uuid4
 from fastapi import APIRouter, HTTPException, status
+from fastapi.responses import FileResponse
 from werkzeug.utils import secure_filename
 
 from details import Details
@@ -51,15 +52,14 @@ def get_name_tag_sheets():
 
 
 @router.get('/{filename}',
-            response_model=FilePath,
+            response_class=FileResponse,
             responses={
                 status.HTTP_404_NOT_FOUND: {"model": Details},
             })
 def get_name_tag_sheet(filename : str):
     nameTagFilename = labelsPath + secure_filename(filename)
     if os.path.exists(nameTagFilename) and os.path.isfile(nameTagFilename):
-        os.remove(nameTagFilename)
-        return FilePath(filename=nameTagFilename)
+        return FileResponse(path=nameTagFilename)
 
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Sheet not found")
 

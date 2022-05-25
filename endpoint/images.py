@@ -1,8 +1,7 @@
-from http.client import HTTPException
 import os
 from typing import List
 from uuid import uuid4
-from fastapi import File, UploadFile, APIRouter, status
+from fastapi import File, UploadFile, APIRouter, status, HTTPException
 from fastapi.responses import FileResponse
 from werkzeug.utils import secure_filename
 from details import Details
@@ -37,17 +36,16 @@ async def new_image(image: UploadFile = File(...)):
     return FilePath(filename=outputFilename)
 
 @router.get('/{filename}',
-            response_model=List[FilePath],
+            response_class=FileResponse,
             responses={
                 status.HTTP_404_NOT_FOUND: {"model": Details},
             })
 def get_image(filename : str):
     imageFilename = imagesPath + secure_filename(filename)
     if os.path.exists(imageFilename) and os.path.isfile(imageFilename):
-        os.remove(imageFilename)
-        return FilePath(filename=imageFilename)
+        return FileResponse(path=imageFilename)
 
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Image not found")
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, details="Image not found")
 
 @router.delete('/{filename}',
             response_model=FilePath,
