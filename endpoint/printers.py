@@ -1,23 +1,21 @@
 import os
+from typing import List
 from uuid import uuid4
 from datetime import date as date
-from fastapi import APIRouter, HTTPException, status
+from fastapi import HTTPException, status
 from werkzeug.utils import secure_filename
 
 from details import Details
-from site_paths import imagesPath, queuesPath
+from site_paths import imagesPath, printersPath
 from printer_code import PrinterCode
 from endpoint.bookings import calendar
 from endpoint.bookings import Booking
-from endpoint.printerbox import wsConnectionManager
+from endpoint.printers_ws import allFilesInPrinterQueue, wsConnectionManager, router
 from file_path import FilePath
 from name_data import NameData
 from pdf.layouts import Layout
 from pdf.name_tag_type import NameTagType
 from pdf import name_tag_4786103
-
-router = APIRouter()
-
 
 def checkImageFileExist(nameData: NameData):
     imageName = imagesPath + nameData.imageName
@@ -38,20 +36,20 @@ def findBooking(bookingCode):
     return booking.printer_code, booking.name_tag_type
 
 
-@router.post('/{layout}',
+@router.post('/',
              response_model=FilePath,
              status_code=status.HTTP_201_CREATED,
              responses={
                  status.HTTP_400_BAD_REQUEST: {"model": Details},
                  status.HTTP_404_NOT_FOUND: {"model": Details}
              })
-async def nameTag(booking_code: str, layout: Layout, name_data: NameData):
+async def new_name_tag(booking_code: str, layout : Layout, name_data: NameData):
     name_data.imageName = secure_filename(name_data.imageName)
     checkImageFileExist(name_data)
 
     printerCode, nameTagType = findBooking(booking_code)
 
-    outputPath = queuesPath + printerCode + '/'
+    outputPath = printersPath + printerCode + '/'
     outputFilename = outputPath + nameTagType + '_' + uuid4().hex + '.pdf'
 
     if not os.path.exists(outputPath):
@@ -69,3 +67,40 @@ async def nameTag(booking_code: str, layout: Layout, name_data: NameData):
     await wsConnectionManager.sendToPrinter(printerCode, response.json())
 
     return response
+    
+
+@router.get('/{printer_code}', response_model=List[FilePath])
+def get_name_tags(printer_code: PrinterCode):
+    return allFilesInPrinterQueue(printer_code)
+
+
+@router.get('/{printer_code}/{filename}',
+            response_model=List[FilePath],
+            responses={
+                status.HTTP_404_NOT_FOUND: {"model": Details},
+            })
+def get_name_tag(filename : str):
+    nameTagFilename = imagesPath + secure_filename(filename)
+    if os.path.exists(nameTagFilename) and os.path.isfile(nameTagFilename):
+        os.remove(nameTagFilename)
+        return FilePath(filename=nameTagFilename)
+
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Name tag not found")
+
+
+@router.delete('/{printer_code}/{filename}', 
+            response_model=FilePath,
+            responses={
+                status.HTTP_404_NOT_FOUND: {"model": Details},
+            })
+def delete_name_tag(printer_code: PrinterCode, filename: str):
+    securedFileName = secure_filename(filename)
+    nameTagFilename = printersPath + printer_code + \
+        '/' + os.path.basename(securedFileName)
+
+    if os.path.exists(nameTagFilename) and os.path.isfile(nameTagFilename):
+        os.remove(nameTagFilename)
+        return FilePath(filename=nameTagFilename)
+
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                        detail="NameTag not found")

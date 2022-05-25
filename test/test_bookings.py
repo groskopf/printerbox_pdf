@@ -6,13 +6,13 @@ import pytest
 from main import app
 from pdf.name_tag_type import NameTagType
 from printer_code import PrinterCode
-from endpoint.bookings import calendar
+from endpoint.bookings import Booking, calendar
 
 client = TestClient(app)
 
 
 @pytest.fixture
-def clearBookingList():
+def deleteBookings():
     # Get all bookings
     response = client.get('/bookings')
     assert response.status_code == 200
@@ -26,7 +26,7 @@ def clearBookingList():
     calendar.save()
 
 
-def createBooking(startDate: date, endDate: date, printerCode: PrinterCode, nameTagType: NameTagType):
+def newBooking(startDate: date, endDate: date, printerCode: PrinterCode, nameTagType: NameTagType):
 
     # Create a new booking
     response = client.post('/bookings/?start_date=' + startDate.isoformat() +
@@ -45,27 +45,27 @@ def createBooking(startDate: date, endDate: date, printerCode: PrinterCode, name
     return bookingCode
 
 
-def getBookingList():
+def getBookings():
     response = client.get('/bookings')
     assert response.status_code == 200
     bookings = response.json()
     return bookings
 
 
-def test_clean_booking_list(clearBookingList):
+def test_clean_booking_list(deleteBookings):
     response = client.get("/bookings")
     assert response.status_code == 200
     bookings = response.json()
     assert bookings == []
 
 
-def test_add_booking(clearBookingList):
-    bookingCode = createBooking(date.fromisoformat('1974-08-22'),
+def test_add_booking(deleteBookings):
+    bookingCode = newBooking(date.fromisoformat('1974-08-22'),
                                 date.fromisoformat('1974-09-22'),
                                 PrinterCode._XDESP95271_p,
                                 NameTagType._4786103)
 
-    bookings = getBookingList()
+    bookings = getBookings()
     assert len(bookings) == 1
 
     # Test that we have the date we need
@@ -77,13 +77,13 @@ def test_add_booking(clearBookingList):
     assert booking['name_tag_type'] == NameTagType._4786103
 
     # Create another booking
-    bookingCode = createBooking(date.fromisoformat('1984-08-22'),
+    bookingCode = newBooking(date.fromisoformat('1984-08-22'),
                                 date.fromisoformat('1984-09-26'),
                                 PrinterCode._XDESP95271_p,
                                 NameTagType._4786103)
 
     # Test that we got the new booking
-    bookings = getBookingList()
+    bookings = getBookings()
     assert len(bookings) == 2
 
     # Fail creating an overlapping booking
@@ -107,8 +107,25 @@ def test_add_booking(clearBookingList):
     assert response.status_code == 400
 
 
-def test_update_booking(clearBookingList):
-    bookingCode = createBooking(date.fromisoformat('1984-08-22'),
+def test_get_booking(deleteBookings):
+    bookingCode = newBooking(date.fromisoformat('1974-08-22'),
+                                date.fromisoformat('1974-09-22'),
+                                PrinterCode._XDESP95271_p,
+                                NameTagType._4786103)
+
+    response = client.get('/bookings/' + bookingCode)
+    assert response.status_code == 200
+    
+    booking = response.json()
+    assert booking['start_date'] == '1974-08-22'
+    assert booking['end_date'] == '1974-09-22'
+    assert booking['printer_code'] == 'XDESP95271_p'
+    assert booking['name_tag_type'] == NameTagType._4786103
+    assert bookingCode == booking['code']
+
+
+def test_update_booking(deleteBookings):
+    bookingCode = newBooking(date.fromisoformat('1984-08-22'),
                                 date.fromisoformat('1984-09-22'),
                                 PrinterCode._XDESP95271_p,
                                 NameTagType._4786103)
@@ -129,7 +146,7 @@ def test_update_booking(clearBookingList):
     assert booking['name_tag_type'] == NameTagType._4786103
 
     # Test that we got the new booking
-    bookings = getBookingList()
+    bookings = getBookings()
     assert len(bookings) == 1
 
     # Test that we have the date we need
@@ -149,14 +166,14 @@ def test_update_booking(clearBookingList):
     assert response.status_code == 404
 
 
-def test_delete_booking(clearBookingList):
-    bookingCode = createBooking(date.fromisoformat('1984-08-22'),
+def test_delete_booking(deleteBookings):
+    bookingCode = newBooking(date.fromisoformat('1984-08-22'),
                                 date.fromisoformat('1984-09-22'),
                                 PrinterCode._XDESP95271_p,
                                 NameTagType._47150106)
 
     # Test we don't have any bookings
-    assert len(getBookingList()) == 1
+    assert len(getBookings()) == 1
 
     # Fail delete non existing booking
     response = client.delete('bookings/' + 'FAKE_CODE')
@@ -167,4 +184,4 @@ def test_delete_booking(clearBookingList):
     assert response.status_code == 200
 
     # Test we don't have any bookings
-    assert len(getBookingList()) == 0
+    assert len(getBookings()) == 0

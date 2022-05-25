@@ -59,7 +59,7 @@ router = APIRouter()
 
 
 @router.get('/', response_model=List[Booking])
-def getNameTagSheet():
+def get_bookings():
     return calendar.bookings
 
 
@@ -70,7 +70,7 @@ def getNameTagSheet():
                  status.HTTP_400_BAD_REQUEST: {"model": Details},
                  status.HTTP_409_CONFLICT: {"model": Details}
              })
-def postNameTagSheet(start_date: date, end_date: date, printer_code: PrinterCode, name_tag_type: NameTagType):
+def new_booking(start_date: date, end_date: date, printer_code: PrinterCode, name_tag_type: NameTagType):
     if start_date > end_date:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Dates are in wrong order")
@@ -89,12 +89,26 @@ def postNameTagSheet(start_date: date, end_date: date, printer_code: PrinterCode
                         detail="Printer has booking in same period")
 
 
+@router.get('/{booking_code}',
+            response_model=Booking,
+            responses={
+                status.HTTP_404_NOT_FOUND: {"model": Details},
+            })
+def get_booking(booking_code: str):
+    for i in range(len(calendar.bookings)):
+        if calendar.bookings[i].code == booking_code:
+            return calendar.bookings[i]
+
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                        detail="Item not found")
+
+
 @router.put('/{booking_code}',
             response_model=Booking,
             responses={
                 status.HTTP_404_NOT_FOUND: {"model": Details},
             })
-def putNameTagSheet(booking_code: str, start_date: date, end_date: date, printer_code: PrinterCode, name_tag_type: NameTagType):
+def update_booking(booking_code: str, start_date: date, end_date: date, printer_code: PrinterCode, name_tag_type: NameTagType):
     for i in range(len(calendar.bookings)):
         if calendar.bookings[i].code == booking_code:
             booking = Booking(start_date=start_date, end_date=end_date,
@@ -102,6 +116,7 @@ def putNameTagSheet(booking_code: str, start_date: date, end_date: date, printer
             calendar.bookings[i] = booking
             calendar.save()
             return booking
+
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                         detail="Item not found")
 
@@ -111,11 +126,12 @@ def putNameTagSheet(booking_code: str, start_date: date, end_date: date, printer
                responses={
                    status.HTTP_404_NOT_FOUND: {"model": Details},
                })
-def deleteNameTagSheet(booking_code: str):
+def delete_booking(booking_code: str):
     for i in range(len(calendar.bookings)):
         if calendar.bookings[i].code == booking_code:
             booking = calendar.bookings[i]
             del calendar.bookings[i]
             return booking
+
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                         detail="Item not found")

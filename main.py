@@ -1,10 +1,9 @@
 from datetime import date as date
 import uvicorn
 from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
 
-from site_paths import queuesPath, labelsPath
-from endpoint import upload, bookings, label_designer, onsite_print, printerbox 
+from site_paths import printersPath, labelsPath
+from endpoint import images, bookings, labels, printers, printers_ws 
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -24,14 +23,10 @@ app.add_middleware(
 )
 
 
-app.mount('/queues', StaticFiles(directory=queuesPath),  name="queues")
-app.mount('/labels', StaticFiles(directory=labelsPath),  name="labels")
-
-app.include_router(upload.router, prefix='/upload')
+app.include_router(images.router, prefix='/images', tags=['images'])
 app.include_router(bookings.router, prefix='/bookings', tags=['admin'])
-app.include_router(label_designer.router, prefix='/label_designer', tags=['label-designer'])
-app.include_router(onsite_print.router, prefix='/onsite_print', tags=['onsite-print'])
-app.include_router(printerbox.router, prefix='/printerbox', tags=['printerbox'])
+app.include_router(labels.router, prefix='/labels', tags=['labels-designer'])
+app.include_router(printers.router, prefix='/printers', tags=['printers'])
 
 
 if __name__ == "__main__":

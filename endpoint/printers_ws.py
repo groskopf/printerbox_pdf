@@ -1,12 +1,14 @@
 import os
 from typing import List
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, status, HTTPException
-from pydantic import BaseModel
-from werkzeug.utils import secure_filename
+from urllib import response
+from fastapi import WebSocket, WebSocketDisconnect, APIRouter
 
 from file_path import FilePath
-from site_paths import queuesPath
+from site_paths import printersPath
 from printer_code import PrinterCode
+
+router = APIRouter()
+
 
 
 class WSConnection():
@@ -42,34 +44,14 @@ class WSConnectionManager:
 def allFilesInPrinterQueue(printerCode: PrinterCode):
     files: List[FilePath] = []
 
-    for root, dirs, foundFiles in os.walk(queuesPath + printerCode, topdown=False):
+    for root, dirs, foundFiles in os.walk(printersPath + printerCode, topdown=False):
         for name in foundFiles:
             files.append(FilePath(filename=os.path.join(root, name)))
 
     return files
 
 
-router = APIRouter()
 wsConnectionManager = WSConnectionManager()
-
-
-@router.get('/{printer_code}', response_model=List[FilePath])
-def printerboxQueue(printer_code: PrinterCode):
-    return allFilesInPrinterQueue(printer_code)
-
-
-@router.delete('/{printer_code}/{filename}', response_model=FilePath)
-def deleteNameTag(printer_code: PrinterCode, filename: str):
-    securedFileName = secure_filename(filename)
-    nameTagFilename = queuesPath + printer_code + \
-        '/' + os.path.basename(securedFileName)
-
-    if os.path.exists(nameTagFilename) and os.path.isfile(nameTagFilename):
-        os.remove(nameTagFilename)
-        return FilePath(nameTagFilename)
-
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                        detail="NameTag not found")
 
 
 @router.websocket("/ws/{printer_code}")
