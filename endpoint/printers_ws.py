@@ -1,6 +1,5 @@
 import os
 from typing import List
-from urllib import response
 from fastapi import WebSocket, WebSocketDisconnect, APIRouter
 
 from file_path import FilePath
@@ -54,7 +53,7 @@ def allFilesInPrinterQueue(printerCode: PrinterCode):
 wsConnectionManager = WSConnectionManager()
 
 
-@router.websocket("/ws/{printer_code}")
+@router.websocket("/{printer_code}/ws")
 async def websocket_endpoint(websocket: WebSocket, printer_code: PrinterCode):
     connection = WSConnection(websocket, printer_code)
     await wsConnectionManager.connect(connection)

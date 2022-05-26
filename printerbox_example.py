@@ -15,7 +15,8 @@ def on_open(ws):
 
 if __name__ == "__main__":
     websocket.enableTrace(False)
-    ws = websocket.WebSocketApp("ws://localhost:8000/printerbox/ws/XDESP95271_p",
+    ws = websocket.WebSocketApp("ws://localhost:8000/printers/XDESP95271_p/ws",
+    # ws = websocket.WebSocketApp("wss://api.printerboks.dk/api/v1/printers/XDESP95271_p/ws",
                               on_open=on_open,
                               on_message=on_message,
                               on_error=on_error,
