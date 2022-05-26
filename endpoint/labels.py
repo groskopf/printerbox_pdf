@@ -7,6 +7,7 @@ from werkzeug.utils import secure_filename
 
 from details import Details
 from file_path import FilePath
+from pdf.name_tag_sheet_layouts import getNameTagSheetLayouts
 from printer_code import PrinterCode
 from site_paths import labelsPath
 from name_data import NameData
@@ -16,6 +17,8 @@ from pdf import name_tag_sheet_456090
 
 router = APIRouter()
 
+
+
 def allFilesInLabels():
     files: List[FilePath] = []
 
@@ -24,6 +27,7 @@ def allFilesInLabels():
             files.append(FilePath(filename=os.path.join(root, name)))
 
     return files
+
 
 @router.post('/',
              response_model=FilePath,
@@ -35,13 +39,17 @@ def allFilesInLabels():
 def new_name_tag_sheet(name_tag_sheet_type: NameTagSheetType, layout: Layout, name_data_list: List[NameData]):
     outputFilename = labelsPath + name_tag_sheet_type + '_' + uuid4().hex + '.pdf'
 
+    if layout not in getNameTagSheetLayouts(name_tag_sheet_type).layouts:
+        raise HTTPException(
+             status_code=status.HTTP_400_BAD_REQUEST, detail="Name tag sheet layout not supported")
+
     match name_tag_sheet_type:
         case NameTagSheetType._456090:
             name_tag_sheet_456090.create(
                 outputFilename, layout, name_data_list)
         case _:
             raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="NameTagSheetType not supported")
+                status_code=status.HTTP_404_NOT_FOUND, detail="Name tag sheet type not supported")
 
     return FilePath(filename=outputFilename)
 
@@ -56,18 +64,20 @@ def get_name_tag_sheets():
             responses={
                 status.HTTP_404_NOT_FOUND: {"model": Details},
             })
-def get_name_tag_sheet(filename : str):
+def get_name_tag_sheet(filename: str):
     nameTagFilename = labelsPath + secure_filename(filename)
     if os.path.exists(nameTagFilename) and os.path.isfile(nameTagFilename):
         return FileResponse(path=nameTagFilename)
 
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Sheet not found")
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                        detail="Sheet not found")
 
-@router.delete('/{filename}', 
-            response_model=FilePath,
-            responses={
-                status.HTTP_404_NOT_FOUND: {"model": Details},
-            })
+
+@router.delete('/{filename}',
+               response_model=FilePath,
+               responses={
+                   status.HTTP_404_NOT_FOUND: {"model": Details},
+               })
 def delete_name_tag_sheet(filename: str):
     securedFileName = secure_filename(filename)
     nameTagFilename = labelsPath + os.path.basename(securedFileName)

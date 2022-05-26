@@ -85,3 +85,29 @@ def test_delete_name_tag_sheet():
 
     # Are they deleted
     assert not os.path.exists(filename)
+
+def test_wrong_layout_name_tag_sheet(removeOldSheets):
+    image = os.path.basename(newImage('./test/images/logo.jpg'))
+    body = [
+        {
+            "line_1": "string",
+            "line_2": "string",
+            "line_3": "string",
+            "line_4": "string",
+            "line_5": "string",
+            "qr_code": "string",
+            "imageName": image
+        },
+        {
+            "line_1": "string",
+            "line_2": "string",
+            "line_3": "string",
+            "line_4": "string",
+            "line_5": "string",
+            "qr_code": "string",
+            "imageName": image
+        },
+    ]
+    response = client.post('/labels/?name_tag_sheet_type=456090&layout=invalid', json=body)
+    assert response.status_code == 400
+

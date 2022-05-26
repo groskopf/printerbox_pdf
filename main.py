@@ -3,7 +3,7 @@ import uvicorn
 from fastapi import FastAPI
 
 from site_paths import printersPath, labelsPath
-from endpoint import images, bookings, labels, layouts, printers, printers_ws 
+from endpoint import images, bookings, labels, layouts, printers
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()

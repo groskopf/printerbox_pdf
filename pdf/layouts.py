@@ -10,7 +10,7 @@ from pdf.styles import normalCenterStyle, heading1CenterStyle
 
 class Layout(str, Enum):
     LAYOUT_1 = "layout_1"
-    LAYOUT_2 = "layout_2"
+    LAYOUT_INVALID = "invalid"
 
 
 class LeftImageAndParagraphTable(Table):

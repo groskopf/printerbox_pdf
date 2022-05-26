@@ -173,3 +173,26 @@ def test_delete_name_tags(deleteBookings, deleteAllNameTags, deleteAllImages):
         assert response.status_code == 200
         filenames = response.json()
         assert len(filenames) == 0
+
+
+def test_wrong_layout_name_tag_sheet(deleteBookings, deleteAllNameTags, deleteAllImages):
+    bookingCode = newBooking(
+            date.today(),
+            date.today(),
+            PrinterCode._8SCNWZUF9M_8,
+            NameTagType._4786103)
+    image = os.path.basename(newImage('./test/images/logo.jpg'))
+    body = {
+            "line_1": "string",
+            "line_2": "string",
+            "line_3": "string",
+            "line_4": "string",
+            "line_5": "string",
+            "qr_code": "string",
+            "imageName": image
+        }
+    response = client.post('/printers/?booking_code=' + bookingCode +
+                           '&layout=' + Layout.LAYOUT_INVALID,
+                           json=body)
+    assert response.status_code == 400
+

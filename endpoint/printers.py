@@ -7,6 +7,7 @@ from fastapi.responses import FileResponse
 from werkzeug.utils import secure_filename
 
 from details import Details
+from pdf.name_tag_layouts import getNameTagLayouts
 from site_paths import imagesPath, printersPath
 from printer_code import PrinterCode
 from endpoint.bookings import calendar
@@ -50,6 +51,10 @@ async def new_name_tag(booking_code: str, layout : Layout, name_data: NameData):
     checkImageFileExist(name_data)
 
     printerCode, nameTagType = findBooking(booking_code)
+
+    if layout not in getNameTagLayouts(nameTagType).layouts:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Name tag layout not supported")
 
     outputPath = printersPath + printerCode + '/'
     outputFilename = outputPath + nameTagType + '_' + uuid4().hex + '.pdf'
