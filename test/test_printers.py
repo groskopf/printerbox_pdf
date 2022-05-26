@@ -29,12 +29,15 @@ def deleteAllNameTags():
 
 def postNameTag(bookingCode: str):
     image = os.path.basename(newImage('./test/images/logo.jpg'))
-    body = {"name": "string",
-            "description1": "string",
-            "description2": "string",
-            "description3": "string",
-            "description4": "string",
-            "imageName": image}
+    body = {
+            "line_1": "string",
+            "line_2": "string",
+            "line_3": "string",
+            "line_4": "string",
+            "line_5": "string",
+            "qr_code": "string",
+            "imageName": image
+        }
     response = client.post('/printers/?booking_code=' + bookingCode +
                            '&layout=' + Layout.LAYOUT_1,
                            json=body)

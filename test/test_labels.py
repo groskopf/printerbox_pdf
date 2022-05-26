@@ -23,21 +23,29 @@ def newNameTagSheet():
     image1 = os.path.basename(newImage('./test/images/Kongresartikler.jpg'))
     image2 = os.path.basename(newImage('./test/images/logo.jpg'))
     body = [
-        {"name": "string",
-         "description1": "string",
-         "description2": "string",
-         "description3": "string",
-         "description4": "string",
-         "imageName": image1},
-        {"name": "string",
-         "description1": "string",
-         "description2": "string",
-         "description3": "string",
-         "description4": "string",
-         "imageName": image2}
+        {
+            "line_1": "string",
+            "line_2": "string",
+            "line_3": "string",
+            "line_4": "string",
+            "line_5": "string",
+            "qr_code": "string",
+            "imageName": image1
+        },
+        {
+            "line_1": "string",
+            "line_2": "string",
+            "line_3": "string",
+            "line_4": "string",
+            "line_5": "string",
+            "qr_code": "string",
+            "imageName": image2
+        },
     ]
-    response = client.post('/labels/?name_tag_sheet_type=456090&layout=layout_1', json=body)
+    response = client.post(
+        '/labels/?name_tag_sheet_type=456090&layout=layout_1', json=body)
     return response
+
 
 def getNameTagSheets():
     # Get the list of images
@@ -55,20 +63,22 @@ def test_new_name_tag_sheet(removeOldSheets):
         # Do file exist locally
         filename = response.json()['filename']
         assert os.path.exists(filename) and os.path.isfile(filename)
-    
+
     # Get the list of images
     filenames = getNameTagSheets()
     assert 10 == len(filenames)
+
 
 def test_get_name_tag_sheet():
     assert True
     # TODO can we download it?
 
+
 def test_delete_name_tag_sheet():
     response = newNameTagSheet()
     assert response.status_code == 201
     filename = response.json()['filename']
-    
+
     response = client.delete(filename)
     assert response.status_code == 200
     assert filename == response.json()['filename']

@@ -46,10 +46,10 @@ class NameTagLayout1Table(Table):
         middleCellHeight = height / 4
         bottomCellHeight = height / 2
 
-        topCell = [Paragraph(nameData.description1, normalCenterStyle)]
-        middleCell = [Paragraph(nameData.name, heading1CenterStyle)]
+        topCell = [Paragraph(nameData.line_2, normalCenterStyle)]
+        middleCell = [Paragraph(nameData.line_1, heading1CenterStyle)]
         bottomCell = [LeftImageAndParagraphTable(
-            cellWidth, bottomCellHeight, nameData.description2, nameData.imageName)]
+            cellWidth, bottomCellHeight, nameData.line_3, nameData.imageName)]
 
         allCellsContent = [[KeepInFrame(cellWidth, topCellHeight, topCell)],
                            [KeepInFrame(
