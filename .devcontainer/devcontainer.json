@@ -1,7 +1,7 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.140.1/containers/docker-existing-dockerfile
 {
-	"name": "NeoCortec Development",
+	"name": "Printerbox PDF",
 
 	"image": "ghcr.io/groskopf/printerbox_pdf:latest",
 
