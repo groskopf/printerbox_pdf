@@ -1,5 +1,6 @@
 import os
 from datetime import date as date, timedelta
+from typing import List
 from fastapi.testclient import TestClient
 import pytest
 

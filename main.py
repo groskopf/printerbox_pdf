@@ -3,7 +3,7 @@ import uvicorn
 from fastapi import FastAPI
 
 from site_paths import printersPath, labelsPath
-from endpoint import images, bookings, labels, printers, printers_ws 
+from endpoint import images, bookings, labels, layouts, printers, printers_ws 
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -27,6 +27,7 @@ app.include_router(images.router, prefix='/images', tags=['images'])
 app.include_router(bookings.router, prefix='/bookings', tags=['admin'])
 app.include_router(labels.router, prefix='/labels', tags=['labels-designer'])
 app.include_router(printers.router, prefix='/printers', tags=['printers'])
+app.include_router(layouts.router, prefix='/layouts', tags=['layouts'])
 
 
 if __name__ == "__main__":
