@@ -9,7 +9,7 @@ reportlab
 starlette
 typing_extensions
 python-multipart
-uvicorn[standart]
+uvicorn[standard]
 Werkzeug
 websocket-client
 autopep8
