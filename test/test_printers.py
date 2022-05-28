@@ -123,13 +123,13 @@ def test_get_name_tags(deleteBookings, deleteAllNameTags, deleteAllImages):
         assert response.status_code == 200
         filenames = response.json()
 
-        numFundNamesTags = len(filenames)
-        assert numFundNamesTags == numOfNewNameTags
+        numFundNameTags = len(filenames)
+        assert numFundNameTags == numOfNewNameTags
 
         # Compare the list with the output
         newNameTags.sort()
         sortedFileNames = sorted(filenames, key=lambda d: d['filename'])
-        for i in range(numFundNamesTags):
+        for i in range(numFundNameTags):
             assert sortedFileNames[i]['filename'] == newNameTags[i]
 
     # Test they disappear again
