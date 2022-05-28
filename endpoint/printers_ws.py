@@ -27,8 +27,8 @@ class WSConnectionManager:
         await connection.websocket.accept()
         self.connections.append(connection)
 
-    def disconnect(self, websocket: WebSocket):
-        self.connections.remove(websocket)
+    def disconnect(self, connection: WSConnection):
+        self.connections.remove(connection)
 
     async def sendToPrinter(self, printerCode: PrinterCode, message: str):
         for connection in self.connections:
@@ -58,13 +58,13 @@ async def websocket_endpoint(websocket: WebSocket, printer_code: PrinterCode):
     connection = WSConnection(websocket, printer_code)
     await wsConnectionManager.connect(connection)
 
-    for filename in allFilesInPrinterQueue(printer_code):
-        await wsConnectionManager.sendToPrinter(connection.printerCode, filename.json())
-
     try:
+        for filename in allFilesInPrinterQueue(printer_code):
+            await wsConnectionManager.sendToPrinter(connection.printerCode, filename.json())
+
         while True:
             # Just reply what is received
             data = await websocket.receive_text()
             await wsConnectionManager.sendToPrinter(connection.printerCode, data)
     except WebSocketDisconnect:
-        wsConnectionManager.disconnect(websocket)
+        wsConnectionManager.disconnect(connection)
