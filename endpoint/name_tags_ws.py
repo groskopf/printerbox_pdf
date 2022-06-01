@@ -3,7 +3,7 @@ from typing import List
 from fastapi import WebSocket, WebSocketDisconnect, APIRouter
 
 from file_path import FilePath
-from site_paths import printersPath
+from site_paths import nameTagsPath
 from printer_code import PrinterCode
 
 router = APIRouter()
@@ -43,7 +43,7 @@ class WSConnectionManager:
 def deleteFilesInPrinterQueue(printerCode: PrinterCode):
     files: List[FilePath] = []
 
-    for root, dirs, foundFiles in os.walk(printersPath + printerCode, topdown=False):
+    for root, dirs, foundFiles in os.walk(nameTagsPath + printerCode, topdown=False):
         for name in foundFiles:
             filename=os.path.join(root, name)
             files.append(FilePath(filename=filename))
@@ -55,7 +55,7 @@ def deleteFilesInPrinterQueue(printerCode: PrinterCode):
 def getFilesInPrinterQueue(printerCode: PrinterCode):
     files: List[FilePath] = []
 
-    for root, dirs, foundFiles in os.walk(printersPath + printerCode, topdown=False):
+    for root, dirs, foundFiles in os.walk(nameTagsPath + printerCode, topdown=False):
         for name in foundFiles:
             files.append(FilePath(filename=os.path.join(root, name)))
 

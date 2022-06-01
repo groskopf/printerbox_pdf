@@ -8,11 +8,11 @@ from werkzeug.utils import secure_filename
 
 from details import Details
 from pdf.name_tag_layouts import getNameTagLayouts
-from site_paths import imagesPath, printersPath
+from site_paths import imagesPath, nameTagsPath
 from printer_code import PrinterCode
 from endpoint.bookings import calendar
 from endpoint.bookings import Booking
-from endpoint.printers_ws import getFilesInPrinterQueue, deleteFilesInPrinterQueue, wsConnectionManager, router
+from endpoint.name_tags_ws import getFilesInPrinterQueue, deleteFilesInPrinterQueue, wsConnectionManager, router
 from file_path import FilePath
 from name_data import NameData
 from pdf.layouts import Layout
@@ -56,7 +56,7 @@ async def new_name_tag(booking_code: str, layout : Layout, name_data: NameData):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Name tag layout not supported")
 
-    outputPath = printersPath + printerCode + '/'
+    outputPath = nameTagsPath + printerCode + '/'
     outputFilename = outputPath + nameTagType + '_' + uuid4().hex + '.pdf'
 
     if not os.path.exists(outputPath):
@@ -92,7 +92,7 @@ def get_name_tags(printer_code: PrinterCode):
             })
 def get_name_tag(printer_code : PrinterCode, filename : str):
     securedFileName = secure_filename(filename)
-    nameTagFilename = printersPath + printer_code + \
+    nameTagFilename = nameTagsPath + printer_code + \
         '/' + os.path.basename(securedFileName)
         
     if os.path.exists(nameTagFilename) and os.path.isfile(nameTagFilename):
@@ -108,7 +108,7 @@ def get_name_tag(printer_code : PrinterCode, filename : str):
             })
 def delete_name_tag(printer_code: PrinterCode, filename: str):
     securedFileName = secure_filename(filename)
-    nameTagFilename = printersPath + printer_code + \
+    nameTagFilename = nameTagsPath + printer_code + \
         '/' + os.path.basename(securedFileName)
 
     if os.path.exists(nameTagFilename) and os.path.isfile(nameTagFilename):

@@ -5,7 +5,7 @@ from fastapi.testclient import TestClient
 import pytest
 
 from main import app
-from site_paths import printersPath
+from site_paths import nameTagsPath
 from pdf.name_tag_type import NameTagType
 from pdf.layouts import Layout
 from printer_code import PrinterCode
@@ -16,7 +16,7 @@ client = TestClient(app)
 
 
 def deleteAllNameTagFiles():
-    for root, dirs, files in os.walk(printersPath, topdown=False):
+    for root, dirs, files in os.walk(nameTagsPath, topdown=False):
         for name in files:
             os.remove(os.path.join(root, name))
         for name in dirs:
@@ -39,7 +39,7 @@ def postNameTag(bookingCode: str):
             "qr_code": "string",
             "image_name": image
         }
-    response = client.post('/printers/?booking_code=' + bookingCode +
+    response = client.post('/name_tags/?booking_code=' + bookingCode +
                            '&layout=' + Layout.LAYOUT_1,
                            json=body)
     return response
@@ -119,7 +119,7 @@ def test_get_name_tags(deleteBookings, deleteAllNameTags, deleteAllImages):
             newNameTags.append(newNameTag(bookingCode))
 
         # Get the list
-        response = client.get('/printers/' + printerCode)
+        response = client.get('/name_tags/' + printerCode)
         assert response.status_code == 200
         filenames = response.json()
 
@@ -136,7 +136,7 @@ def test_get_name_tags(deleteBookings, deleteAllNameTags, deleteAllImages):
     deleteAllNameTagFiles()
 
     for printerCode in PrinterCode:
-        response = client.get('/printers/' + printerCode)
+        response = client.get('/name_tags/' + printerCode)
         assert response.status_code == 200
         filenames = response.json()
         assert len(filenames) == 0
@@ -161,12 +161,12 @@ def test_delete_name_tags(deleteBookings, deleteAllNameTags, deleteAllImages):
             newNameTags.append(newNameTag(bookingCode))
         
         # Try delete all name tags
-        response = client.delete('/printers/' + printerCode)
+        response = client.delete('/name_tags/' + printerCode)
         assert response.status_code == 200
 
         # Test they all disappear again
         for printerCode in PrinterCode:
-            response = client.get('/printers/' + printerCode)
+            response = client.get('/name_tags/' + printerCode)
             assert response.status_code == 200
             filenames = response.json()
             assert len(filenames) == 0
@@ -188,7 +188,7 @@ def test_delete_name_tag(deleteBookings, deleteAllNameTags, deleteAllImages):
 
     for printerCode in PrinterCode:
         # Get the name tags
-        response = client.get('/printers/' + printerCode)
+        response = client.get('/name_tags/' + printerCode)
         assert response.status_code == 200
         filenames = response.json()
 
@@ -199,7 +199,7 @@ def test_delete_name_tag(deleteBookings, deleteAllNameTags, deleteAllImages):
 
     # Test they all disappear again
     for printerCode in PrinterCode:
-        response = client.get('/printers/' + printerCode)
+        response = client.get('/name_tags/' + printerCode)
         assert response.status_code == 200
         filenames = response.json()
         assert len(filenames) == 0
@@ -221,7 +221,7 @@ def test_wrong_layout_name_tag_sheet(deleteBookings, deleteAllNameTags, deleteAl
             "qr_code": "string",
             "image_name": image
         }
-    response = client.post('/printers/?booking_code=' + bookingCode +
+    response = client.post('/name_tags/?booking_code=' + bookingCode +
                            '&layout=' + Layout.LAYOUT_INVALID,
                            json=body)
     assert response.status_code == 400

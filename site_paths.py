@@ -1,5 +1,5 @@
 
 bookingsPath = 'bookings/'
 imagesPath = 'images/'
-printersPath = 'printers/'
+nameTagsPath = 'name_tags/'
 sheetsPath = 'sheets/'
