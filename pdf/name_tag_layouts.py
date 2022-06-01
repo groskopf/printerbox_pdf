@@ -12,10 +12,6 @@ class NameTagLayouts(BaseModel):
 
 nameTagLayoutsList: List[NameTagLayouts] = [
     NameTagLayouts(
-        name_tag_type=NameTagType._47150106,
-        layouts=[Layout.LAYOUT_1]
-    ),
-    NameTagLayouts(
         name_tag_type=NameTagType._4760100,
         layouts=[Layout.LAYOUT_1]
     ),
