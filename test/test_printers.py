@@ -37,7 +37,7 @@ def postNameTag(bookingCode: str):
             "line_4": "string",
             "line_5": "string",
             "qr_code": "string",
-            "imageName": image
+            "image_name": image
         }
     response = client.post('/printers/?booking_code=' + bookingCode +
                            '&layout=' + Layout.LAYOUT_1,
@@ -189,7 +189,7 @@ def test_wrong_layout_name_tag_sheet(deleteBookings, deleteAllNameTags, deleteAl
             "line_4": "string",
             "line_5": "string",
             "qr_code": "string",
-            "imageName": image
+            "image_name": image
         }
     response = client.post('/printers/?booking_code=' + bookingCode +
                            '&layout=' + Layout.LAYOUT_INVALID,

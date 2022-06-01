@@ -30,7 +30,7 @@ def newNameTagSheet():
             "line_4": "string",
             "line_5": "string",
             "qr_code": "string",
-            "imageName": image1
+            "image_name": image1
         },
         {
             "line_1": "string",
@@ -39,7 +39,7 @@ def newNameTagSheet():
             "line_4": "string",
             "line_5": "string",
             "qr_code": "string",
-            "imageName": image2
+            "image_name": image2
         },
     ]
     response = client.post(
@@ -96,7 +96,7 @@ def test_wrong_layout_name_tag_sheet(removeOldSheets):
             "line_4": "string",
             "line_5": "string",
             "qr_code": "string",
-            "imageName": image
+            "image_name": image
         },
         {
             "line_1": "string",
@@ -105,7 +105,7 @@ def test_wrong_layout_name_tag_sheet(removeOldSheets):
             "line_4": "string",
             "line_5": "string",
             "qr_code": "string",
-            "imageName": image
+            "image_name": image
         },
     ]
     response = client.post('/labels/?name_tag_sheet_type=456090&layout=invalid', json=body)

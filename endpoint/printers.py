@@ -20,7 +20,7 @@ from pdf.name_tag_type import NameTagType
 from pdf import name_tag_4786103
 
 def checkImageFileExist(nameData: NameData):
-    imageName = imagesPath + nameData.imageName
+    imageName = imagesPath + nameData.image_name
     if imageName:
         if not os.path.exists(imageName) or not os.path.isfile(imageName):
             raise HTTPException(
@@ -47,7 +47,7 @@ def findBooking(bookingCode):
                  status.HTTP_404_NOT_FOUND: {"model": Details}
              })
 async def new_name_tag(booking_code: str, layout : Layout, name_data: NameData):
-    name_data.imageName = secure_filename(name_data.imageName)
+    name_data.image_name = secure_filename(name_data.image_name)
     checkImageFileExist(name_data)
 
     printerCode, nameTagType = findBooking(booking_code)
