@@ -12,7 +12,7 @@ from site_paths import imagesPath, printersPath
 from printer_code import PrinterCode
 from endpoint.bookings import calendar
 from endpoint.bookings import Booking
-from endpoint.printers_ws import allFilesInPrinterQueue, wsConnectionManager, router
+from endpoint.printers_ws import getFilesInPrinterQueue, deleteFilesInPrinterQueue, wsConnectionManager, router
 from file_path import FilePath
 from name_data import NameData
 from pdf.layouts import Layout
@@ -78,7 +78,11 @@ async def new_name_tag(booking_code: str, layout : Layout, name_data: NameData):
 
 @router.get('/{printer_code}', response_model=List[FilePath])
 def get_name_tags(printer_code: PrinterCode):
-    return allFilesInPrinterQueue(printer_code)
+    return getFilesInPrinterQueue(printer_code)
+
+@router.delete('/{printer_code}', response_model=List[FilePath])
+def get_name_tags(printer_code: PrinterCode):
+    return deleteFilesInPrinterQueue(printer_code)
 
 
 @router.get('/{printer_code}/{filename}',

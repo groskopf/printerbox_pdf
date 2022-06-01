@@ -40,7 +40,19 @@ class WSConnectionManager:
             await connection.websocket.send_text(message)
 
 
-def allFilesInPrinterQueue(printerCode: PrinterCode):
+def deleteFilesInPrinterQueue(printerCode: PrinterCode):
+    files: List[FilePath] = []
+
+    for root, dirs, foundFiles in os.walk(printersPath + printerCode, topdown=False):
+        for name in foundFiles:
+            filename=os.path.join(root, name)
+            files.append(FilePath(filename=filename))
+            os.remove(filename)
+
+    return files
+
+
+def getFilesInPrinterQueue(printerCode: PrinterCode):
     files: List[FilePath] = []
 
     for root, dirs, foundFiles in os.walk(printersPath + printerCode, topdown=False):
@@ -59,7 +71,7 @@ async def websocket_endpoint(websocket: WebSocket, printer_code: PrinterCode):
     await wsConnectionManager.connect(connection)
 
     try:
-        for filename in allFilesInPrinterQueue(printer_code):
+        for filename in getFilesInPrinterQueue(printer_code):
             await wsConnectionManager.sendToPrinter(connection.printerCode, filename.json())
 
         while True:

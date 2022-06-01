@@ -142,7 +142,37 @@ def test_get_name_tags(deleteBookings, deleteAllNameTags, deleteAllImages):
         assert len(filenames) == 0
 
 
+
 def test_delete_name_tags(deleteBookings, deleteAllNameTags, deleteAllImages):
+
+    for printerCode in PrinterCode:
+        # Create a booking on the printer
+        bookingCode = newBooking(
+            date.today(),
+            date.today(),
+            printerCode,
+            NameTagType._4786103)
+
+        numOfNewNameTags = 5
+        newNameTags: List[str] = []
+
+        # Create some nametags
+        for i in range(numOfNewNameTags):
+            newNameTags.append(newNameTag(bookingCode))
+        
+        # Try delete all name tags
+        response = client.delete('/printers/' + printerCode)
+        assert response.status_code == 200
+
+        # Test they all disappear again
+        for printerCode in PrinterCode:
+            response = client.get('/printers/' + printerCode)
+            assert response.status_code == 200
+            filenames = response.json()
+            assert len(filenames) == 0
+
+
+def test_delete_name_tag(deleteBookings, deleteAllNameTags, deleteAllImages):
 
     for printerCode in PrinterCode:
         # Create a booking on the printer
@@ -175,7 +205,7 @@ def test_delete_name_tags(deleteBookings, deleteAllNameTags, deleteAllImages):
         assert len(filenames) == 0
 
 
-def test_wrong_layout_sheet(deleteBookings, deleteAllNameTags, deleteAllImages):
+def test_wrong_layout_name_tag_sheet(deleteBookings, deleteAllNameTags, deleteAllImages):
     bookingCode = newBooking(
             date.today(),
             date.today(),
