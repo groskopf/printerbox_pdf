@@ -19,7 +19,7 @@ def get_name_tag_layouts():
     return nameTagLayoutsList
 
 
-@router.get('/name_tags_sheets', response_model=List[SheetLayouts])
+@router.get('/sheets', response_model=List[SheetLayouts])
 def get_sheet_layouts():
     return sheetLayoutsList
 

@@ -9,7 +9,7 @@ from details import Details
 from file_path import FilePath
 from pdf.sheet_layouts import getSheetLayouts
 from printer_code import PrinterCode
-from site_paths import labelsPath
+from site_paths import sheetsPath
 from name_data import NameData
 from pdf.layouts import Layout
 from pdf.sheet_type import SheetType
@@ -22,7 +22,7 @@ router = APIRouter()
 def allFilesInLabels():
     files: List[FilePath] = []
 
-    for root, dirs, foundFiles in os.walk(labelsPath, topdown=False):
+    for root, dirs, foundFiles in os.walk(sheetsPath, topdown=False):
         for name in foundFiles:
             files.append(FilePath(filename=os.path.join(root, name)))
 
@@ -37,7 +37,7 @@ def allFilesInLabels():
                  status.HTTP_404_NOT_FOUND: {"model": Details}
              })
 def new_sheet(sheet_type: SheetType, layout: Layout, name_data_list: List[NameData]):
-    outputFilename = labelsPath + sheet_type + '_' + uuid4().hex + '.pdf'
+    outputFilename = sheetsPath + sheet_type + '_' + uuid4().hex + '.pdf'
 
     if layout not in getSheetLayouts(sheet_type).layouts:
         raise HTTPException(
@@ -65,7 +65,7 @@ def get_sheets():
                 status.HTTP_404_NOT_FOUND: {"model": Details},
             })
 def get_sheet(filename: str):
-    nameTagFilename = labelsPath + secure_filename(filename)
+    nameTagFilename = sheetsPath + secure_filename(filename)
     if os.path.exists(nameTagFilename) and os.path.isfile(nameTagFilename):
         return FileResponse(path=nameTagFilename)
 
@@ -80,7 +80,7 @@ def get_sheet(filename: str):
                })
 def delete_sheet(filename: str):
     securedFileName = secure_filename(filename)
-    nameTagFilename = labelsPath + os.path.basename(securedFileName)
+    nameTagFilename = sheetsPath + os.path.basename(securedFileName)
 
     if os.path.exists(nameTagFilename) and os.path.isfile(nameTagFilename):
         os.remove(nameTagFilename)

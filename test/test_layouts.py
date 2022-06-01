@@ -65,7 +65,7 @@ def test_get_layouts_sheet():
 
 
 def test_get_layouts_sheets():
-    response = client.get('layouts/name_tags_sheets')
+    response = client.get('layouts/sheets')
     assert response.status_code == 200
 
     sheetLayoutsList = response.json()

@@ -2,7 +2,7 @@ from datetime import date as date
 import uvicorn
 from fastapi import FastAPI
 
-from endpoint import images, bookings, labels, layouts, printers
+from endpoint import images, bookings, layouts, printers, sheets
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -24,7 +24,7 @@ app.add_middleware(
 
 app.include_router(images.router, prefix='/images', tags=['images'])
 app.include_router(bookings.router, prefix='/bookings', tags=['bookings'])
-app.include_router(labels.router, prefix='/labels', tags=['labels'])
+app.include_router(sheets.router, prefix='/sheets', tags=['sheets'])
 app.include_router(printers.router, prefix='/printers', tags=['printers'])
 app.include_router(layouts.router, prefix='/layouts', tags=['layouts'])
 

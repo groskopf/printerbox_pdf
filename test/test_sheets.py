@@ -4,7 +4,7 @@ from fastapi.testclient import TestClient
 
 from main import app
 from file_path import FilePath
-from site_paths import labelsPath
+from site_paths import sheetsPath
 from test.test_images import newImage
 
 client = TestClient(app)
@@ -12,7 +12,7 @@ client = TestClient(app)
 
 @pytest.fixture
 def removeOldSheets():
-    for root, dirs, files in os.walk(labelsPath, topdown=False):
+    for root, dirs, files in os.walk(sheetsPath, topdown=False):
         for name in files:
             os.remove(os.path.join(root, name))
         for name in dirs:
@@ -43,13 +43,13 @@ def newSheet():
         },
     ]
     response = client.post(
-        '/labels/?sheet_type=456090&layout=layout_1', json=body)
+        '/sheets/?sheet_type=456090&layout=layout_1', json=body)
     return response
 
 
 def getSheets():
     # Get the list of images
-    response = client.get('/labels/')
+    response = client.get('/sheets/')
     assert response.status_code == 200
     filenames = response.json()
     return filenames
@@ -108,6 +108,6 @@ def test_wrong_layout_sheet(removeOldSheets):
             "image_name": image
         },
     ]
-    response = client.post('/labels/?sheet_type=456090&layout=invalid', json=body)
+    response = client.post('/sheets/?sheet_type=456090&layout=invalid', json=body)
     assert response.status_code == 400
 
