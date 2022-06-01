@@ -20,7 +20,7 @@ def deleteBookings():
     # Delete all bookings
     bookings = response.json()
     for booking in bookings:
-        response = client.delete('/bookings/' + booking['code'])
+        response = client.delete('/bookings/' + booking['booking_code'])
         assert response.status_code == 200
 
     calendar.save()
@@ -40,7 +40,7 @@ def newBooking(startDate: date, endDate: date, printerCode: PrinterCode, nameTag
     assert booking['end_date'] == endDate.isoformat()
     assert booking['printer_code'] == printerCode
     assert booking['name_tag_type'] == nameTagType
-    bookingCode = booking['code']
+    bookingCode = booking['booking_code']
     assert bookingCode
     return bookingCode
 
@@ -61,9 +61,9 @@ def test_clean_booking_list(deleteBookings):
 
 def test_add_booking(deleteBookings):
     bookingCode = newBooking(date.fromisoformat('1974-08-22'),
-                                date.fromisoformat('1974-09-22'),
-                                PrinterCode._XDESP95271_p,
-                                NameTagType._4786103)
+                             date.fromisoformat('1974-09-22'),
+                             PrinterCode._XDESP95271_p,
+                             NameTagType._4786103)
 
     bookings = getBookings()
     assert len(bookings) == 1
@@ -73,14 +73,14 @@ def test_add_booking(deleteBookings):
     assert booking['start_date'] == '1974-08-22'
     assert booking['end_date'] == '1974-09-22'
     assert booking['printer_code'] == 'XDESP95271_p'
-    assert booking['code'] == bookingCode
+    assert booking['booking_code'] == bookingCode
     assert booking['name_tag_type'] == NameTagType._4786103
 
     # Create another booking
     bookingCode = newBooking(date.fromisoformat('1984-08-22'),
-                                date.fromisoformat('1984-09-26'),
-                                PrinterCode._XDESP95271_p,
-                                NameTagType._4786103)
+                             date.fromisoformat('1984-09-26'),
+                             PrinterCode._XDESP95271_p,
+                             NameTagType._4786103)
 
     # Test that we got the new booking
     bookings = getBookings()
@@ -109,26 +109,26 @@ def test_add_booking(deleteBookings):
 
 def test_get_booking(deleteBookings):
     bookingCode = newBooking(date.fromisoformat('1974-08-22'),
-                                date.fromisoformat('1974-09-22'),
-                                PrinterCode._XDESP95271_p,
-                                NameTagType._4786103)
+                             date.fromisoformat('1974-09-22'),
+                             PrinterCode._XDESP95271_p,
+                             NameTagType._4786103)
 
     response = client.get('/bookings/' + bookingCode)
     assert response.status_code == 200
-    
+
     booking = response.json()
     assert booking['start_date'] == '1974-08-22'
     assert booking['end_date'] == '1974-09-22'
     assert booking['printer_code'] == 'XDESP95271_p'
     assert booking['name_tag_type'] == NameTagType._4786103
-    assert bookingCode == booking['code']
+    assert bookingCode == booking['booking_code']
 
 
 def test_update_booking(deleteBookings):
     bookingCode = newBooking(date.fromisoformat('1984-08-22'),
-                                date.fromisoformat('1984-09-22'),
-                                PrinterCode._XDESP95271_p,
-                                NameTagType._4786103)
+                             date.fromisoformat('1984-09-22'),
+                             PrinterCode._XDESP95271_p,
+                             NameTagType._4786103)
 
     # Update booking
     response = client.put('bookings/' + bookingCode +
@@ -142,7 +142,7 @@ def test_update_booking(deleteBookings):
     assert booking['start_date'] == '1984-08-22'
     assert booking['end_date'] == '1984-09-22'
     assert booking['printer_code'] == 'XDESP95271_p'
-    bookingCode = booking['code']
+    bookingCode = booking['booking_code']
     assert booking['name_tag_type'] == NameTagType._4786103
 
     # Test that we got the new booking
@@ -154,7 +154,7 @@ def test_update_booking(deleteBookings):
     assert booking['start_date'] == '1984-08-22'
     assert booking['end_date'] == '1984-09-22'
     assert booking['printer_code'] == 'XDESP95271_p'
-    assert booking['code'] == bookingCode
+    assert booking['booking_code'] == bookingCode
     assert booking['name_tag_type'] == NameTagType._4786103
 
     # Fail update non existing booking
@@ -168,9 +168,9 @@ def test_update_booking(deleteBookings):
 
 def test_delete_booking(deleteBookings):
     bookingCode = newBooking(date.fromisoformat('1984-08-22'),
-                                date.fromisoformat('1984-09-22'),
-                                PrinterCode._XDESP95271_p,
-                                NameTagType._47150106)
+                             date.fromisoformat('1984-09-22'),
+                             PrinterCode._XDESP95271_p,
+                             NameTagType._4760100)
 
     # Test we don't have any bookings
     assert len(getBookings()) == 1

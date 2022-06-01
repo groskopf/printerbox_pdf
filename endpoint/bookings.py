@@ -20,7 +20,7 @@ class Booking(BaseModel):
     start_date: date
     end_date: date
     printer_code: PrinterCode
-    code: str
+    booking_code: str
     name_tag_type: NameTagType
 
 
@@ -47,7 +47,7 @@ class Calendar(BaseModel):
 
     def getBooking(self, bookingCode: str):
         for booking in self.bookings:
-            if booking.code == bookingCode:
+            if booking.booking_code == bookingCode:
                 return booking
         return None
 
@@ -78,7 +78,7 @@ def new_booking(start_date: date, end_date: date, printer_code: PrinterCode, nam
     booking = Booking(start_date=start_date,
                       end_date=end_date,
                       printer_code=printer_code,
-                      code=base64.urlsafe_b64encode(uuid.uuid4().bytes)[
+                      booking_code=base64.b32encode(uuid.uuid4().bytes)[
                           0:15].upper(),
                       name_tag_type=name_tag_type)
     if(not calendar.isOverlappingExitingBooking(booking)):
@@ -96,7 +96,7 @@ def new_booking(start_date: date, end_date: date, printer_code: PrinterCode, nam
             })
 def get_booking(booking_code: str):
     for i in range(len(calendar.bookings)):
-        if calendar.bookings[i].code == booking_code:
+        if calendar.bookings[i].booking_code == booking_code:
             return calendar.bookings[i]
 
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
@@ -110,9 +110,12 @@ def get_booking(booking_code: str):
             })
 def update_booking(booking_code: str, start_date: date, end_date: date, printer_code: PrinterCode, name_tag_type: NameTagType):
     for i in range(len(calendar.bookings)):
-        if calendar.bookings[i].code == booking_code:
-            booking = Booking(start_date=start_date, end_date=end_date,
-                              printer_code=printer_code, code=booking_code, name_tag_type=name_tag_type)
+        if calendar.bookings[i].booking_code == booking_code:
+            booking = Booking(start_date=start_date,
+                              end_date=end_date,
+                              printer_code=printer_code,
+                              booking_code=booking_code,
+                              name_tag_type=name_tag_type)
             calendar.bookings[i] = booking
             calendar.save()
             return booking
@@ -128,7 +131,7 @@ def update_booking(booking_code: str, start_date: date, end_date: date, printer_
                })
 def delete_booking(booking_code: str):
     for i in range(len(calendar.bookings)):
-        if calendar.bookings[i].code == booking_code:
+        if calendar.bookings[i].booking_code == booking_code:
             booking = calendar.bookings[i]
             del calendar.bookings[i]
             return booking
