@@ -90,7 +90,7 @@ class ReversedNameTagLayout1Table(NameTagLayout1Table):
         Table.draw(self)
 
 
-class NameTagSheetTable(Table):
+class SheetTable(Table):
     def __init__(self, colounms, labelWidth, labelHeight, labels):
         # Fill up with empty labels
         emptyLabelsInLastRow = len(labels) % colounms

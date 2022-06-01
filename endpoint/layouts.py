@@ -6,8 +6,8 @@ from details import Details
 from pdf.layouts import Layout
 from pdf.name_tag_type import NameTagType
 from pdf.name_tag_layouts import NameTagLayouts, nameTagLayoutsList, getNameTagLayouts
-from pdf.name_tag_sheet_type import NameTagSheetType
-from pdf.name_tag_sheet_layouts import NameTagSheetLayouts, nameTagSheetLayoutsList, getNameTagSheetLayouts
+from pdf.sheet_type import SheetType
+from pdf.sheet_layouts import SheetLayouts, sheetLayoutsList, getSheetLayouts
 
 from site_paths import imagesPath
 
@@ -19,9 +19,9 @@ def get_name_tag_layouts():
     return nameTagLayoutsList
 
 
-@router.get('/name_tags_sheets', response_model=List[NameTagSheetLayouts])
-def get_name_tag_sheet_layouts():
-    return nameTagSheetLayoutsList
+@router.get('/name_tags_sheets', response_model=List[SheetLayouts])
+def get_sheet_layouts():
+    return sheetLayoutsList
 
 
 @router.get('/name_tags/{name_tag_type}',
@@ -39,16 +39,16 @@ def get_image(name_tag_type: NameTagType):
     return nameTagLayouts
 
 
-@router.get('/name_tag_sheets/{name_tag_sheet_type}',
-            response_model=NameTagSheetLayouts,
+@router.get('/sheets/{sheet_type}',
+            response_model=SheetLayouts,
             responses={
                 status.HTTP_404_NOT_FOUND: {"model": Details},
             })
-def get_image(name_tag_sheet_type: NameTagSheetType):
-    nameTagSheetLayouts = getNameTagSheetLayouts(name_tag_sheet_type)
+def get_image(sheet_type: SheetType):
+    sheetLayouts = getSheetLayouts(sheet_type)
     
-    if not nameTagSheetLayouts:
+    if not sheetLayouts:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             details="Name tag sheet type not found")
 
-    return nameTagSheetLayouts
+    return sheetLayouts

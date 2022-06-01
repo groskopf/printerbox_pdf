@@ -175,7 +175,7 @@ def test_delete_name_tags(deleteBookings, deleteAllNameTags, deleteAllImages):
         assert len(filenames) == 0
 
 
-def test_wrong_layout_name_tag_sheet(deleteBookings, deleteAllNameTags, deleteAllImages):
+def test_wrong_layout_sheet(deleteBookings, deleteAllNameTags, deleteAllImages):
     bookingCode = newBooking(
             date.today(),
             date.today(),

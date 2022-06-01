@@ -19,7 +19,7 @@ def removeOldSheets():
             os.rmdir(os.path.join(root, name))
 
 
-def newNameTagSheet():
+def newSheet():
     image1 = os.path.basename(newImage('./test/images/Kongresartikler.jpg'))
     image2 = os.path.basename(newImage('./test/images/logo.jpg'))
     body = [
@@ -43,11 +43,11 @@ def newNameTagSheet():
         },
     ]
     response = client.post(
-        '/labels/?name_tag_sheet_type=456090&layout=layout_1', json=body)
+        '/labels/?sheet_type=456090&layout=layout_1', json=body)
     return response
 
 
-def getNameTagSheets():
+def getSheets():
     # Get the list of images
     response = client.get('/labels/')
     assert response.status_code == 200
@@ -55,9 +55,9 @@ def getNameTagSheets():
     return filenames
 
 
-def test_new_name_tag_sheet(removeOldSheets):
+def test_new_sheet(removeOldSheets):
     for i in range(10):
-        response = newNameTagSheet()
+        response = newSheet()
         assert response.status_code == 201
 
         # Do file exist locally
@@ -65,17 +65,17 @@ def test_new_name_tag_sheet(removeOldSheets):
         assert os.path.exists(filename) and os.path.isfile(filename)
 
     # Get the list of images
-    filenames = getNameTagSheets()
+    filenames = getSheets()
     assert 10 == len(filenames)
 
 
-def test_get_name_tag_sheet():
+def test_get_sheet():
     assert True
     # TODO can we download it?
 
 
-def test_delete_name_tag_sheet():
-    response = newNameTagSheet()
+def test_delete_sheet():
+    response = newSheet()
     assert response.status_code == 201
     filename = response.json()['filename']
 
@@ -86,7 +86,7 @@ def test_delete_name_tag_sheet():
     # Are they deleted
     assert not os.path.exists(filename)
 
-def test_wrong_layout_name_tag_sheet(removeOldSheets):
+def test_wrong_layout_sheet(removeOldSheets):
     image = os.path.basename(newImage('./test/images/logo.jpg'))
     body = [
         {
@@ -108,6 +108,6 @@ def test_wrong_layout_name_tag_sheet(removeOldSheets):
             "image_name": image
         },
     ]
-    response = client.post('/labels/?name_tag_sheet_type=456090&layout=invalid', json=body)
+    response = client.post('/labels/?sheet_type=456090&layout=invalid', json=body)
     assert response.status_code == 400
 

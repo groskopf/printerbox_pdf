@@ -27,7 +27,7 @@ class NameTag4786103DocTemplate(NameTagDocTemplate):
         self.addPageTemplates(template)
 
 
-class NameTagSheet456090DocTemplate(NameTagDocTemplate):
+class Sheet456090DocTemplate(NameTagDocTemplate):
     def __init__(self, filename):
         pageWidth, pageHeight = A4
         NameTagDocTemplate.__init__(self, filename,

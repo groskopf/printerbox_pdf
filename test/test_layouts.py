@@ -5,7 +5,7 @@ from datetime import date as date
 from fastapi.testclient import TestClient
 
 from main import app
-from pdf.name_tag_sheet_type import NameTagSheetType
+from pdf.sheet_type import SheetType
 from pdf.name_tag_type import NameTagType
 
 client = TestClient(app)
@@ -50,39 +50,39 @@ def test_layouts_get_name_tags():
         )
 
 
-def test_get_layouts_name_tag_sheet():
+def test_get_layouts_sheet():
 
     # Do name tag type have at least one layout entry?
-    for nameTagSheetType in NameTagSheetType:
-        response = client.get('layouts/name_tag_sheets/' + nameTagSheetType)
+    for sheetType in SheetType:
+        response = client.get('layouts/sheets/' + sheetType)
         assert response.status_code == 200
         
-        assert nameTagSheetType == response.json()['name_tag_sheet_type']
+        assert sheetType == response.json()['sheet_type']
 
-        nameTagSheetLayouts = response.json()['layouts']
-        assert nameTagSheetLayouts
-        assert len(nameTagSheetLayouts)
+        sheetLayouts = response.json()['layouts']
+        assert sheetLayouts
+        assert len(sheetLayouts)
 
 
-def test_get_layouts_name_tag_sheets():
+def test_get_layouts_sheets():
     response = client.get('layouts/name_tags_sheets')
     assert response.status_code == 200
 
-    nameTagSheetLayoutsList = response.json()
+    sheetLayoutsList = response.json()
 
     # Do all name tag types have at least one layout entry?
-    for nameTagSheetType in NameTagSheetType:
-        nameTagSheetLayouts = next(
-            (nameTagSheetLayouts for nameTagSheetLayouts in nameTagSheetLayoutsList
-             if nameTagSheetLayouts['name_tag_sheet_type'] == nameTagSheetType), None)
-        assert nameTagSheetLayouts
-        assert len(nameTagSheetLayouts['layouts'])
+    for sheetType in SheetType:
+        sheetLayouts = next(
+            (sheetLayouts for sheetLayouts in sheetLayoutsList
+             if sheetLayouts['sheet_type'] == sheetType), None)
+        assert sheetLayouts
+        assert len(sheetLayouts['layouts'])
 
     # Do any tag types appears more than once?
-    for nameTagSheetType in NameTagSheetType:
+    for sheetType in SheetType:
         assert 1 == len(
             [
-                (nameTagSheetLayouts for nameTagSheetLayouts in nameTagSheetLayoutsList
-                 if nameTagSheetLayouts['name_tag_sheet_type'] == nameTagSheetType)
+                (sheetLayouts for sheetLayouts in sheetLayoutsList
+                 if sheetLayouts['sheet_type'] == sheetType)
             ]
         )
