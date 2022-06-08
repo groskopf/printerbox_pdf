@@ -7,9 +7,9 @@ class NameTagDocTemplate(BaseDocTemplate):
     def __init__(self, filename, **kwargs):
         self.allowSplitting = 0
         BaseDocTemplate.__init__(self, filename,
-                                 author='printerbox.dk',
-                                 creator='printerbox.dk',
-                                 producer='printerbox.dk',
+                                 author='kongresartikler.dk',
+                                 creator='kongresartikler.dk',
+                                 producer='kongresartikler.dk',
                                  **kwargs)
 
 
@@ -22,7 +22,9 @@ class NameTag4786103DocTemplate(NameTagDocTemplate):
                                     title='Navneskilt 4786103',
                                     subject="Foldbart navneskilt 86x103mm")
         pageFrame = Frame(0, 0, pageWidth, pageHeight,
-                          topPadding=16 * mm, bottomPadding=16 * mm)
+                          topPadding=16 * mm,
+                          bottomPadding=16 * mm
+                          )
         template = PageTemplate('normal', [pageFrame])
         self.addPageTemplates(template)
 
