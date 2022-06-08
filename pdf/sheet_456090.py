@@ -3,7 +3,7 @@ from typing import List
 
 from pdf.doc_templates import Sheet456090DocTemplate
 from name_data import NameData
-from pdf.layouts import Layout, NameTagLayout1Table, SheetTable
+from pdf.layouts import Layout, NameTagLayout3BaseTable, SheetTable
 
 labelWidth = 90*mm
 labelHeight = 60*mm
@@ -14,7 +14,7 @@ def create(fileName, layout: Layout, nameDataList: List[NameData]):
 
     if(layout == Layout.LAYOUT_1):
         for nameData in nameDataList:
-            labels.append(NameTagLayout1Table(labelWidth,
+            labels.append(NameTagLayout3BaseTable(labelWidth,
                                               labelHeight,
                                               nameData))
 
