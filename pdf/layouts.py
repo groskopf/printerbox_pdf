@@ -4,6 +4,7 @@ from reportlab.platypus import Table, TableStyle
 from reportlab.platypus.para import Paragraph
 from reportlab.platypus.flowables import KeepInFrame, Image
 from reportlab.lib import colors
+from reportlab_qrcode import QRCodeImage
 
 from name_data import NameData
 from pdf.styles import normalCenterStyle, heading1CenterStyle
@@ -78,9 +79,16 @@ class UpsideDownTable(Table):
 
 
 class ImageAndParagraphTable(Table):
-    def __init__(self, width, height, text, imageName, justify: Justify):
-        image = Image('images/' + imageName)
-        image._restrictSize(height, height)
+    def __init__(self, width, height, text, nameData : NameData, justify: Justify):
+        imageName = nameData.image_name 
+        qrCode = nameData.qr_code 
+        if imageName and len(imageName):
+            image = Image('images/' + imageName)
+            image._restrictSize(height, height)
+        elif qrCode and len(qrCode):
+            image = QRCodeImage(qrCode,height)
+        else:
+            image = ""
 
         paragraph = Paragraph(text, normalCenterStyle)
 
@@ -175,7 +183,7 @@ class NameTagLayout2PTRTable(UpsideDownTable):
 
         lines = []
         lines.append([ImageAndParagraphTable(width, lineHeights[0],
-                                             nameData.line_1, nameData.image_name,
+                                             nameData.line_1, nameData,
                                              Justify.Right)])
         lines.append([Paragraph(nameData.line_2, heading1CenterStyle)])
 
@@ -188,7 +196,7 @@ class NameTagLayout2PTLTable(UpsideDownTable):
 
         lines = []
         lines.append([ImageAndParagraphTable(width, lineHeights[0],
-                                             nameData.line_1, nameData.image_name,
+                                             nameData.line_1, nameData,
                                              Justify.Left)])
         lines.append([Paragraph(nameData.line_2, heading1CenterStyle)])
 
@@ -202,7 +210,7 @@ class NameTagLayout2PBRTable(UpsideDownTable):
         lines = []
         lines.append([Paragraph(nameData.line_1, heading1CenterStyle)])
         lines.append([ImageAndParagraphTable(width, lineHeights[1],
-                                             nameData.line_2, nameData.image_name,
+                                             nameData.line_2, nameData,
                                              Justify.Right)])
 
         NameTagLayout2BaseTable.__init__(self, width, lineHeights, lines)
@@ -216,7 +224,7 @@ class NameTagLayout2PBLTable(UpsideDownTable):
         lines = []
         lines.append([Paragraph(nameData.line_1, heading1CenterStyle)])
         lines.append([ImageAndParagraphTable(width, lineHeights[1],
-                                             nameData.line_2, nameData.image_name,
+                                             nameData.line_2, nameData,
                                              Justify.Left)])
 
         NameTagLayout2BaseTable.__init__(self, width, lineHeights, lines)
@@ -286,14 +294,11 @@ class NameTagLayout3PBLTable(NameTagLayout3BaseTable):
 
         lineHeights = [height/4, height/4,  height/2]
 
-        image = Image('images/' + nameData.image_name)
-        image._restrictSize(width, height[2])
-        
         lines = []
         lines.append([Paragraph(nameData.line_1, normalCenterStyle)])
         lines.append([Paragraph(nameData.line_2, heading1CenterStyle)])
         lines.append([ImageAndParagraphTable(width, lineHeights[2],
-                                             nameData.line_3, nameData.image_name,
+                                             nameData.line_3, nameData,
                                              Justify.Left)])
 
         NameTagLayout3BaseTable.__init__(self, width, lineHeights, lines)
@@ -307,7 +312,7 @@ class NameTagLayout3PBRTable(NameTagLayout3BaseTable):
         lines.append([Paragraph(nameData.line_1, normalCenterStyle)])
         lines.append([Paragraph(nameData.line_2, heading1CenterStyle)])
         lines.append([ImageAndParagraphTable(width, lineHeights[2],
-                                             nameData.line_3, nameData.image_name,
+                                             nameData.line_3, nameData,
                                              Justify.Right)])
 
         NameTagLayout3BaseTable.__init__(self, width, lineHeights, lines)
@@ -320,7 +325,7 @@ class NameTagLayout3PTLTable(NameTagLayout3BaseTable):
 
         lines = []
         lines.append([ImageAndParagraphTable(width, lineHeights[0],
-                                             nameData.line_1, nameData.image_name,
+                                             nameData.line_1, nameData,
                                              Justify.Left)])
         lines.append([Paragraph(nameData.line_2, heading1CenterStyle)])
         lines.append([Paragraph(nameData.line_3, normalCenterStyle)])
@@ -335,7 +340,7 @@ class NameTagLayout3PTRTable(NameTagLayout3BaseTable):
 
         lines = []
         lines.append([ImageAndParagraphTable(width, lineHeights[0],
-                                             nameData.line_1, nameData.image_name,
+                                             nameData.line_1, nameData,
                                              Justify.Right)])
         lines.append([Paragraph(nameData.line_2, heading1CenterStyle)])
         lines.append([Paragraph(nameData.line_3, normalCenterStyle)])
