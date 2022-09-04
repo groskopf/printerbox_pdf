@@ -1,0 +1,12 @@
+{
+    "access_keys" : [
+        {
+            "key" : 123,
+            "scopes" : [ "admin", "booking_system" ]
+        },
+        {
+            "key" : 456,
+            "scopes" : [ "printer" ] 
+        }
+    ]
+}

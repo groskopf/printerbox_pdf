@@ -1,14 +1,15 @@
 import os
 from typing import List
 from uuid import uuid4
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Security, status
 from fastapi.responses import FileResponse
+from fastapi.security.api_key import APIKey
 from werkzeug.utils import secure_filename
 
 from details import Details
+from endpoint.authentication import AccessScope, authApiKey
 from file_path import FilePath
 from pdf.sheet_layouts import getSheetLayouts
-from printer_code import PrinterCode
 from site_paths import sheetsPath
 from name_data import NameData
 from pdf.layouts import Layout
@@ -41,7 +42,7 @@ def new_sheet(sheet_type: SheetType, layout: Layout, name_data_list: List[NameDa
 
     if layout not in getSheetLayouts(sheet_type).layouts:
         raise HTTPException(
-             status_code=status.HTTP_400_BAD_REQUEST, detail="Name tag sheet layout not supported")
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Name tag sheet layout not supported")
 
     match sheet_type:
         case SheetType._456090:
@@ -55,7 +56,7 @@ def new_sheet(sheet_type: SheetType, layout: Layout, name_data_list: List[NameDa
 
 
 @router.get('/', response_model=List[FilePath])
-def get_sheets():
+def get_sheets(api_key: APIKey = Security(authApiKey, scopes=[AccessScope._ADMIN])):
     return allFilesInLabels()
 
 

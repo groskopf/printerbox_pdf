@@ -49,7 +49,7 @@ def newSheet():
 
 def getSheets():
     # Get the list of images
-    response = client.get('/sheets/')
+    response = client.get('/sheets/', headers={'access_token':'123'})
     assert response.status_code == 200
     filenames = response.json()
     return filenames
