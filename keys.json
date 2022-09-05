@@ -1,12 +1,24 @@
 {
     "access_keys" : [
         {
-            "key" : 123,
-            "scopes" : [ "admin", "booking_system" ]
+            "key" : "123admin",
+            "scopes" : [ "admin" ]
         },
         {
-            "key" : 456,
+            "key" : "456printer",
             "scopes" : [ "printer" ] 
+        },
+        {
+            "key" : "789conference",
+            "scopes" : [ "conference" ]
+        },
+        {
+            "key" : "xyzbooking",
+            "scopes" : [ "printer_booking" ]
+        },
+        {
+            "key" : "456printer789booking",
+            "scopes" : [ "printer", "printer_booking" ]
         }
     ]
 }

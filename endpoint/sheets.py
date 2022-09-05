@@ -7,7 +7,7 @@ from fastapi.security.api_key import APIKey
 from werkzeug.utils import secure_filename
 
 from details import Details
-from endpoint.authentication import AccessScope, authApiKey
+from endpoint.authentication import AccessScope, authenticate_api_key
 from file_path import FilePath
 from pdf.sheet_layouts import getSheetLayouts
 from site_paths import sheetsPath
@@ -17,7 +17,6 @@ from pdf.sheet_type import SheetType
 from pdf import sheet_456090
 
 router = APIRouter()
-
 
 
 def allFilesInLabels():
@@ -37,7 +36,8 @@ def allFilesInLabels():
                  status.HTTP_400_BAD_REQUEST: {"model": Details},
                  status.HTTP_404_NOT_FOUND: {"model": Details}
              })
-def new_sheet(sheet_type: SheetType, layout: Layout, name_data_list: List[NameData]):
+def new_sheet(sheet_type: SheetType, layout: Layout, name_data_list: List[NameData],
+              api_key: APIKey = Security(authenticate_api_key, scopes=[AccessScope._CONFERENCE])):
     outputFilename = sheetsPath + sheet_type + '_' + uuid4().hex + '.pdf'
 
     if layout not in getSheetLayouts(sheet_type).layouts:
@@ -56,7 +56,7 @@ def new_sheet(sheet_type: SheetType, layout: Layout, name_data_list: List[NameDa
 
 
 @router.get('/', response_model=List[FilePath])
-def get_sheets(api_key: APIKey = Security(authApiKey, scopes=[AccessScope._ADMIN])):
+def get_sheets(api_key: APIKey = Security(authenticate_api_key, scopes=[])):
     return allFilesInLabels()
 
 
@@ -65,7 +65,8 @@ def get_sheets(api_key: APIKey = Security(authApiKey, scopes=[AccessScope._ADMIN
             responses={
                 status.HTTP_404_NOT_FOUND: {"model": Details},
             })
-def get_sheet(filename: str):
+def get_sheet(filename: str,
+              api_key: APIKey = Security(authenticate_api_key, scopes=[AccessScope._PRINTER])):
     nameTagFilename = sheetsPath + secure_filename(filename)
     if os.path.exists(nameTagFilename) and os.path.isfile(nameTagFilename):
         return FileResponse(path=nameTagFilename)
@@ -79,7 +80,8 @@ def get_sheet(filename: str):
                responses={
                    status.HTTP_404_NOT_FOUND: {"model": Details},
                })
-def delete_sheet(filename: str):
+def delete_sheet(filename: str,
+                 api_key: APIKey = Security(authenticate_api_key, scopes=[AccessScope._PRINTER])):
     securedFileName = secure_filename(filename)
     nameTagFilename = sheetsPath + os.path.basename(securedFileName)
 

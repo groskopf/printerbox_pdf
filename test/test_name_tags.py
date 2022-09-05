@@ -1,6 +1,8 @@
 import os
 from datetime import date as date, timedelta
+from re import I
 from typing import List
+from fastapi import status
 from fastapi.testclient import TestClient
 import pytest
 
@@ -31,17 +33,18 @@ def deleteAllNameTags():
 def postNameTag(bookingCode: str):
     image = os.path.basename(newImage('./test/images/logo.jpg'))
     body = {
-            "line_1": "string",
-            "line_2": "string",
-            "line_3": "string",
-            "line_4": "string",
-            "line_5": "string",
-            "qr_code": "string",
-            "image_name": image
-        }
+        "line_1": "string",
+        "line_2": "string",
+        "line_3": "string",
+        "line_4": "string",
+        "line_5": "string",
+        "qr_code": "string",
+        "image_name": image
+    }
     response = client.post('/name_tags/?booking_code=' + bookingCode +
                            '&layout=' + Layout.LAYOUT_1,
-                           json=body)
+                           json=body,
+                           headers={'access_token': '123admin'})
     return response
 
 
@@ -119,7 +122,8 @@ def test_get_name_tags(deleteBookings, deleteAllNameTags, deleteAllImages):
             newNameTags.append(newNameTag(bookingCode))
 
         # Get the list
-        response = client.get('/name_tags/' + printerCode)
+        response = client.get('/name_tags/' + printerCode,
+                              headers={'access_token': '123admin'})
         assert response.status_code == 200
         filenames = response.json()
 
@@ -136,11 +140,11 @@ def test_get_name_tags(deleteBookings, deleteAllNameTags, deleteAllImages):
     deleteAllNameTagFiles()
 
     for printerCode in PrinterCode:
-        response = client.get('/name_tags/' + printerCode)
+        response = client.get('/name_tags/' + printerCode,
+                              headers={'access_token': '123admin'})
         assert response.status_code == 200
         filenames = response.json()
         assert len(filenames) == 0
-
 
 
 def test_delete_name_tags(deleteBookings, deleteAllNameTags, deleteAllImages):
@@ -159,14 +163,16 @@ def test_delete_name_tags(deleteBookings, deleteAllNameTags, deleteAllImages):
         # Create some nametags
         for i in range(numOfNewNameTags):
             newNameTags.append(newNameTag(bookingCode))
-        
+
         # Try delete all name tags
-        response = client.delete('/name_tags/' + printerCode)
+        response = client.delete('/name_tags/' + printerCode,
+                                 headers={'access_token': '123admin'})
         assert response.status_code == 200
 
         # Test they all disappear again
         for printerCode in PrinterCode:
-            response = client.get('/name_tags/' + printerCode)
+            response = client.get('/name_tags/' + printerCode,
+                                  headers={'access_token': '123admin'})
             assert response.status_code == 200
             filenames = response.json()
             assert len(filenames) == 0
@@ -188,18 +194,21 @@ def test_delete_name_tag(deleteBookings, deleteAllNameTags, deleteAllImages):
 
     for printerCode in PrinterCode:
         # Get the name tags
-        response = client.get('/name_tags/' + printerCode)
+        response = client.get('/name_tags/' + printerCode,
+                              headers={'access_token': '123admin'})
         assert response.status_code == 200
         filenames = response.json()
 
         # Try delete all name tags
         for filename in filenames:
-            response = client.delete(filename['filename'])
+            response = client.delete(filename['filename'],
+                                     headers={'access_token': '123admin'})
             assert response.status_code == 200
 
     # Test they all disappear again
     for printerCode in PrinterCode:
-        response = client.get('/name_tags/' + printerCode)
+        response = client.get('/name_tags/' + printerCode,
+                              headers={'access_token': '123admin'})
         assert response.status_code == 200
         filenames = response.json()
         assert len(filenames) == 0
@@ -207,22 +216,167 @@ def test_delete_name_tag(deleteBookings, deleteAllNameTags, deleteAllImages):
 
 def test_wrong_layout_name_tag_sheet(deleteBookings, deleteAllNameTags, deleteAllImages):
     bookingCode = newBooking(
-            date.today(),
-            date.today(),
-            PrinterCode._8SCNWZUF9M_8,
-            NameTagType._4786103)
+        date.today(),
+        date.today(),
+        PrinterCode._8SCNWZUF9M_8,
+        NameTagType._4786103)
     image = os.path.basename(newImage('./test/images/logo.jpg'))
     body = {
-            "line_1": "string",
-            "line_2": "string",
-            "line_3": "string",
-            "line_4": "string",
-            "line_5": "string",
-            "qr_code": "string",
-            "image_name": image
-        }
+        "line_1": "string",
+        "line_2": "string",
+        "line_3": "string",
+        "line_4": "string",
+        "line_5": "string",
+        "qr_code": "string",
+        "image_name": image
+    }
     response = client.post('/name_tags/?booking_code=' + bookingCode +
                            '&layout=' + Layout.LAYOUT_INVALID,
-                           json=body)
+                           json=body,
+                           headers={'access_token': '123admin'})
     assert response.status_code == 400
 
+
+def test_post_name_tags_access_rights(deleteBookings):
+    bookingCode = newBooking(
+        date.today(),
+        date.today(),
+        PrinterCode._8SCNWZUF9M_8,
+        NameTagType._4786103)
+    image = os.path.basename(newImage('./test/images/logo.jpg'))
+    body = {
+        "line_1": "string",
+        "line_2": "string",
+        "line_3": "string",
+        "line_4": "string",
+        "line_5": "string",
+        "qr_code": "string",
+        "image_name": image
+    }
+
+    response = client.post('/name_tags/?booking_code=' + bookingCode + '&layout=' + Layout.LAYOUT_1,
+                           json=body,
+                           headers={'access_token': '123admin'})
+    assert response.status_code == status.HTTP_201_CREATED
+    response = client.post('/name_tags/?booking_code=' + bookingCode + '&layout=' + Layout.LAYOUT_1,
+                           json=body,
+                           headers={'access_token': '789conference'})
+    assert response.status_code == status.HTTP_201_CREATED
+    response = client.post('/name_tags/?booking_code=' + bookingCode + '&layout=' + Layout.LAYOUT_1,
+                           json=body,
+                           headers={'access_token': '456printer'})
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+    response = client.post('/name_tags/?booking_code=' + bookingCode + '&layout=' + Layout.LAYOUT_1,
+                           json=body,
+                           headers={'access_token': 'xyzbooking'})
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+    response = client.post('/name_tags/?booking_code=' + bookingCode + '&layout=' + Layout.LAYOUT_1,
+                           json=body)
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+def test_get_name_tags_printer_code_access_rights(deleteBookings):
+    printerCode = PrinterCode._8SCNWZUF9M_8
+    bookingCode = newBooking(
+        date.today(),
+        date.today(),
+        printerCode,
+        NameTagType._4786103)
+    newNameTag(bookingCode)
+    response = client.get('/name_tags/' + printerCode)
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+    response = client.get('/name_tags/' + printerCode,
+                            headers={'access_token': '123admin'})
+    assert response.status_code == status.HTTP_200_OK
+    response = client.get('/name_tags/' + printerCode,
+                            headers={'access_token': '789conference'})
+    assert response.status_code == status.HTTP_200_OK
+    response = client.get('/name_tags/' + printerCode,
+                            headers={'access_token': '456printer'})
+    assert response.status_code == status.HTTP_200_OK
+    response = client.get('/name_tags/' + printerCode,
+                            headers={'access_token': 'xyzbooking'})
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+def test_delete_name_tags_printer_code_access_rights(deleteBookings):
+    printerCode = PrinterCode._8SCNWZUF9M_8
+    bookingCode = newBooking(
+        date.today(),
+        date.today(),
+        printerCode,
+        NameTagType._4786103)
+    newNameTag(bookingCode)
+    response = client.delete('/name_tags/' + printerCode)
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+    response = client.delete('/name_tags/' + printerCode,
+                            headers={'access_token': '123admin'})
+    assert response.status_code == status.HTTP_200_OK
+    response = client.delete('/name_tags/' + printerCode,
+                            headers={'access_token': '789conference'})
+    assert response.status_code == status.HTTP_200_OK
+    response = client.delete('/name_tags/' + printerCode,
+                            headers={'access_token': '456printer'})
+    assert response.status_code == status.HTTP_200_OK
+    response = client.delete('/name_tags/' + printerCode,
+                            headers={'access_token': 'xyzbooking'})
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+def test_get_name_tags_printer_code_file_name_access_rights(deleteBookings):
+    printerCode = PrinterCode._8SCNWZUF9M_8
+    bookingCode = newBooking(
+        date.today(),
+        date.today(),
+        printerCode,
+        NameTagType._4786103)
+
+    filename = newNameTag(bookingCode)
+    response = client.get(filename)
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+    response = client.get(filename,
+                            headers={'access_token': 'xyzbooking'})
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    filename = newNameTag(bookingCode)
+    response = client.get(filename,
+                            headers={'access_token': '123admin'})
+    assert response.status_code == status.HTTP_200_OK
+    
+    filename = newNameTag(bookingCode)
+    response = client.get('/name_tags/' + printerCode,
+                            headers={'access_token': '789conference'})
+    assert response.status_code == status.HTTP_200_OK
+    
+    filename = newNameTag(bookingCode)
+    response = client.get('/name_tags/' + printerCode,
+                            headers={'access_token': '456printer'})
+    assert response.status_code == status.HTTP_200_OK
+
+def test_delete_name_tags_printer_code_file_name_access_rights(deleteBookings):
+    printerCode = PrinterCode._8SCNWZUF9M_8
+    bookingCode = newBooking(
+        date.today(),
+        date.today(),
+        printerCode,
+        NameTagType._4786103)
+
+    filename = newNameTag(bookingCode)
+    response = client.delete(filename)
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+    response = client.delete(filename,
+                            headers={'access_token': 'xyzbooking'})
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    filename = newNameTag(bookingCode)
+    response = client.delete(filename,
+                            headers={'access_token': '123admin'})
+    assert response.status_code == status.HTTP_200_OK
+    
+    filename = newNameTag(bookingCode)
+    response = client.delete('/name_tags/' + printerCode,
+                            headers={'access_token': '789conference'})
+    assert response.status_code == status.HTTP_200_OK
+    
+    filename = newNameTag(bookingCode)
+    response = client.delete('/name_tags/' + printerCode,
+                            headers={'access_token': '456printer'})
+    assert response.status_code == status.HTTP_200_OK

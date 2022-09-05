@@ -14,7 +14,8 @@ API_KEY_NAME = "access_token"
 class AccessScope(str, Enum):
     _ADMIN = "admin"
     _PRINTER = "printer"
-    _BOOKING_SYSTEM = "booking_system"
+    _PRINTER_BOOKING = "printer_booking"
+    _CONFERENCE = "conference"
 
 
 class AccessKey(BaseModel):
@@ -46,6 +47,9 @@ def keyHasRequiredRole(current_key : AccessKey, required_scopes : List[AccessSco
     #Find key in database
     for access_key in key_database:
         if access_key.key == current_key:
+            # Is it an admin key
+            if AccessScope._ADMIN in access_key.scopes:
+                    return True
             # Do key have required scope
             for scope in required_scopes:
                 if scope in access_key.scopes:
@@ -53,7 +57,7 @@ def keyHasRequiredRole(current_key : AccessKey, required_scopes : List[AccessSco
     return False
 
 
-def authApiKey( required_scopes: SecurityScopes,
+def authenticate_api_key( required_scopes: SecurityScopes = None,
     api_key_query: str = Security(dependency=api_key_query),
     api_key_header: str = Security(dependency=api_key_header),
 ) -> str:
