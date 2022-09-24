@@ -14,7 +14,7 @@ from pydantic import BaseModel, parse_raw_as
 from pydantic.json import pydantic_encoder
 from site_paths import bookingsPath
 
-from endpoint.authentication import AccessScope, authenticate_api_key
+from endpoint.authentication import AccessScope, authenticate_api_key, authenticate_printer_api_key
 
 defaultBookingFile = bookingsPath + 'bookings.json'
 
@@ -60,10 +60,29 @@ calendar.load()
 
 router = APIRouter()
 
+def getPrinterBooking(printer_code: PrinterCode):
+    today = date.today()
+    for booking in calendar.bookings:
+        if booking.printer_code == printer_code:
+            if booking.start_date <= today and today <= booking.end_date:
+                print(f"Booking: {booking}")
+                return booking
+    return None
+
 
 @router.get('/', response_model=List[Booking])
 def get_bookings(api_key: APIKey = Security(authenticate_api_key, scopes=[AccessScope._PRINTER_BOOKING])):
     return calendar.bookings
+
+
+@router.get('/printer/{printer_code}', response_model=Booking)
+def get_bookings(printer_code : str, api_key: APIKey = Security(authenticate_printer_api_key, scopes=[AccessScope._PRINTER])):
+    bookingCode = getPrinterBooking(printer_code)
+    if bookingCode:
+        return bookingCode
+
+    raise HTTPException(
+            status_code=status.HTTP_204_NO_CONTENT, detail="No current bookings")
 
 
 @router.post('/',
@@ -99,7 +118,7 @@ def new_booking(start_date: date, end_date: date, printer_code: PrinterCode, nam
                 status.HTTP_404_NOT_FOUND: {"model": Details},
             })
 def get_booking(booking_code: str,
-                api_key: APIKey = Security(authenticate_api_key, scopes=[AccessScope._PRINTER_BOOKING])):
+                api_key: APIKey = Security(authenticate_api_key, scopes=[AccessScope._PRINTER_BOOKING, AccessScope._CONFERENCE])):
     for i in range(len(calendar.bookings)):
         if calendar.bookings[i].booking_code == booking_code:
             return calendar.bookings[i]

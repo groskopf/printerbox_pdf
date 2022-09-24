@@ -43,7 +43,7 @@ def findBooking(bookingCode):
     return booking.printer_code, booking.name_tag_type
 
 
-@router.post('/',
+@router.post('/{booking_code}',
              response_model=FilePath,
              status_code=status.HTTP_201_CREATED,
              responses={
@@ -60,7 +60,7 @@ async def new_name_tag(booking_code: str, layout: Layout, name_data: NameData,
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Name tag layout not supported")
 
-    outputPath = nameTagsPath + printerCode + '/'
+    outputPath = nameTagsPath + booking_code + '/'
     outputFilename = outputPath + nameTagType + '_' + uuid4().hex + '.pdf'
 
     if not os.path.exists(outputPath):
@@ -75,32 +75,32 @@ async def new_name_tag(booking_code: str, layout: Layout, name_data: NameData,
 
     response = FilePath(filename=outputFilename)
 
-    await wsConnectionManager.sendToPrinter(printerCode, response.json())
+    await wsConnectionManager.sendToPrinter(booking_code, response.json())
 
     return response
 
 
-@router.get('/{printer_code}', response_model=List[FilePath])
-def get_name_tags(printer_code: PrinterCode,
+@router.get('/{booking_code}', response_model=List[FilePath])
+def get_name_tags(booking_code: str,
                   api_key: APIKey = Security(authenticate_api_key, scopes=[AccessScope._PRINTER, AccessScope._CONFERENCE])):
-    return getFilesInPrinterQueue(printer_code)
+    return getFilesInPrinterQueue(booking_code)
 
 
-@router.delete('/{printer_code}', response_model=List[FilePath])
-def get_name_tags(printer_code: PrinterCode,
+@router.delete('/{booking_code}', response_model=List[FilePath])
+def get_name_tags(booking_code: str,
                   api_key: APIKey = Security(authenticate_api_key, scopes=[AccessScope._PRINTER, AccessScope._CONFERENCE])):
-    return deleteFilesInPrinterQueue(printer_code)
+    return deleteFilesInPrinterQueue(booking_code)
 
 
-@router.get('/{printer_code}/{filename}',
+@router.get('/{booking_code}/{filename}',
             response_class=FileResponse,
             responses={
                 status.HTTP_404_NOT_FOUND: {"model": Details},
             })
-def get_name_tag(printer_code: PrinterCode, filename: str,
+def get_name_tag(booking_code: str, filename: str,
                  api_key: APIKey = Security(authenticate_api_key, scopes=[AccessScope._PRINTER, AccessScope._CONFERENCE])):
     securedFileName = secure_filename(filename)
-    nameTagFilename = nameTagsPath + printer_code + \
+    nameTagFilename = nameTagsPath + booking_code + \
         '/' + os.path.basename(securedFileName)
 
     if os.path.exists(nameTagFilename) and os.path.isfile(nameTagFilename):
@@ -110,15 +110,15 @@ def get_name_tag(printer_code: PrinterCode, filename: str,
                         detail="Name tag not found")
 
 
-@router.delete('/{printer_code}/{filename}',
+@router.delete('/{booking_code}/{filename}',
                response_model=FilePath,
                responses={
                    status.HTTP_404_NOT_FOUND: {"model": Details},
                })
-def delete_name_tag(printer_code: PrinterCode, filename: str,
+def delete_name_tag(booking_code: str, filename: str,
                     api_key: APIKey = Security(authenticate_api_key, scopes=[AccessScope._PRINTER, AccessScope._CONFERENCE])):
     securedFileName = secure_filename(filename)
-    nameTagFilename = nameTagsPath + printer_code + \
+    nameTagFilename = nameTagsPath + booking_code + \
         '/' + os.path.basename(securedFileName)
 
     if os.path.exists(nameTagFilename) and os.path.isfile(nameTagFilename):

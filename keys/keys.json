@@ -1,0 +1,120 @@
+{
+    "access_keys": [
+        {
+            "key": "123admin",
+            "scopes": [
+                "admin"
+            ]
+        },
+        {
+            "key": "789conference",
+            "scopes": [
+                "conference"
+            ]
+        },
+        {
+            "key": "xyzbooking",
+            "scopes": [
+                "printer_booking"
+            ]
+        },
+        {
+            "key": "printer_p789booking",
+            "scopes": [
+                "printer",
+                "printer_booking"
+            ]
+        },
+        {
+            "key": "printer_p",
+            "scopes": [
+                "printer"
+            ],
+            "printer_code": "XDESP95271_p"
+        },
+        {
+            "key": "printer_m",
+            "scopes": [
+                "printer"
+            ],
+            "printer_code": "W8IL27UCYQ_m"
+        },
+        {
+            "key": "printer_3",
+            "scopes": [
+                "printer"
+            ],
+            "printer_code": "1OPYKBGXVN_1"
+        },
+        {
+            "key": "printer_2",
+            "scopes": [
+                "printer"
+            ],
+            "printer_code": "YF1OF5FWZ0_2"
+        },
+        {
+            "key": "printer_3",
+            "scopes": [
+                "printer"
+            ],
+            "printer_code": "EK4M52IXL5_3"
+        },
+        {
+            "key": "printer_4",
+            "scopes": [
+                "printer"
+            ],
+            "printer_code": "C0ZE5TM5V4_4"
+        },
+        {
+            "key": "printer_5",
+            "scopes": [
+                "printer"
+            ],
+            "printer_code": "21YG0T6L8O_5"
+        },
+        {
+            "key": "printer_6",
+            "scopes": [
+                "printer"
+            ],
+            "printer_code": "GRR4QKRYZP_6"
+        },
+        {
+            "key": "printer_7",
+            "scopes": [
+                "printer"
+            ],
+            "printer_code": "R6CYBCY2XF_7"
+        },
+        {
+            "key": "printer_8",
+            "scopes": [
+                "printer"
+            ],
+            "printer_code": "8SCNWZUF9M_8"
+        },
+        {
+            "key": "printer_9",
+            "scopes": [
+                "printer"
+            ],
+            "printer_code": "AQ3PB4Q7I0_9"
+        },
+        {
+            "key": "printer_10",
+            "scopes": [
+                "printer"
+            ],
+            "printer_code": "COIC1PEJ8J_10"
+        },
+        {
+            "key": "printer_11",
+            "scopes": [
+                "printer"
+            ],
+            "printer_code": "MB5C43920Y_11"
+        }
+    ]
+}

@@ -127,7 +127,7 @@ def test_get_sheets_access_rights():
     assert response.status_code == status.HTTP_403_FORBIDDEN
     response = client.get('/sheets/', headers={'access_token': '123admin'})
     assert response.status_code == status.HTTP_200_OK
-    response = client.get('/sheets/', headers={'access_token': '456printer'})
+    response = client.get('/sheets/', headers={'access_token': 'printer_p'})
     assert response.status_code == status.HTTP_403_FORBIDDEN
     response = client.get('/sheets/', headers={'access_token': '789conference'})
     assert response.status_code == status.HTTP_403_FORBIDDEN
@@ -162,7 +162,7 @@ def test_post_sheets_access_rights():
     assert response.status_code == status.HTTP_201_CREATED
     response = client.post('/sheets/?sheet_type=456090&layout=layout_1', json=body, headers={'access_token': '789conference'})
     assert response.status_code == status.HTTP_201_CREATED
-    response = client.post('/sheets/?sheet_type=456090&layout=layout_1', json=body, headers={'access_token': '456printer'})
+    response = client.post('/sheets/?sheet_type=456090&layout=layout_1', json=body, headers={'access_token': 'printer_p'})
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 def test_get_sheet_access_rights():
@@ -175,7 +175,7 @@ def test_get_sheet_access_rights():
     assert response.status_code == status.HTTP_403_FORBIDDEN
     response = client.get(filename, headers={'access_token': '123admin'})
     assert response.status_code == status.HTTP_200_OK
-    response = client.get(filename, headers={'access_token': '456printer'})
+    response = client.get(filename, headers={'access_token': 'printer_p'})
     assert response.status_code == status.HTTP_200_OK
     response = client.get(filename, headers={'access_token': '789conference'})
     assert response.status_code == status.HTTP_403_FORBIDDEN
@@ -197,7 +197,7 @@ def test_delete_sheet_access_rights():
     response = newSheet()
     assert response.status_code == 201
     filename = response.json()['filename']
-    response = client.get(filename, headers={'access_token': '456printer'})
+    response = client.get(filename, headers={'access_token': 'printer_p'})
     assert response.status_code == status.HTTP_200_OK
 
 def test_access_key_checker():
@@ -205,18 +205,18 @@ def test_access_key_checker():
     assert response.status_code == status.HTTP_403_FORBIDDEN
     response = client.get('/sheets/', headers={'access_token': '123admin'})
     assert response.status_code == status.HTTP_200_OK
-    response = client.get('/sheets/', headers={'access_token': '456printer'})
+    response = client.get('/sheets/', headers={'access_token': 'printer_p'})
     assert response.status_code == status.HTTP_403_FORBIDDEN
     response = client.get('/sheets/', headers={'access_token': '789conference'})
     assert response.status_code == status.HTTP_403_FORBIDDEN
-    response = client.get('/sheets/', headers={'access_token': '456printer789conference'})
+    response = client.get('/sheets/', headers={'access_token': 'printer_p789conference'})
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
     response = client.get('/sheets/?access_token=12341234')
     assert response.status_code == status.HTTP_403_FORBIDDEN
     response = client.get('/sheets/?access_token=123admin')
     assert response.status_code == status.HTTP_200_OK
-    response = client.get('/sheets/?access_token=456printer')
+    response = client.get('/sheets/?access_token=printer_p')
     assert response.status_code == status.HTTP_403_FORBIDDEN
     response = client.get('/sheets/?access_token=789conference')
     assert response.status_code == status.HTTP_403_FORBIDDEN

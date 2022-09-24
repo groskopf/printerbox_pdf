@@ -92,7 +92,7 @@ def test_get_layouts_sheets():
 def test_get_layouts_name_tags():
     response = client.get('layouts/name_tags', headers={'access_token': '123admin'})
     assert response.status_code == status.HTTP_200_OK
-    response = client.get('layouts/name_tags', headers={'access_token': '456printer'})
+    response = client.get('layouts/name_tags', headers={'access_token': 'printer_p'})
     assert response.status_code == status.HTTP_403_FORBIDDEN
     response = client.get('layouts/name_tags', headers={'access_token': '789conference'})
     assert response.status_code == status.HTTP_200_OK
@@ -102,7 +102,7 @@ def test_get_layouts_name_tags():
 def test_get_layouts_sheets():
     response = client.get('layouts/sheets', headers={'access_token': '123admin'})
     assert response.status_code == status.HTTP_200_OK
-    response = client.get('layouts/sheets', headers={'access_token': '456printer'})
+    response = client.get('layouts/sheets', headers={'access_token': 'printer_p'})
     assert response.status_code == status.HTTP_403_FORBIDDEN
     response = client.get('layouts/sheets', headers={'access_token': '789conference'})
     assert response.status_code == status.HTTP_200_OK
@@ -112,7 +112,7 @@ def test_get_layouts_sheets():
 def test_get_layouts_name_tags():
     response = client.get('layouts/name_tags/' + NameTagType._4786103, headers={'access_token': '123admin'})
     assert response.status_code == status.HTTP_200_OK
-    response = client.get('layouts/name_tags/' + NameTagType._4786103, headers={'access_token': '456printer'})
+    response = client.get('layouts/name_tags/' + NameTagType._4786103, headers={'access_token': 'printer_p'})
     assert response.status_code == status.HTTP_403_FORBIDDEN
     response = client.get('layouts/name_tags/' + NameTagType._4786103, headers={'access_token': '789conference'})
     assert response.status_code == status.HTTP_200_OK
@@ -122,7 +122,7 @@ def test_get_layouts_name_tags():
 def test_get_layouts_sheets():
     response = client.get('layouts/sheets/' + SheetType._454880, headers={'access_token': '123admin'})
     assert response.status_code == status.HTTP_200_OK
-    response = client.get('layouts/sheets/' + SheetType._454880, headers={'access_token': '456printer'})
+    response = client.get('layouts/sheets/' + SheetType._454880, headers={'access_token': 'printer_p'})
     assert response.status_code == status.HTTP_403_FORBIDDEN
     response = client.get('layouts/sheets/' + SheetType._454880, headers={'access_token': '789conference'})
     assert response.status_code == status.HTTP_200_OK

@@ -31,7 +31,7 @@ def test_name_tags_ws(deleteBookings, deleteAllNameTags, deleteAllImages):
             newNameTags.append(newNameTag(bookingCode))
 
         # Get the list
-        with client.websocket_connect('/name_tags/'+ printerCode + '/ws') as websocket:
+        with client.websocket_connect('/name_tags/'+ bookingCode + '/ws') as websocket:
             for i in range(numOfNewNameTags):
                 receivedFilename = websocket.receive_json(mode='text')
                 assert any(newNameTag == receivedFilename['filename'] for newNameTag in newNameTags)

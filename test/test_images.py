@@ -91,7 +91,7 @@ def test_delete_image(deleteAllImages):
 def test_get_images_access_rights(deleteAllImages):
     response = client.get('/images', headers={'access_token': '123admin'})
     assert response.status_code == status.HTTP_200_OK
-    response = client.get('/images', headers={'access_token': '456printer'})
+    response = client.get('/images', headers={'access_token': 'printer_p'})
     assert response.status_code == status.HTTP_403_FORBIDDEN
     response = client.get('/images', headers={'access_token': '789conference'})
     assert response.status_code == status.HTTP_403_FORBIDDEN
@@ -107,7 +107,7 @@ def test_post_images_access_right(deleteAllImages):
         assert response.status_code == status.HTTP_200_OK
         response = client.post('/images/',
                                 files={"image": (imageName, f, "image/jpeg")},
-                                headers={'access_token': '456printer'})
+                                headers={'access_token': 'printer_p'})
         assert response.status_code == status.HTTP_403_FORBIDDEN
         response = client.post('/images/',
                                 files={"image": (imageName, f, "image/jpeg")},
@@ -124,7 +124,7 @@ def test_get_image_access_right(deleteAllImages):
 
     response = client.get(imageName, headers={'access_token': '123admin'})
     assert response.status_code == status.HTTP_200_OK
-    response = client.get(imageName, headers={'access_token': '456printer'})
+    response = client.get(imageName, headers={'access_token': 'printer_p'})
     assert response.status_code == status.HTTP_403_FORBIDDEN
     response = client.get(imageName, headers={'access_token': '789conference'})
     assert response.status_code == status.HTTP_403_FORBIDDEN
@@ -136,7 +136,7 @@ def test_get_image_access_right(deleteAllImages):
 def test_delete_image_access_right(deleteAllImages):
     imageName = newImage('./test/images/logo.jpg')
 
-    response = client.delete(imageName, headers={'access_token': '456printer'})
+    response = client.delete(imageName, headers={'access_token': 'printer_p'})
     assert response.status_code == status.HTTP_403_FORBIDDEN
     response = client.delete(imageName, headers={'access_token': 'xyzbooking'})
     assert response.status_code == status.HTTP_403_FORBIDDEN
