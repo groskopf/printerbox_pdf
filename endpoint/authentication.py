@@ -27,7 +27,7 @@ key_database : List[AccessKey] = []
 
 
 def load_key_database():
-    f = open('keys.json')
+    f = open('keys/keys.json')
     data = json.load(f)
     f.close()
   
