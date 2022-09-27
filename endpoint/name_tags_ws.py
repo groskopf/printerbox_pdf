@@ -28,6 +28,7 @@ class WSConnectionManager:
         self.connections.append(connection)
 
     def disconnect(self, connection: WSConnection):
+        print("Disconnecting: " + connection.booking_code)
         self.connections.remove(connection)
 
     async def sendToPrinter(self, booking_code: str, message: str):
@@ -37,6 +38,7 @@ class WSConnectionManager:
                 await connection.websocket.send_text(message)
 
     async def broadcast(self, message: str):
+        print("Broardcating: " + message)
         for connection in self.connections:
             await connection.websocket.send_text(message)
 
