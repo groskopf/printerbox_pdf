@@ -43,8 +43,8 @@ class NoPaddingTableStyle(TableStyle):
                  **kw):
         super().__init__(cmds, parent, **kw)
 
-        self.add('INNERGRID', (0, 0), (-1, -1), 1, colors.black)
-        self.add('BOX', (0, 0), (-1, -1), 1, colors.black)
+        self.add('INNERGRID', (0, 0), (-1, -1), 1, colors.white)
+        self.add('BOX', (0, 0), (-1, -1), 1, colors.white)
 
         if valign:
             self.add('VALIGN', (0, 0), (-1, -1), valign)
