@@ -48,9 +48,33 @@ def postNameTag(bookingCode: str):
                            headers={'access_token': '123admin'})
     return response
 
-
 def newNameTag(bookingCode: str):
     response = postNameTag(bookingCode)
+    assert response.status_code == 201
+    filename = response.json()['filename']
+    assert filename
+    return filename
+
+def postNameTagWithLayout(bookingCode: str, layout : Layout):
+    image = os.path.basename(newImage('./test/images/logo.jpg'))
+    body = {
+        "line_1": "<font size=\"18\"><b>Sebastian Line 1</b></font>",
+        # "line_2": "",
+        "line_2": "<font size=\"14\"><i>Line 2 Dekoratør</i></font>",
+        "line_3": "<font size=\"16\"><b>Line 3 FUSK A/S</b></font>",
+        "line_4": "Line 4 hello hello",
+        "line_5": "Line 5 hello hello",
+        "qr_code": "string",
+        "image_name": image
+    }
+    response = client.post('/name_tags/' + bookingCode +
+                           '?layout=' + layout,
+                           json=body,
+                           headers={'access_token': '123admin'})
+    return response
+
+def newNameTagWithLayout(bookingCode: str, layout : Layout):
+    response = postNameTagWithLayout(bookingCode, layout)
     assert response.status_code == 201
     filename = response.json()['filename']
     assert filename
@@ -71,6 +95,25 @@ def test_new_name_tag(deleteBookings, deleteAllNameTags):
     assert os.path.exists(filename) and os.path.isfile(filename)
 
     # TODO can we download it?
+
+
+def test_name_tag_all_layouts(deleteBookings, deleteAllNameTags):
+    # Today
+    bookingCode = newBooking(date.today(),
+                             date.today(),
+                             PrinterCode._XDESP95271_p,
+                             NameTagType._4786103)
+
+    for layout in Layout:
+        if layout == Layout.LAYOUT_INVALID:
+            continue
+
+        # Create a name tag
+        filename = newNameTagWithLayout(bookingCode, layout)
+
+        # Do file exist locally
+        assert os.path.exists(filename) and os.path.isfile(filename)
+
 
 
 def test_booking_wrong_dates(deleteBookings, deleteAllNameTags, deleteAllImages):
