@@ -1,12 +1,30 @@
-from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.styles import getSampleStyleSheet, _baseFontNameB
 from reportlab.lib.enums import TA_CENTER
 
 styleSheet = getSampleStyleSheet()
-normalCenterStyle = styleSheet["Normal"]
-normalCenterStyle.alignment = TA_CENTER
-normalCenterStyle.splitLongWords = 1
-normalCenterStyle.wordWrap = 1
 
-heading1CenterStyle = styleSheet["Heading1"]
-heading1CenterStyle.alignment = TA_CENTER
-heading1CenterStyle.splitLongWords = 1
+nameStyle = styleSheet["Normal"]
+nameStyle.alignment = TA_CENTER
+nameStyle.fontSize = 18
+nameStyle.spaceBefore=10
+nameStyle.splitLongWords = 1
+
+titleStyle = styleSheet["Normal"]
+titleStyle.alignment = TA_CENTER
+titleStyle.fontSize = 14
+titleStyle.spaceBefore=10
+titleStyle.spaceAfter=10
+titleStyle.splitLongWords = 1
+
+companyStyle = styleSheet["Normal"]
+companyStyle.alignment = TA_CENTER
+companyStyle.fontName = _baseFontNameB
+companyStyle.fontSize = 16
+companyStyle.spaceBefore=10
+companyStyle.splitLongWords = 1
+
+smallCompanyStyle = styleSheet["Italic"]
+smallCompanyStyle.alignment = TA_CENTER
+smallCompanyStyle.fontSize = 12
+smallCompanyStyle.spaceBefore=6
+smallCompanyStyle.splitLongWords = 1
