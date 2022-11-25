@@ -2,7 +2,7 @@ from reportlab.lib.units import mm
 
 from pdf.doc_templates import NameTag4786103DocTemplate
 from name_data import NameData
-from pdf.layouts import Layout, NameTagLayout3PBLTable, createNameTag
+from pdf.layouts import Layout, createNameTag
 
 
 def create(fileName: str, layout: Layout, nameData: NameData):
