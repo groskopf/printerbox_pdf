@@ -1,30 +1,45 @@
-from reportlab.lib.styles import getSampleStyleSheet, _baseFontNameB
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle, _baseFontNameB
 from reportlab.lib.enums import TA_CENTER
+
 
 styleSheet = getSampleStyleSheet()
 
-nameStyle = styleSheet["Normal"]
-nameStyle.alignment = TA_CENTER
-nameStyle.fontSize = 18
-nameStyle.spaceBefore=10
-nameStyle.splitLongWords = 1
 
-titleStyle = styleSheet["Normal"]
-titleStyle.alignment = TA_CENTER
-titleStyle.fontSize = 14
-titleStyle.spaceBefore=10
-titleStyle.spaceAfter=10
-titleStyle.splitLongWords = 1
+nameStyle = ParagraphStyle(name='NameStyle',
+                           parent=styleSheet['Normal'],
+                           alignment=TA_CENTER,
+                           fontSize=18,
+                           fontName=_baseFontNameB,
+                           spaceBefore=10,
+                           splitLongWords=1,
+                           )
 
-companyStyle = styleSheet["Normal"]
-companyStyle.alignment = TA_CENTER
-companyStyle.fontName = _baseFontNameB
-companyStyle.fontSize = 16
-companyStyle.spaceBefore=10
-companyStyle.splitLongWords = 1
+titleStyle = ParagraphStyle(name='TitleStyle',
+                            parent=styleSheet['Normal'],
+                            alignment=TA_CENTER,
+                            fontSize=14,
+                            spaceBefore=10,
+                            spaceAfter=10,
+                            splitLongWords=1,
+                            leading=12
+                            )
 
-smallCompanyStyle = styleSheet["Italic"]
-smallCompanyStyle.alignment = TA_CENTER
-smallCompanyStyle.fontSize = 12
-smallCompanyStyle.spaceBefore=6
-smallCompanyStyle.splitLongWords = 1
+companyStyle = ParagraphStyle(name='CompanyStyle',
+                              parent=styleSheet['Normal'],
+                              alignment=TA_CENTER,
+                              fontSize=16,
+                              fontName=_baseFontNameB,
+                              spaceBefore=10,
+                              splitLongWords=1,
+                              leading=12
+                              )
+
+smallCompanyStyle = ParagraphStyle(name='SmallCompanyStyle',
+                                   parent=styleSheet['Italic'],
+                                   alignment=TA_CENTER,
+                                   fontSize=12,
+                                   spaceBefore=6,
+                                   splitLongWords=1,
+                                   leading=12
+                                   )
+

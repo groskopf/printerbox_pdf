@@ -58,12 +58,16 @@ def newNameTag(bookingCode: str):
 def postNameTagWithLayout(bookingCode: str, layout : Layout):
     image = os.path.basename(newImage('./test/images/logo.jpg'))
     body = {
-        "line_1": "<font size=\"18\"><b>Sebastian Line 1</b></font>",
-        # "line_2": "",
-        "line_2": "<font size=\"14\"><i>Line 2 Dekoratør</i></font>",
-        "line_3": "<font size=\"16\"><b>Line 3 FUSK A/S</b></font>",
+        "line_1": "Sebastian Line 1",
+        "line_2": "Line 2 Dekoratør",
+        "line_3": "Line 3 FUSK A/S",
         "line_4": "Line 4 hello hello",
         "line_5": "Line 5 hello hello",
+        # "line_1": "<font size=\"18\"><b>Sebastian Line 1</b></font>",
+        # "line_2": "<font size=\"14\"><i>Line 2 Dekoratør</i></font>",
+        # "line_3": "<font size=\"16\"><b>Line 3 FUSK A/S</b></font>",
+        # "line_4": "Line 4 hello hello",
+        # "line_5": "Line 5 hello hello",
         "qr_code": "string",
         "image_name": image
     }
