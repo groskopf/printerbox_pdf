@@ -53,8 +53,6 @@ class Layout(str, Enum):
     LAYOUT_INVALID = "invalid"
 
 
-
-
 class NoPaddingTableStyle(TableStyle):
     def __init__(self, cmds=None, parent=None,
                  valign: str = None,
@@ -67,8 +65,7 @@ class NoPaddingTableStyle(TableStyle):
 
         self.add('VALIGN', (0, 0), (-1, -1), 'MIDDLE')
         if valign:
-            self.add(valign[0],valign[1],valign[2], valign[3])
-        
+            self.add(valign[0], valign[1], valign[2], valign[3])
 
         if align:
             self.add('ALIGN', (0, 0), (-1, -1), align)
@@ -87,7 +84,7 @@ class UpsideDownTable(Table):
 
     def __init__(self, *args, **kwargs):
         Table.__init__(self, *args, **kwargs)
-        self.setStyle(NoPaddingTableStyle(valign = self.valign))
+        self.setStyle(NoPaddingTableStyle(valign=self.valign))
 
     def draw(self):
         if self.upsideDown:
@@ -99,14 +96,14 @@ class UpsideDownTable(Table):
 
 
 class ImageAndParagraphTable(Table):
-    def __init__(self, width, height, text, nameData : NameData, justify: Justify):
-        imageName = nameData.image_name 
-        qrCode = nameData.qr_code 
+    def __init__(self, width, height, text, nameData: NameData, justify: Justify):
+        imageName = nameData.image_name
+        qrCode = nameData.qr_code
         if imageName and len(imageName):
             image = Image('images/' + imageName)
             image._restrictSize(height, height)
         elif qrCode and len(qrCode):
-            image = QRCodeImage(qrCode,height)
+            image = QRCodeImage(qrCode, height)
         else:
             image = ""
 
@@ -160,7 +157,6 @@ class NameTagLayout2BaseTable(UpsideDownTable):
         return Table.wrap(self, availWidth, availHeight)
 
 
-
 class NameTagLayout2Table(NameTagLayout2BaseTable):
     def __init__(self, width: float, height: float, nameData: NameData):
 
@@ -173,7 +169,7 @@ class NameTagLayout2Table(NameTagLayout2BaseTable):
                       Paragraph(nameData.line_5, smallCompanyStyle)
                       ])
         lines.append([Paragraph(nameData.line_3, companyStyle)])
-        
+
         self.valign = ['VALIGN', (0, -1), (0, -1), 'TOP']
 
         NameTagLayout2BaseTable.__init__(self, width, lineHeights, lines)
@@ -183,10 +179,10 @@ class NameTagLayout2PTTable(UpsideDownTable):
     def __init__(self, width: float, height: float, nameData: NameData):
 
         lineHeights = [height/2, height/2]
-        
+
         image = Image('images/' + nameData.image_name)
         image._restrictSize(width, lineHeights[0])
-        
+
         lines = []
         lines.append([image])
         lines.append([Paragraph(nameData.line_1, nameStyle),
@@ -195,7 +191,7 @@ class NameTagLayout2PTTable(UpsideDownTable):
                       Paragraph(nameData.line_4, smallCompanyStyle),
                       Paragraph(nameData.line_5, smallCompanyStyle)
                       ])
-        
+
         NameTagLayout2BaseTable.__init__(self, width, lineHeights, lines)
 
 
@@ -206,7 +202,7 @@ class NameTagLayout2PBTable(UpsideDownTable):
 
         image = Image('images/' + nameData.image_name)
         image._restrictSize(width, lineHeights[1])
-        
+
         lines = []
         lines.append([Paragraph(nameData.line_1, nameStyle),
                       Paragraph(nameData.line_2, titleStyle),
@@ -215,7 +211,7 @@ class NameTagLayout2PBTable(UpsideDownTable):
                       Paragraph(nameData.line_5, smallCompanyStyle)
                       ])
         lines.append([image])
-        
+
         NameTagLayout2BaseTable.__init__(self, width, lineHeights, lines)
 
 
@@ -247,8 +243,9 @@ class NameTagLayout2PBLTable(NameTagLayout2BaseTable):
         lines.append([ImageAndParagraphTable(width, lineHeights[1],
                                              nameData.line_3, nameData,
                                              Justify.Left)])
-        
+
         NameTagLayout2BaseTable.__init__(self, width, lineHeights, lines)
+
 
 class NameTagLayout2PBRTable(NameTagLayout2BaseTable):
     def __init__(self, width: float, height: float, nameData: NameData):
@@ -264,7 +261,7 @@ class NameTagLayout2PBRTable(NameTagLayout2BaseTable):
         lines.append([ImageAndParagraphTable(width, lineHeights[1],
                                              nameData.line_3, nameData,
                                              Justify.Right)])
-        
+
         NameTagLayout2BaseTable.__init__(self, width, lineHeights, lines)
 
 
@@ -282,8 +279,9 @@ class NameTagLayout2PTLTable(NameTagLayout2BaseTable):
                       Paragraph(nameData.line_4, smallCompanyStyle),
                       Paragraph(nameData.line_5, smallCompanyStyle)
                       ])
-        lines.append([Paragraph(nameData.line_1, nameStyle),Paragraph(nameData.line_2, titleStyle)])
-        
+        lines.append([Paragraph(nameData.line_1, nameStyle),
+                     Paragraph(nameData.line_2, titleStyle)])
+
         NameTagLayout2BaseTable.__init__(self, width, lineHeights, lines)
 
 
@@ -301,8 +299,9 @@ class NameTagLayout2PTRTable(NameTagLayout2BaseTable):
                       Paragraph(nameData.line_4, smallCompanyStyle),
                       Paragraph(nameData.line_5, smallCompanyStyle)
                       ])
-        
+
         NameTagLayout2BaseTable.__init__(self, width, lineHeights, lines)
+
 
 class NameTagLayout3Table(NameTagLayout3BaseTable):
     def __init__(self, width: float, height: float, nameData: NameData):
@@ -318,6 +317,8 @@ class NameTagLayout3Table(NameTagLayout3BaseTable):
         lines.append([Paragraph(nameData.line_4, companyStyle)])
 
         NameTagLayout3BaseTable.__init__(self, width, lineHeights, lines)
+
+
 class NameTagLayout3PTTable(NameTagLayout3BaseTable):
     def __init__(self, width: float, height: float, nameData: NameData):
 
@@ -325,7 +326,7 @@ class NameTagLayout3PTTable(NameTagLayout3BaseTable):
 
         image = Image('images/' + nameData.image_name)
         image._restrictSize(width, lineHeights[2])
-        
+
         lines = []
         lines.append([image])
         lines.append([Paragraph(nameData.line_1, nameStyle),
@@ -345,7 +346,7 @@ class NameTagLayout3PBTable(NameTagLayout3BaseTable):
 
         image = Image('images/' + nameData.image_name)
         image._restrictSize(width, lineHeights[0])
-        
+
         lines = []
         lines.append([Paragraph(nameData.line_1, nameStyle),
                       Paragraph(nameData.line_2, titleStyle),
@@ -372,8 +373,9 @@ class NameTagLayout3PTLTable(NameTagLayout3BaseTable):
                       Paragraph(nameData.line_5, smallCompanyStyle)
                       ])
         lines.append([Paragraph(nameData.line_3, companyStyle)])
-        
+
         NameTagLayout3BaseTable.__init__(self, width, lineHeights, lines)
+
 
 class NameTagLayout3PTRTable(NameTagLayout3BaseTable):
     def __init__(self, width: float, height: float, nameData: NameData):
@@ -389,8 +391,9 @@ class NameTagLayout3PTRTable(NameTagLayout3BaseTable):
                       Paragraph(nameData.line_5, smallCompanyStyle)
                       ])
         lines.append([Paragraph(nameData.line_3, companyStyle)])
-        
+
         NameTagLayout3BaseTable.__init__(self, width, lineHeights, lines)
+
 
 class NameTagLayout3PBLTable(NameTagLayout3BaseTable):
     def __init__(self, width: float, height: float, nameData: NameData):
@@ -406,8 +409,9 @@ class NameTagLayout3PBLTable(NameTagLayout3BaseTable):
         lines.append([ImageAndParagraphTable(width, lineHeights[2],
                                              nameData.line_4, nameData,
                                              Justify.Left)])
-        
+
         NameTagLayout3BaseTable.__init__(self, width, lineHeights, lines)
+
 
 class NameTagLayout3PBRTable(NameTagLayout3BaseTable):
     def __init__(self, width: float, height: float, nameData: NameData):
@@ -423,11 +427,11 @@ class NameTagLayout3PBRTable(NameTagLayout3BaseTable):
         lines.append([ImageAndParagraphTable(width, lineHeights[2],
                                              nameData.line_4, nameData,
                                              Justify.Right)])
-        
+
         NameTagLayout3BaseTable.__init__(self, width, lineHeights, lines)
 
 
-def createNameTag(layout : Layout, width: float, height: float, nameData: NameData):
+def createNameTag(layout: Layout, width: float, height: float, nameData: NameData):
     match layout:
         case Layout.LAYOUT_1:
             return NameTagLayout1Table(width, height, nameData)
@@ -465,7 +469,7 @@ def createNameTag(layout : Layout, width: float, height: float, nameData: NameDa
             return NameTagLayout3PBRTable(width, height, nameData)
         case Layout.LAYOUT_3PBL:
             return NameTagLayout3PBLTable(width, height, nameData)
-    
+
 
 class SheetTable(Table):
     def __init__(self, colounms, labelWidth, labelHeight, labels):

@@ -48,6 +48,7 @@ def postNameTag(bookingCode: str):
                            headers={'access_token': '123admin'})
     return response
 
+
 def newNameTag(bookingCode: str):
     response = postNameTag(bookingCode)
     assert response.status_code == 201
@@ -55,7 +56,8 @@ def newNameTag(bookingCode: str):
     assert filename
     return filename
 
-def postNameTagWithLayout(bookingCode: str, layout : Layout):
+
+def postNameTagWithLayout(bookingCode: str, layout: Layout):
     image = os.path.basename(newImage('./test/images/logo.jpg'))
     body = {
         "line_1": "Sebastian Line 1",
@@ -77,7 +79,8 @@ def postNameTagWithLayout(bookingCode: str, layout : Layout):
                            headers={'access_token': '123admin'})
     return response
 
-def newNameTagWithLayout(bookingCode: str, layout : Layout):
+
+def newNameTagWithLayout(bookingCode: str, layout: Layout):
     response = postNameTagWithLayout(bookingCode, layout)
     assert response.status_code == 201
     filename = response.json()['filename']
@@ -117,7 +120,6 @@ def test_name_tag_all_layouts(deleteBookings, deleteAllNameTags):
 
         # Do file exist locally
         assert os.path.exists(filename) and os.path.isfile(filename)
-
 
 
 def test_booking_wrong_dates(deleteBookings, deleteAllNameTags, deleteAllImages):
