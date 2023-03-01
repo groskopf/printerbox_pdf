@@ -34,12 +34,12 @@ def deleteAllNameTags():
 def postNameTag(bookingCode: str):
     image = os.path.basename(newImage('./test/images/logo.jpg'))
     body = {
-        "line_1": "string",
-        "line_2": "string",
-        "line_3": "string",
-        "line_4": "string",
-        "line_5": "string",
-        "qr_code": "string",
+        "line_1": "string string string string string string string string string",
+        "line_2": "string string string string string string string string string",
+        "line_3": "string string string string string string string string string",
+        "line_4": "string string string string string string string string string",
+        "line_5": "string string string string string string string string string",
+        "qr_code": "string string string string string string string string string",
         "image_name": image
     }
     response = client.post('/name_tags/' + bookingCode +

@@ -12,6 +12,7 @@ nameStyle = ParagraphStyle(name='NameStyle',
                            fontName=_baseFontNameB,
                            spaceBefore=10,
                            splitLongWords=1,
+                           leading=20
                            )
 
 titleStyle = ParagraphStyle(name='TitleStyle',
@@ -21,7 +22,7 @@ titleStyle = ParagraphStyle(name='TitleStyle',
                             spaceBefore=10,
                             spaceAfter=10,
                             splitLongWords=1,
-                            leading=12
+                            leading=16
                             )
 
 companyStyle = ParagraphStyle(name='CompanyStyle',
@@ -31,7 +32,7 @@ companyStyle = ParagraphStyle(name='CompanyStyle',
                               fontName=_baseFontNameB,
                               spaceBefore=10,
                               splitLongWords=1,
-                              leading=12
+                              leading=18
                               )
 
 smallCompanyStyle = ParagraphStyle(name='SmallCompanyStyle',
@@ -40,6 +41,5 @@ smallCompanyStyle = ParagraphStyle(name='SmallCompanyStyle',
                                    fontSize=12,
                                    spaceBefore=6,
                                    splitLongWords=1,
-                                   leading=12
+                                   leading=14
                                    )
-
