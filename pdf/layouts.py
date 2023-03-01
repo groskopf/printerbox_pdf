@@ -1,3 +1,4 @@
+import json
 from enum import Enum, Flag
 from typing import List
 from reportlab.platypus import Table, TableStyle
@@ -5,9 +6,27 @@ from reportlab.platypus.para import Paragraph
 from reportlab.platypus.flowables import KeepInFrame, Image
 from reportlab.lib import colors
 from reportlab_qrcode import QRCodeImage
+from pydantic import BaseModel
 
 from name_data import NameData
 from pdf.styles import nameStyle, titleStyle, companyStyle, smallCompanyStyle
+
+
+class Config(BaseModel):
+    show_frames: bool
+
+
+def loadConfig():
+    with open('config/config.json') as config_file:
+        configDict = json.load(config_file)['config']
+        return Config(**configDict)
+
+
+config: Config = loadConfig()
+
+gridColor: bool = colors.white
+if config.show_frames:
+    gridColor = colors.black
 
 
 class Justify(Flag):
@@ -43,8 +62,8 @@ class NoPaddingTableStyle(TableStyle):
                  **kw):
         super().__init__(cmds, parent, **kw)
 
-        self.add('INNERGRID', (0, 0), (-1, -1), 1, colors.black)
-        self.add('BOX', (0, 0), (-1, -1), 1, colors.black)
+        self.add('INNERGRID', (0, 0), (-1, -1), 1, gridColor)
+        self.add('BOX', (0, 0), (-1, -1), 1, gridColor)
 
         self.add('VALIGN', (0, 0), (-1, -1), 'MIDDLE')
         if valign:
