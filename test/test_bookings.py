@@ -65,7 +65,7 @@ def test_clean_booking_list(deleteBookings):
 def test_add_booking(deleteBookings):
     bookingCode = newBooking(date.fromisoformat('1974-08-22'),
                              date.fromisoformat('1974-09-22'),
-                             PrinterCode._XDESP95271_p,
+                             PrinterCode._1OPYKBGXVN_1,
                              NameTagType._4786103)
 
     bookings = getBookings()
@@ -75,14 +75,14 @@ def test_add_booking(deleteBookings):
     booking = bookings[0]
     assert booking['start_date'] == '1974-08-22'
     assert booking['end_date'] == '1974-09-22'
-    assert booking['printer_code'] == 'XDESP95271_p'
+    assert booking['printer_code'] == '1OPYKBGXVN_1'
     assert booking['booking_code'] == bookingCode
     assert booking['name_tag_type'] == NameTagType._4786103
 
     # Create another booking
     bookingCode = newBooking(date.fromisoformat('1984-08-22'),
                              date.fromisoformat('1984-09-26'),
-                             PrinterCode._XDESP95271_p,
+                             PrinterCode._1OPYKBGXVN_1,
                              NameTagType._4786103)
 
     # Test that we got the new booking
@@ -91,25 +91,25 @@ def test_add_booking(deleteBookings):
 
     # Fail creating an overlapping booking
     response = client.post(
-        'bookings/?start_date=1984-08-21&end_date=1984-08-22&printer_code=XDESP95271_p&name_tag_type=4786103',
+        'bookings/?start_date=1984-08-21&end_date=1984-08-22&printer_code=1OPYKBGXVN_1&name_tag_type=4786103',
         headers={'access_token': '123admin'})
     assert response.status_code == 409
 
     # Fail creating an overlapping booking
     response = client.post(
-        'bookings/?start_date=1984-08-26&end_date=1984-08-29&printer_code=XDESP95271_p&name_tag_type=4786103',
+        'bookings/?start_date=1984-08-26&end_date=1984-08-29&printer_code=1OPYKBGXVN_1&name_tag_type=4786103',
         headers={'access_token': '123admin'})
     assert response.status_code == 409
 
     # Fail creating an overlapping booking
     response = client.post(
-        'bookings/?start_date=1984-08-23&end_date=1984-08-25&printer_code=XDESP95271_p&name_tag_type=4786103',
+        'bookings/?start_date=1984-08-23&end_date=1984-08-25&printer_code=1OPYKBGXVN_1&name_tag_type=4786103',
         headers={'access_token': '123admin'})
     assert response.status_code == 409
 
     # Fail creating mixed around date order
     response = client.post(
-        'bookings/?start_date=1984-08-29&end_date=1984-08-25&printer_code=XDESP95271_p&name_tag_type=4786103',
+        'bookings/?start_date=1984-08-29&end_date=1984-08-25&printer_code=1OPYKBGXVN_1&name_tag_type=4786103',
         headers={'access_token': '123admin'})
     assert response.status_code == 400
 
@@ -117,7 +117,7 @@ def test_add_booking(deleteBookings):
 def test_get_booking(deleteBookings):
     bookingCode = newBooking(date.fromisoformat('1974-08-22'),
                              date.fromisoformat('1974-09-22'),
-                             PrinterCode._XDESP95271_p,
+                             PrinterCode._1OPYKBGXVN_1,
                              NameTagType._4786103)
 
     response = client.get('/bookings/' + bookingCode,
@@ -127,7 +127,7 @@ def test_get_booking(deleteBookings):
     booking = response.json()
     assert booking['start_date'] == '1974-08-22'
     assert booking['end_date'] == '1974-09-22'
-    assert booking['printer_code'] == 'XDESP95271_p'
+    assert booking['printer_code'] == '1OPYKBGXVN_1'
     assert booking['name_tag_type'] == NameTagType._4786103
     assert bookingCode == booking['booking_code']
 
@@ -135,7 +135,7 @@ def test_get_booking(deleteBookings):
 def test_get_booking_printer(deleteBookings):
     bookingCode = newBooking(date.fromisoformat('1974-08-22'),
                              date.fromisoformat('1974-09-22'),
-                             PrinterCode._XDESP95271_p,
+                             PrinterCode._1OPYKBGXVN_1,
                              NameTagType._4760100)
     bookingCode = newBooking(date.today(),
                              date.today(),
@@ -148,7 +148,7 @@ def test_get_booking_printer(deleteBookings):
 
     booking = response.json()
     assert date.fromisoformat(booking['start_date']) == date.today()
-    assert date.fromisoformat(booking['end_date']) == date.today() 
+    assert date.fromisoformat(booking['end_date']) == date.today()
     assert booking['printer_code'] == '21YG0T6L8O_5'
     assert booking['name_tag_type'] == NameTagType._4786103
     assert bookingCode == booking['booking_code']
@@ -157,21 +157,21 @@ def test_get_booking_printer(deleteBookings):
 def test_update_booking(deleteBookings):
     bookingCode = newBooking(date.fromisoformat('1984-08-22'),
                              date.fromisoformat('1984-09-22'),
-                             PrinterCode._XDESP95271_p,
+                             PrinterCode._1OPYKBGXVN_1,
                              NameTagType._4786103)
 
     # Update booking
     response = client.put('bookings/' + bookingCode +
                           '?start_date=1984-08-22' +
                           '&end_date=1984-09-22' +
-                          '&printer_code=XDESP95271_p' +
+                          '&printer_code=1OPYKBGXVN_1' +
                           '&name_tag_type=' + NameTagType._4786103, headers={'access_token': '123admin'})
     assert response.status_code == 200
 
     booking = response.json()
     assert booking['start_date'] == '1984-08-22'
     assert booking['end_date'] == '1984-09-22'
-    assert booking['printer_code'] == 'XDESP95271_p'
+    assert booking['printer_code'] == '1OPYKBGXVN_1'
     bookingCode = booking['booking_code']
     assert booking['name_tag_type'] == NameTagType._4786103
 
@@ -183,7 +183,7 @@ def test_update_booking(deleteBookings):
     booking = bookings[0]
     assert booking['start_date'] == '1984-08-22'
     assert booking['end_date'] == '1984-09-22'
-    assert booking['printer_code'] == 'XDESP95271_p'
+    assert booking['printer_code'] == '1OPYKBGXVN_1'
     assert booking['booking_code'] == bookingCode
     assert booking['name_tag_type'] == NameTagType._4786103
 
@@ -191,7 +191,7 @@ def test_update_booking(deleteBookings):
     response = client.put('bookings/' + 'FAKE_CODE' +
                           '?start_date=1984-08-22' +
                           '&end_date=1984-09-22' +
-                          '&printer_code=XDESP95271_p' +
+                          '&printer_code=1OPYKBGXVN_1' +
                           '&name_tag_type=' + NameTagType._4786103,
                           headers={'access_token': '123admin'})
     assert response.status_code == 404
@@ -200,7 +200,7 @@ def test_update_booking(deleteBookings):
 def test_delete_booking(deleteBookings):
     bookingCode = newBooking(date.fromisoformat('1984-08-22'),
                              date.fromisoformat('1984-09-22'),
-                             PrinterCode._XDESP95271_p,
+                             PrinterCode._1OPYKBGXVN_1,
                              NameTagType._4760100)
 
     # Test we don't have any bookings
@@ -228,114 +228,122 @@ def test_get_bookings_access_rights(deleteBookings):
     response = client.get('/bookings', headers={'access_token': 'printer_p'})
     assert response.status_code == status.HTTP_403_FORBIDDEN
     response = client.get('/bookings',
-         headers={'access_token': '789conference'})
+                          headers={'access_token': '789conference'})
     assert response.status_code == status.HTTP_403_FORBIDDEN
+
 
 def test_post_bookings_access_rights(deleteBookings):
     response = client.post(
-        'bookings/?start_date=2984-08-21&end_date=2984-08-22&printer_code=XDESP95271_p&name_tag_type=4786103')
+        'bookings/?start_date=2984-08-21&end_date=2984-08-22&printer_code=1OPYKBGXVN_1&name_tag_type=4786103')
     assert response.status_code == status.HTTP_403_FORBIDDEN
     response = client.post(
-        'bookings/?start_date=2984-08-21&end_date=2984-08-22&printer_code=XDESP95271_p&name_tag_type=4786103',
+        'bookings/?start_date=2984-08-21&end_date=2984-08-22&printer_code=1OPYKBGXVN_1&name_tag_type=4786103',
         headers={'access_token': 'printer_p'})
     assert response.status_code == status.HTTP_403_FORBIDDEN
     response = client.post(
-        'bookings/?start_date=2984-08-21&end_date=2984-08-22&printer_code=XDESP95271_p&name_tag_type=4786103',
+        'bookings/?start_date=2984-08-21&end_date=2984-08-22&printer_code=1OPYKBGXVN_1&name_tag_type=4786103',
         headers={'access_token': '789conference'})
     assert response.status_code == status.HTTP_403_FORBIDDEN
     response = client.post(
-        'bookings/?start_date=2984-08-21&end_date=2984-08-22&printer_code=XDESP95271_p&name_tag_type=4786103',
+        'bookings/?start_date=2984-08-21&end_date=2984-08-22&printer_code=1OPYKBGXVN_1&name_tag_type=4786103',
         headers={'access_token': 'xyzbooking'})
     assert response.status_code == status.HTTP_201_CREATED
     response = client.post(
-        'bookings/?start_date=2994-08-21&end_date=2994-08-22&printer_code=XDESP95271_p&name_tag_type=4786103',
+        'bookings/?start_date=2994-08-21&end_date=2994-08-22&printer_code=1OPYKBGXVN_1&name_tag_type=4786103',
         headers={'access_token': '123admin'})
     assert response.status_code == status.HTTP_201_CREATED
-    
+
+
 def test_get_booking_access_rights(deleteBookings):
     bookingCode = newBooking(date.fromisoformat('1964-08-22'),
                              date.fromisoformat('1964-09-22'),
-                             PrinterCode._XDESP95271_p,
+                             PrinterCode._1OPYKBGXVN_1,
                              NameTagType._4760100)
-    
+
     response = client.get('/bookings/' + bookingCode)
     assert response.status_code == status.HTTP_403_FORBIDDEN
-    response = client.get('/bookings/' + bookingCode, headers={'access_token': 'printer_p'})
+    response = client.get('/bookings/' + bookingCode,
+                          headers={'access_token': 'printer_p'})
     assert response.status_code == status.HTTP_403_FORBIDDEN
-    response = client.get('/bookings/' + bookingCode, headers={'access_token': 'xyzbooking'})
+    response = client.get('/bookings/' + bookingCode,
+                          headers={'access_token': 'xyzbooking'})
     assert response.status_code == status.HTTP_200_OK
-    response = client.get('/bookings/' + bookingCode, headers={'access_token': '789conference'})
+    response = client.get('/bookings/' + bookingCode,
+                          headers={'access_token': '789conference'})
     assert response.status_code == status.HTTP_200_OK
-    
+
     bookingCode = newBooking(date.fromisoformat('1974-08-22'),
                              date.fromisoformat('1974-09-22'),
-                             PrinterCode._XDESP95271_p,
+                             PrinterCode._1OPYKBGXVN_1,
                              NameTagType._4760100)
-    
-    response = client.get('/bookings/' + bookingCode, headers={'access_token': '123admin'})
+
+    response = client.get('/bookings/' + bookingCode,
+                          headers={'access_token': '123admin'})
     assert response.status_code == status.HTTP_200_OK
-    
+
 
 def test_put_booking_access_rights(deleteBookings):
     bookingCode = newBooking(date.fromisoformat('1987-08-22'),
                              date.fromisoformat('1987-09-22'),
-                             PrinterCode._XDESP95271_p,
+                             PrinterCode._1OPYKBGXVN_1,
                              NameTagType._4786103)
 
-    response = client.put('bookings/' + bookingCode + 
+    response = client.put('bookings/' + bookingCode +
                           '?start_date=1987-08-22' +
                           '&end_date=1987-09-22' +
-                          '&printer_code=XDESP95271_p' +
+                          '&printer_code=1OPYKBGXVN_1' +
                           '&name_tag_type=' + NameTagType._4786103,
                           headers={'access_token': 'printer_p'})
     assert response.status_code == status.HTTP_403_FORBIDDEN
-    response = client.put('bookings/' + bookingCode + 
+    response = client.put('bookings/' + bookingCode +
                           '?start_date=1987-08-22' +
                           '&end_date=1987-09-22' +
-                          '&printer_code=XDESP95271_p' +
+                          '&printer_code=1OPYKBGXVN_1' +
                           '&name_tag_type=' + NameTagType._4786103,
                           headers={'access_token': '789conference'})
     assert response.status_code == status.HTTP_403_FORBIDDEN
-    response = client.put('bookings/' + bookingCode + 
+    response = client.put('bookings/' + bookingCode +
                           '?start_date=1987-08-22' +
                           '&end_date=1987-09-22' +
-                          '&printer_code=XDESP95271_p' +
+                          '&printer_code=1OPYKBGXVN_1' +
                           '&name_tag_type=' + NameTagType._4786103,
                           headers={'access_token': 'xyzbooking'})
     assert response.status_code == status.HTTP_200_OK
-    response = client.put('bookings/' + bookingCode + 
+    response = client.put('bookings/' + bookingCode +
                           '?start_date=1987-08-22' +
                           '&end_date=1987-09-22' +
-                          '&printer_code=XDESP95271_p' +
+                          '&printer_code=1OPYKBGXVN_1' +
                           '&name_tag_type=' + NameTagType._4786103,
                           headers={'access_token': '123admin'})
     assert response.status_code == status.HTTP_200_OK
-    
+
+
 def test_delete_booking_access_rights(deleteBookings):
     bookingCode = newBooking(date.fromisoformat('1987-08-22'),
                              date.fromisoformat('1987-09-22'),
-                             PrinterCode._XDESP95271_p,
+                             PrinterCode._1OPYKBGXVN_1,
                              NameTagType._4786103)
 
     response = client.delete('bookings/' + bookingCode,
-                          headers={'access_token': 'printer_p'})
+                             headers={'access_token': 'printer_p'})
     assert response.status_code == status.HTTP_403_FORBIDDEN
     response = client.delete('bookings/' + bookingCode,
-                          headers={'access_token': '789conference'})
+                             headers={'access_token': '789conference'})
     assert response.status_code == status.HTTP_403_FORBIDDEN
     response = client.delete('bookings/' + bookingCode,
-                          headers={'access_token': 'xyzbooking'})
+                             headers={'access_token': 'xyzbooking'})
     assert response.status_code == status.HTTP_200_OK
 
     bookingCode = newBooking(date.fromisoformat('1987-08-22'),
                              date.fromisoformat('1987-09-22'),
-                             PrinterCode._XDESP95271_p,
+                             PrinterCode._1OPYKBGXVN_1,
                              NameTagType._4786103)
 
     response = client.delete('bookings/' + bookingCode,
-                          headers={'access_token': '123admin'})
+                             headers={'access_token': '123admin'})
     assert response.status_code == status.HTTP_200_OK
-    
+
+
 def test_get_booking_printer_access_rights(deleteBookings):
     bookingCode = newBooking(date.today(),
                              date.today(),
@@ -352,8 +360,7 @@ def test_get_booking_printer_access_rights(deleteBookings):
 
     booking = response.json()
     assert date.fromisoformat(booking['start_date']) == date.today()
-    assert date.fromisoformat(booking['end_date']) == date.today() 
+    assert date.fromisoformat(booking['end_date']) == date.today()
     assert booking['printer_code'] == '21YG0T6L8O_5'
     assert booking['name_tag_type'] == NameTagType._4786103
     assert bookingCode == booking['booking_code']
-

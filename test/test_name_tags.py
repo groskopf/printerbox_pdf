@@ -92,7 +92,7 @@ def test_new_name_tag(deleteBookings, deleteAllNameTags):
     # Today
     bookingCode = newBooking(date.today(),
                              date.today(),
-                             PrinterCode._XDESP95271_p,
+                             PrinterCode._1OPYKBGXVN_1,
                              NameTagType._4786103)
 
     # Create a name tag
@@ -108,7 +108,7 @@ def test_name_tag_all_layouts(deleteBookings, deleteAllNameTags):
     # Today
     bookingCode = newBooking(date.today(),
                              date.today(),
-                             PrinterCode._XDESP95271_p,
+                             PrinterCode._1OPYKBGXVN_1,
                              NameTagType._4786103)
 
     for layout in Layout:
@@ -126,7 +126,7 @@ def test_booking_wrong_dates(deleteBookings, deleteAllNameTags, deleteAllImages)
     # Too early
     bookingCode = newBooking(date.today()+timedelta(days=1),
                              date.today()+timedelta(days=1),
-                             PrinterCode._XDESP95271_p,
+                             PrinterCode._1OPYKBGXVN_1,
                              NameTagType._4786103)
 
     # Create a name tag
@@ -137,7 +137,7 @@ def test_booking_wrong_dates(deleteBookings, deleteAllNameTags, deleteAllImages)
     # Too late
     bookingCode = newBooking(date.today()-timedelta(days=1),
                              date.today()-timedelta(days=1),
-                             PrinterCode._XDESP95271_p,
+                             PrinterCode._1OPYKBGXVN_1,
                              NameTagType._4786103)
 
     # Create a name tag
@@ -332,6 +332,9 @@ def test_get_name_tags_printer_code_access_rights(deleteBookings):
         printerCode,
         NameTagType._4786103)
     newNameTag(bookingCode)
+    response = client.get('/name_tags/' + bookingCode +
+                          '?access_token=123admin')
+    assert response.status_code == status.HTTP_200_OK
     response = client.get('/name_tags/' + bookingCode)
     assert response.status_code == status.HTTP_403_FORBIDDEN
     response = client.get('/name_tags/' + bookingCode,
