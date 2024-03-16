@@ -7,7 +7,7 @@ import pytest
 from main import app
 from pdf.name_tag_type import NameTagType
 from printer_code import PrinterCode
-from endpoint.bookings import Booking, calendar
+from endpoint.booking_calendar import calendar
 
 client = TestClient(app)
 

@@ -8,7 +8,7 @@ import pytest
 
 from main import app
 from site_paths import nameTagsPath
-from endpoint.bookings import getPrinterBooking
+from endpoint.booking_calendar import calendar
 from pdf.name_tag_type import NameTagType
 from pdf.layouts import Layout
 from printer_code import PrinterCode

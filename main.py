@@ -2,7 +2,7 @@ from datetime import date as date
 import uvicorn
 from fastapi import FastAPI
 
-from endpoint import images, bookings, layouts, name_tags, sheets
+from endpoint import endpoint_bookings, endpoint_images, endpoint_layouts, endpoint_name_tags, endpoint_sheets
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -22,11 +22,11 @@ app.add_middleware(
 )
 
 
-app.include_router(images.router, prefix='/images', tags=['images'])
-app.include_router(bookings.router, prefix='/bookings', tags=['bookings'])
-app.include_router(sheets.router, prefix='/sheets', tags=['sheets'])
-app.include_router(name_tags.router, prefix='/name_tags', tags=['name_tags'])
-app.include_router(layouts.router, prefix='/layouts', tags=['layouts'])
+app.include_router(endpoint_images.router, prefix='/images', tags=['images'])
+app.include_router(endpoint_bookings.router, prefix='/bookings', tags=['bookings'])
+app.include_router(endpoint_sheets.router, prefix='/sheets', tags=['sheets'])
+app.include_router(endpoint_name_tags.router, prefix='/name_tags', tags=['name_tags'])
+app.include_router(endpoint_layouts.router, prefix='/layouts', tags=['layouts'])
 
 
 if __name__ == "__main__":
