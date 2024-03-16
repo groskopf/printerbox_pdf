@@ -20,7 +20,8 @@
 		"eamodio.gitlens",
 		"github.vscode-pull-request-github",
 		"streetsidesoftware.code-spell-checker",
-		"littlefoxteam.vscode-python-test-adapter"
+		"littlefoxteam.vscode-python-test-adapter",
+		"ms-python.python"
 	],
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	"forwardPorts": [
