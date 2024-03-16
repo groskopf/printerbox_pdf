@@ -190,7 +190,7 @@ def test_get_name_tags(deleteBookings, deleteAllNameTags, deleteAllImages):
     deleteAllNameTagFiles()
 
     for printerCode in PrinterCode:
-        response = client.get('/name_tags/' + getPrinterBooking(printerCode).booking_code,
+        response = client.get('/name_tags/' + calendar.getPrinterBooking(printerCode).booking_code,
                               headers={'access_token': '123admin'})
         assert response.status_code == 200
         filenames = response.json()
