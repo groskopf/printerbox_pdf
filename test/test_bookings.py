@@ -7,7 +7,7 @@ import pytest
 from main import app
 from pdf.name_tag_type import NameTagType
 from printer_code import PrinterCode
-from endpoint.bookings import Booking, calendar
+from endpoint.booking_calendar import calendar
 
 client = TestClient(app)
 
@@ -25,7 +25,7 @@ def deleteBookings():
             '/bookings/' + booking['booking_code'], headers={'access_token': '123admin'})
         assert response.status_code == 200
 
-    calendar.save()
+    calendar.load()
 
 
 def newBooking(startDate: date, endDate: date, printerCode: PrinterCode, nameTagType: NameTagType):

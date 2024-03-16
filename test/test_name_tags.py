@@ -8,7 +8,7 @@ import pytest
 
 from main import app
 from site_paths import nameTagsPath
-from endpoint.bookings import getPrinterBooking
+from endpoint.booking_calendar import calendar
 from pdf.name_tag_type import NameTagType
 from pdf.layouts import Layout
 from printer_code import PrinterCode
@@ -132,7 +132,6 @@ def test_booking_wrong_dates(deleteBookings, deleteAllNameTags, deleteAllImages)
     # Create a name tag
     response = postNameTag(bookingCode)
     assert response.status_code == 400
-    assert not response
 
     # Too late
     bookingCode = newBooking(date.today()-timedelta(days=1),
@@ -143,7 +142,6 @@ def test_booking_wrong_dates(deleteBookings, deleteAllNameTags, deleteAllImages)
     # Create a name tag
     response = postNameTag(bookingCode)
     assert response.status_code == 400
-    assert not response
 
 
 def test_bad_booking(deleteBookings, deleteAllNameTags):
@@ -152,7 +150,6 @@ def test_bad_booking(deleteBookings, deleteAllNameTags):
     # Create a name tag
     response = postNameTag(bookingCode)
     assert response.status_code == status.HTTP_404_NOT_FOUND
-    assert not response
 
 
 def test_get_name_tags(deleteBookings, deleteAllNameTags, deleteAllImages):
@@ -190,7 +187,7 @@ def test_get_name_tags(deleteBookings, deleteAllNameTags, deleteAllImages):
     deleteAllNameTagFiles()
 
     for printerCode in PrinterCode:
-        response = client.get('/name_tags/' + getPrinterBooking(printerCode).booking_code,
+        response = client.get('/name_tags/' + calendar.getPrinterBooking(printerCode).booking_code,
                               headers={'access_token': '123admin'})
         assert response.status_code == 200
         filenames = response.json()
@@ -220,7 +217,7 @@ def test_delete_name_tags(deleteBookings, deleteAllNameTags, deleteAllImages):
         assert response.status_code == 200
 
         # Test they all disappear again
-        response = client.get('/name_tags/' + getPrinterBooking(printerCode).booking_code,
+        response = client.get('/name_tags/' + calendar.getPrinterBooking(printerCode).booking_code,
                               headers={'access_token': '123admin'})
         assert response.status_code == 200
         filenames = response.json()
@@ -243,7 +240,7 @@ def test_delete_name_tag(deleteBookings, deleteAllNameTags, deleteAllImages):
 
     for printerCode in PrinterCode:
         # Get the name tags
-        response = client.get('/name_tags/' + getPrinterBooking(printerCode).booking_code,
+        response = client.get('/name_tags/' + calendar.getPrinterBooking(printerCode).booking_code,
                               headers={'access_token': '123admin'})
         assert response.status_code == 200
         filenames = response.json()
@@ -256,7 +253,7 @@ def test_delete_name_tag(deleteBookings, deleteAllNameTags, deleteAllImages):
 
     # Test they all disappear again
     for printerCode in PrinterCode:
-        response = client.get('/name_tags/' + getPrinterBooking(printerCode).booking_code,
+        response = client.get('/name_tags/' + calendar.getPrinterBooking(printerCode).booking_code,
                               headers={'access_token': '123admin'})
         assert response.status_code == 200
         filenames = response.json()

@@ -14,9 +14,8 @@ from pdf import name_tag_4786103
 from details import Details
 from pdf.name_tag_layouts import getNameTagLayouts
 from site_paths import imagesPath, nameTagsPath
-from printer_code import PrinterCode
-from endpoint.bookings import calendar
-from endpoint.bookings import Booking
+from endpoint.endpoint_bookings import calendar
+from endpoint.endpoint_bookings import Booking
 from endpoint.name_tags_ws import getFilesInPrinterQueue, deleteFilesInPrinterQueue, wsConnectionManager, router
 from endpoint.authentication import AccessScope, authenticate_api_key
 from name_data import NameData
@@ -54,28 +53,28 @@ async def new_name_tag(booking_code: str, layout: Layout, name_data: NameData,
                        api_key: APIKey = Security(authenticate_api_key, scopes=[AccessScope._CONFERENCE])):
     checkImageFileExist(name_data)
 
-    printerCode, nameTagType = findBooking(booking_code)
+    printer_code, nametag_type = findBooking(booking_code)
 
-    if layout not in getNameTagLayouts(nameTagType).layouts:
+    if layout not in getNameTagLayouts(nametag_type).layouts:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Name tag layout not supported")
 
     outputPath = nameTagsPath + booking_code + '/'
-    outputFilename = outputPath + nameTagType + '_' + uuid4().hex + '.pdf'
+    output_filename = outputPath + nametag_type + '_' + uuid4().hex + '.pdf'
 
     if not os.path.exists(outputPath):
         os.makedirs(outputPath)
 
-    match nameTagType:
+    match nametag_type:
         case NameTagType._4786103:
-            name_tag_4786103.create(outputFilename, layout, name_data)
+            name_tag_4786103.create(output_filename, layout, name_data)
         case _:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="NameTagType not supported")
 
-    response = FilePath(filename=outputFilename)
+    response = FilePath(filename=output_filename)
 
-    await wsConnectionManager.sendToPrinter(booking_code, response.json())
+    await wsConnectionManager.sendToPrinter(booking_code, response.model_dump_json())
 
     return response
 

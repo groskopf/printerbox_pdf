@@ -1,83 +1,31 @@
 import base64
-import json
-import os
+from datetime import date
 import uuid
-from datetime import date as date
 from typing import List
 
+
 from details import Details
-from fastapi import APIRouter, HTTPException, status, Security
-from fastapi.security.api_key import APIKey
 from pdf.name_tag_type import NameTagType
 from printer_code import PrinterCode
-from pydantic import BaseModel, parse_raw_as
-from pydantic.json import pydantic_encoder
-from site_paths import bookingsPath
+from fastapi import APIRouter, HTTPException, status, Security
+from fastapi.security.api_key import APIKey
 
+from endpoint.booking import Booking
+from endpoint.booking_calendar import BookingCalendar, calendar
+from endpoint.name_tags_ws import WSConnectionManager
 from endpoint.authentication import AccessScope, authenticate_api_key, authenticate_printer_api_key
-
-defaultBookingFile = bookingsPath + 'bookings.json'
-
-
-class Booking(BaseModel):
-    start_date: date
-    end_date: date
-    printer_code: PrinterCode
-    booking_code: str
-    name_tag_type: NameTagType
-
-
-class Calendar(BaseModel):
-    bookings: List[Booking] = []
-
-    def save(self, filename: str = defaultBookingFile):
-        with open(filename, 'w') as file:
-            file.write(json.dumps(self.bookings, default=pydantic_encoder))
-
-    def load(self, filename: str = defaultBookingFile):
-        if os.path.exists(filename):
-            with open(filename, 'r') as file:
-                rawJson: str = file.read()
-                if rawJson:
-                    self.bookings = parse_raw_as(List[Booking], rawJson)
-
-    def isOverlappingExitingBooking(self, newBooking: Booking):
-        for existingBooking in self.bookings:
-            if existingBooking.printer_code == newBooking.printer_code:
-                if (newBooking.start_date <= existingBooking.end_date) and (existingBooking.start_date <= newBooking.end_date):
-                    return True
-        return False
-
-    def getBooking(self, bookingCode: str):
-        for booking in self.bookings:
-            if booking.booking_code == bookingCode:
-                return booking
-        return None
-
-
-calendar = Calendar()
-calendar.load()
 
 router = APIRouter()
 
-def getPrinterBooking(printer_code: PrinterCode):
-    today = date.today()
-    for booking in calendar.bookings:
-        if booking.printer_code == printer_code:
-            if booking.start_date <= today and today <= booking.end_date:
-                print(f"Booking: {booking}")
-                return booking
-    return None
 
-
-@router.get('/', response_model=List[Booking])
+@router.get('/', response_model=BookingCalendar)
 def get_bookings(api_key: APIKey = Security(authenticate_api_key, scopes=[AccessScope._PRINTER_BOOKING])):
-    return calendar.bookings
+    return calendar
 
 
 @router.get('/printer/{printer_code}', response_model=Booking)
 def get_bookings(printer_code : str, api_key: APIKey = Security(authenticate_printer_api_key, scopes=[AccessScope._PRINTER])):
-    bookingCode = getPrinterBooking(printer_code)
+    bookingCode = calendar.getPrinterBooking(printer_code)
     if bookingCode:
         return bookingCode
 
@@ -92,7 +40,7 @@ def get_bookings(printer_code : str, api_key: APIKey = Security(authenticate_pri
                  status.HTTP_400_BAD_REQUEST: {"model": Details},
                  status.HTTP_409_CONFLICT: {"model": Details}
              })
-def new_booking(start_date: date, end_date: date, printer_code: PrinterCode, name_tag_type: NameTagType,
+async def new_booking(start_date: date, end_date: date, printer_code: PrinterCode, name_tag_type: NameTagType,
                 api_key: APIKey = Security(authenticate_api_key, scopes=[AccessScope._PRINTER_BOOKING])):
     if start_date > end_date:
         raise HTTPException(
@@ -104,12 +52,14 @@ def new_booking(start_date: date, end_date: date, printer_code: PrinterCode, nam
                       booking_code=base64.b32encode(uuid.uuid4().bytes)[
                           0:15].upper(),
                       name_tag_type=name_tag_type)
-    if (not calendar.isOverlappingExitingBooking(booking)):
-        calendar.bookings.append(booking)
-        calendar.save()
-        return booking
-    raise HTTPException(status_code=status.HTTP_409_CONFLICT,
-                        detail="Printer has booking in same period")
+
+    if (calendar.isOverlappingExitingBooking(booking)):
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT,
+                            detail="Printer has booking in same period")
+
+    calendar.append(booking)
+    calendar.save()
+    return booking
 
 
 @router.get('/{booking_code}',
@@ -119,9 +69,9 @@ def new_booking(start_date: date, end_date: date, printer_code: PrinterCode, nam
             })
 def get_booking(booking_code: str,
                 api_key: APIKey = Security(authenticate_api_key, scopes=[AccessScope._PRINTER_BOOKING, AccessScope._CONFERENCE])):
-    for i in range(len(calendar.bookings)):
-        if calendar.bookings[i].booking_code == booking_code:
-            return calendar.bookings[i]
+    for i in range(len(calendar)):
+        if calendar[i].booking_code == booking_code:
+            return calendar[i]
 
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                         detail="Item not found")
@@ -134,14 +84,14 @@ def get_booking(booking_code: str,
             })
 def update_booking(booking_code: str, start_date: date, end_date: date, printer_code: PrinterCode, name_tag_type: NameTagType,
                    api_key: APIKey = Security(authenticate_api_key, scopes=[AccessScope._PRINTER_BOOKING])):
-    for i in range(len(calendar.bookings)):
-        if calendar.bookings[i].booking_code == booking_code:
+    for i in range(len(calendar)):
+        if calendar[i].booking_code == booking_code:
             booking = Booking(start_date=start_date,
                               end_date=end_date,
                               printer_code=printer_code,
                               booking_code=booking_code,
                               name_tag_type=name_tag_type)
-            calendar.bookings[i] = booking
+            calendar[i] = booking
             calendar.save()
             return booking
 
@@ -156,10 +106,11 @@ def update_booking(booking_code: str, start_date: date, end_date: date, printer_
                })
 def delete_booking(booking_code: str,
                    api_key: APIKey = Security(authenticate_api_key, scopes=[AccessScope._PRINTER_BOOKING])):
-    for i in range(len(calendar.bookings)):
-        if calendar.bookings[i].booking_code == booking_code:
-            booking = calendar.bookings[i]
-            del calendar.bookings[i]
+    for i in range(len(calendar)):
+        if calendar[i].booking_code == booking_code:
+            booking = calendar[i]
+            calendar.pop(i)
+            calendar.save()
             return booking
 
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
