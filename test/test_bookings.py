@@ -25,7 +25,7 @@ def deleteBookings():
             '/bookings/' + booking['booking_code'], headers={'access_token': '123admin'})
         assert response.status_code == 200
 
-    calendar.save()
+    calendar.load()
 
 
 def newBooking(startDate: date, endDate: date, printerCode: PrinterCode, nameTagType: NameTagType):

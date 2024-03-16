@@ -110,6 +110,7 @@ def delete_booking(booking_code: str,
         if calendar[i].booking_code == booking_code:
             booking = calendar[i]
             calendar.pop(i)
+            calendar.save()
             return booking
 
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
