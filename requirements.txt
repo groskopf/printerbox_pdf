@@ -2,6 +2,7 @@ aiofiles
 asgiref
 autopep8
 click
+httpx
 fastapi
 h11
 pillow
