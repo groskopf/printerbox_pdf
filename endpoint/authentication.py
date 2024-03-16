@@ -23,7 +23,7 @@ class AccessScope(str, Enum):
 class AccessKey(BaseModel):
     key: str
     scopes: List[AccessScope]
-    printer_code: Optional[PrinterCode]
+    printer_code: Optional[PrinterCode] = None
 
 
 key_database : List[AccessKey] = []
