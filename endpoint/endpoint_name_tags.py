@@ -73,9 +73,8 @@ async def new_name_tag(booking_code: str, layout: Layout, name_data: NameData,
                 status_code=status.HTTP_404_NOT_FOUND, detail="NameTagType not supported")
 
     response = FilePath(filename=output_filename)
-   
-    fileNameMessage = FilenameMessage(response)
-    await wsConnectionManager.sendToPrinter(printer_code, fileNameMessage.json())
+
+    await wsConnectionManager.sendToPrinter(booking_code, response.model_dump_json())
 
     return response
 
