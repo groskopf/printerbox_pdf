@@ -2,11 +2,10 @@ from datetime import date as date
 import uvicorn
 from fastapi import FastAPI
 
-from endpoint import endpoint_bookings, endpoint_images, endpoint_layouts, endpoint_name_tags, endpoint_sheets
+from endpoint import endpoint_bookings, endpoint_images, endpoint_layouts, endpoint_name_tags, endpoint_sheets, config
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
-
 
 origins = [
     "*",   
@@ -30,4 +29,4 @@ app.include_router(endpoint_layouts.router, prefix='/layouts', tags=['layouts'])
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=config.ip_port)
