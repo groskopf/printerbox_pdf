@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class PrinterCode(str, Enum):
+    _ALGCSOIO9O_A = "ALGCSOIO9O_A"
     _1OPYKBGXVN_1 = "1OPYKBGXVN_1"
     _YF1OF5FWZ0_2 = "YF1OF5FWZ0_2"
     _EK4M52IXL5_3 = "EK4M52IXL5_3"
