@@ -22,7 +22,7 @@ def removeOldSheets():
 
 
 def newSheet():
-    image1 = os.path.basename(newImage('./test/images/Kongresartikler.jpg'))
+    image1 = os.path.basename(newImage('./test/images/Kongresartikler.png'))
     image2 = os.path.basename(newImage('./test/images/logo.jpg'))
     body = [
         {
@@ -134,7 +134,7 @@ def test_get_sheets_access_rights():
 
 
 def test_post_sheets_access_rights():
-    image1 = os.path.basename(newImage('./test/images/Kongresartikler.jpg'))
+    image1 = os.path.basename(newImage('./test/images/Kongresartikler.png'))
     image2 = os.path.basename(newImage('./test/images/logo.jpg'))
     body = [
         {
