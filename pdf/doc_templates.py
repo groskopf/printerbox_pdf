@@ -13,6 +13,23 @@ class NameTagDocTemplate(BaseDocTemplate):
                                  **kwargs)
 
 
+class NameTag4760100DocTemplate(NameTagDocTemplate):
+    def __init__(self, filename):
+        pageWidth = 100*mm
+        pageHeight = 60*mm
+        NameTagDocTemplate.__init__(self, filename,
+                                    pagesize=(pageWidth, pageHeight),
+                                    title='Navneskilt 4760100',
+                                    subject="Label navneskilt 60x100mm")
+        pageFrame = Frame(0, 0, pageWidth, pageHeight,
+                          topPadding=2 * mm,
+                          bottomPadding=2 * mm
+                          )
+        template = PageTemplate('normal', [pageFrame])
+        self.addPageTemplates(template)
+
+
+
 class NameTag4786103DocTemplate(NameTagDocTemplate):
     def __init__(self, filename):
         pageWidth = 103*mm

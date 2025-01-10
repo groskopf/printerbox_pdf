@@ -7,12 +7,13 @@ from fastapi.testclient import TestClient
 import pytest
 
 from main import app
+from pdf.name_tag_layouts import getNameTagLayouts
 from site_paths import nameTagsPath
 from endpoint.booking_calendar import calendar
 from pdf.name_tag_type import NameTagType
 from pdf.layouts import Layout
 from printer_code import PrinterCode
-from test.test_bookings import getBookings, newBooking, deleteBookings
+from test.test_bookings import getBookings, newBooking, deleteBooking, deleteBookings
 from test.test_images import deleteAllImages, newImage
 
 client = TestClient(app)
@@ -32,7 +33,7 @@ def deleteAllNameTags():
 
 
 def postNameTag(bookingCode: str):
-    image = os.path.basename(newImage('./test/images/logo.jpg'))
+    image = os.path.basename(newImage('./test/images/Kongresartikler.png'))
     body = {
         "line_1": "string string string string string string string string string",
         "line_2": "string string string string string string string string string",
@@ -58,19 +59,19 @@ def newNameTag(bookingCode: str):
 
 
 def postNameTagWithLayout(bookingCode: str, layout: Layout):
-    image = os.path.basename(newImage('./test/images/logo.jpg'))
+    image = os.path.basename(newImage('./test/images/Kongresartikler.png'))
     body = {
-        "line_1": "Sebastian Line 1",
-        "line_2": "Line 2 Dekoratør",
-        "line_3": "Line 3 FUSK A/S",
-        "line_4": "Line 4 hello hello",
-        "line_5": "Line 5 hello hello",
+        "line_1": "Kolonne 1",
+        "line_2": "Kolonne 2",
+        "line_3": "Kolonne 3",
+        "line_4": "Kolonne 4",
+        "line_5": "Kolonne 5",
         # "line_1": "<font size=\"18\"><b>Sebastian Line 1</b></font>",
         # "line_2": "<font size=\"14\"><i>Line 2 Dekoratør</i></font>",
         # "line_3": "<font size=\"16\"><b>Line 3 FUSK A/S</b></font>",
         # "line_4": "Line 4 hello hello",
         # "line_5": "Line 5 hello hello",
-        "qr_code": "string",
+        "qr_code": "kongresartikler.dk",
         "image_name": image
     }
     response = client.post('/name_tags/' + bookingCode +
@@ -89,38 +90,44 @@ def newNameTagWithLayout(bookingCode: str, layout: Layout):
 
 
 def test_new_name_tag(deleteBookings, deleteAllNameTags):
-    # Today
-    bookingCode = newBooking(date.today(),
-                             date.today(),
-                             PrinterCode._1OPYKBGXVN_1,
-                             NameTagType._4786103)
-
-    # Create a name tag
-    filename = newNameTag(bookingCode)
-
-    # Do file exist locally
-    assert os.path.exists(filename) and os.path.isfile(filename)
-
-    # TODO can we download it?
-
-
-def test_name_tag_all_layouts(deleteBookings, deleteAllNameTags):
-    # Today
-    bookingCode = newBooking(date.today(),
-                             date.today(),
-                             PrinterCode._1OPYKBGXVN_1,
-                             NameTagType._4786103)
-
-    for layout in Layout:
-        if layout == Layout.LAYOUT_INVALID:
-            continue
+    for nameTagType in NameTagType:
+        # Today
+        bookingCode = newBooking(date.today(),
+                                date.today(),
+                                PrinterCode._1OPYKBGXVN_1,
+                                nameTagType)
 
         # Create a name tag
-        filename = newNameTagWithLayout(bookingCode, layout)
+        filename = newNameTag(bookingCode)
 
         # Do file exist locally
         assert os.path.exists(filename) and os.path.isfile(filename)
 
+        # TODO can we download it?
+       
+        deleteBooking(bookingCode)
+
+
+def test_name_tag_all_layouts(deleteBookings, deleteAllNameTags):
+    for nameTagType in NameTagType:
+        # Today
+        bookingCode = newBooking(date.today(),
+                                date.today(),
+                                PrinterCode._1OPYKBGXVN_1,
+                                nameTagType)
+
+        layouts = getNameTagLayouts(nameTagType)
+        for layout in layouts.layouts:
+            if layout == Layout.LAYOUT_INVALID:
+                continue
+
+            # Create a name tag
+            filename = newNameTagWithLayout(bookingCode, layout)
+
+            # Do file exist locally
+            assert os.path.exists(filename) and os.path.isfile(filename)
+
+        deleteBooking(bookingCode)
 
 def test_booking_wrong_dates(deleteBookings, deleteAllNameTags, deleteAllImages):
     # Too early
@@ -266,7 +273,7 @@ def test_wrong_layout_name_tag_sheet(deleteBookings, deleteAllNameTags, deleteAl
         date.today(),
         PrinterCode._8SCNWZUF9M_8,
         NameTagType._4786103)
-    image = os.path.basename(newImage('./test/images/logo.jpg'))
+    image = os.path.basename(newImage('./test/images/Kongresartikler.png'))
     body = {
         "line_1": "string",
         "line_2": "string",
@@ -289,7 +296,7 @@ def test_post_name_tags_access_rights(deleteBookings):
         date.today(),
         PrinterCode._8SCNWZUF9M_8,
         NameTagType._4786103)
-    image = os.path.basename(newImage('./test/images/logo.jpg'))
+    image = os.path.basename(newImage('./test/images/Kongresartikler.png'))
     body = {
         "line_1": "string",
         "line_2": "string",

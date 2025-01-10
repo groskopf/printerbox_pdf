@@ -52,7 +52,8 @@ nameTagLayoutsList: List[NameTagLayouts] = [
 ]
 
 
-def getNameTagLayouts(nameTagType: NameTagType):
-    nameTagLayouts = next(
-        (nameTagLayouts for nameTagLayouts in nameTagLayoutsList if nameTagLayouts.name_tag_type == nameTagType), None)
-    return nameTagLayouts
+def getNameTagLayouts(nameTagType: NameTagType) -> None | NameTagLayouts:
+    for nameTagLayouts in nameTagLayoutsList:
+        if nameTagLayouts.name_tag_type == nameTagType:
+            return nameTagLayouts
+    return None
