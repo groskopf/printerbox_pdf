@@ -1,4 +1,6 @@
 import os
+from PIL import Image
+from PIL.Image import  Dither
 from typing import List
 from uuid import uuid4
 from fastapi import File, UploadFile, APIRouter, status, HTTPException, Security
@@ -36,6 +38,13 @@ async def new_image(image: UploadFile = File(...),
     outputFile = open(outputFilename, "wb")
     outputFile.write(image.file.read())
     outputFile.close()
+    
+    # Convert image to grayscale
+    image = Image.open(outputFilename)
+    new_image = Image.new("RGBA", image.size, "WHITE")  # Make a new image with white background
+    new_image.paste(image, mask=image)                  # Paste the original image on the background.
+    new_image.convert("L").save(outputFilename)         # Convert to grey scale and save
+    
     return FilePath(filename=outputFilename)
 
 @router.get('/{filename}',

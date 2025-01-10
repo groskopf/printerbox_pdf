@@ -59,7 +59,7 @@ def getImages():
 def test_upload_image(deleteAllImages):
 
     newImageList = newImages(
-        ['./test/images/logo.jpg', './test/images/Kongresartikler.jpg'])
+        ['./test/images/logo.jpg', './test/images/Kongresartikler.png'])
 
     imageNames = getImages()
     assert len(newImageList) == len(imageNames)
@@ -71,7 +71,7 @@ def test_upload_image(deleteAllImages):
 
 def test_delete_image(deleteAllImages):
     newImageList = newImages(
-        ['./test/images/logo.jpg', './test/images/Kongresartikler.jpg'])
+        ['./test/images/logo.jpg', './test/images/Kongresartikler.png'])
 
     # Delete images again
     for imageName in newImageList:
