@@ -9,11 +9,12 @@ def create(fileName: str, layout: Layout, nameData: NameData):
 
     leftPadding = 3*mm
     rightPadding = 3*mm
-    topPadding = 2*mm
-    bottomPadding = 2*mm
+    topPadding = 3*mm
+    bottomPadding = 3*mm
+    tape = 4*mm
 
     height = 60*mm - topPadding - bottomPadding
-    width = 100*mm - leftPadding - rightPadding
+    width = 100*mm + tape - leftPadding - rightPadding
 
     doc = NameTag4760100DocTemplate(fileName)
 
