@@ -15,15 +15,15 @@ class NameTagDocTemplate(BaseDocTemplate):
 
 class NameTag4760100DocTemplate(NameTagDocTemplate):
     def __init__(self, filename):
-        pageWidth = 104*mm
+        pageWidth = 100*mm
         pageHeight = 60*mm
         NameTagDocTemplate.__init__(self, filename,
                                     pagesize=(pageWidth, pageHeight),
                                     title='Navneskilt 4760100',
                                     subject="Label navneskilt 60x100mm")
         pageFrame = Frame(0, 0, pageWidth, pageHeight,
-                          topPadding=3 * mm,
-                          bottomPadding=3 * mm
+                          topPadding=2 * mm,
+                          bottomPadding=2 * mm
                           )
         template = PageTemplate('normal', [pageFrame])
         self.addPageTemplates(template)
