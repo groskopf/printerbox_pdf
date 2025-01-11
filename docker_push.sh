@@ -8,7 +8,7 @@ fi
 echo $CR_PAT | docker login ghcr.io -u USERNAME --password-stdin
 
 image=ghcr.io/groskopf/printerbox_pdf
-tag=1.6
+tag=1.7
 
 docker build -t $image:$tag .
 docker push $image:$tag
