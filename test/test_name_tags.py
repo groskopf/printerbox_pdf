@@ -33,7 +33,7 @@ def deleteAllNameTags():
 
 
 def postNameTag(bookingCode: str):
-    image = os.path.basename(newImage('./test/images/Kongresartikler.png'))
+    image = os.path.basename(newImage('./test/images/kongresartikler_men_rgba.png'))
     body = {
         "line_1": "string string string string string string string string string",
         "line_2": "string string string string string string string string string",
@@ -59,7 +59,7 @@ def newNameTag(bookingCode: str):
 
 
 def postNameTagWithLayout(bookingCode: str, layout: Layout):
-    image = os.path.basename(newImage('./test/images/Kongresartikler.png'))
+    image = os.path.basename(newImage('./test/images/kongresartikler_men_rgba.png'))
     body = {
         "line_1": "Kolonne 1",
         "line_2": "Kolonne 2",
@@ -273,7 +273,7 @@ def test_wrong_layout_name_tag_sheet(deleteBookings, deleteAllNameTags, deleteAl
         date.today(),
         PrinterCode._8SCNWZUF9M_8,
         NameTagType._4786103)
-    image = os.path.basename(newImage('./test/images/Kongresartikler.png'))
+    image = os.path.basename(newImage('./test/images/kongresartikler_men_rgba.png'))
     body = {
         "line_1": "string",
         "line_2": "string",
@@ -296,7 +296,7 @@ def test_post_name_tags_access_rights(deleteBookings):
         date.today(),
         PrinterCode._8SCNWZUF9M_8,
         NameTagType._4786103)
-    image = os.path.basename(newImage('./test/images/Kongresartikler.png'))
+    image = os.path.basename(newImage('./test/images/kongresartikler_men_rgba.png'))
     body = {
         "line_1": "string",
         "line_2": "string",

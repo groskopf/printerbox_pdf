@@ -59,7 +59,14 @@ def getImages():
 def test_upload_image(deleteAllImages):
 
     newImageList = newImages(
-        ['./test/images/logo.jpg', './test/images/Kongresartikler.png'])
+        ['./test/images/kongresartikler_men.jpg'
+         , './test/images/kongresartikler_men_gray.png'
+         , './test/images/kongresartikler_men_graya.png'
+         , './test/images/kongresartikler_men_rgb.png'
+         , './test/images/kongresartikler_men_rgba.png'
+         , './test/images/kongresartikler_blue_man.jpg'
+         , './test/images/hands_and_laptop.jpg'
+         ])
 
     imageNames = getImages()
     assert len(newImageList) == len(imageNames)
@@ -71,7 +78,7 @@ def test_upload_image(deleteAllImages):
 
 def test_delete_image(deleteAllImages):
     newImageList = newImages(
-        ['./test/images/logo.jpg', './test/images/Kongresartikler.png'])
+        ['./test/images/kongresartikler_men.jpg', './test/images/kongresartikler_men_rgba.png'])
 
     # Delete images again
     for imageName in newImageList:
@@ -99,7 +106,7 @@ def test_get_images_access_rights(deleteAllImages):
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 def test_post_images_access_right(deleteAllImages):
-    imageName = './test/images/logo.jpg'
+    imageName = './test/images/kongresartikler_men.jpg'
     with open(imageName, "rb") as f:
         response = client.post('/images/',
                                 files={"image": (imageName, f, "image/jpeg")},
@@ -120,7 +127,7 @@ def test_post_images_access_right(deleteAllImages):
 
 
 def test_get_image_access_right(deleteAllImages):
-    imageName = newImage('./test/images/logo.jpg')
+    imageName = newImage('./test/images/kongresartikler_men.jpg')
 
     response = client.get(imageName, headers={'access_token': '123admin'})
     assert response.status_code == status.HTTP_200_OK
@@ -134,7 +141,7 @@ def test_get_image_access_right(deleteAllImages):
         
 
 def test_delete_image_access_right(deleteAllImages):
-    imageName = newImage('./test/images/logo.jpg')
+    imageName = newImage('./test/images/kongresartikler_men.jpg')
 
     response = client.delete(imageName, headers={'access_token': 'printer_p'})
     assert response.status_code == status.HTTP_403_FORBIDDEN
@@ -143,7 +150,7 @@ def test_delete_image_access_right(deleteAllImages):
     response = client.delete(imageName, headers={'access_token': '123admin'})
     assert response.status_code == status.HTTP_200_OK
     
-    imageName = newImage('./test/images/logo.jpg')
+    imageName = newImage('./test/images/kongresartikler_men.jpg')
     
     response = client.delete(imageName, headers={'access_token': '789conference'})
     assert response.status_code == status.HTTP_200_OK

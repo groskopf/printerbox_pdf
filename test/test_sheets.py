@@ -22,8 +22,8 @@ def removeOldSheets():
 
 
 def newSheet():
-    image1 = os.path.basename(newImage('./test/images/Kongresartikler.png'))
-    image2 = os.path.basename(newImage('./test/images/logo.jpg'))
+    image1 = os.path.basename(newImage('./test/images/kongresartikler_men_rgba.png'))
+    image2 = os.path.basename(newImage('./test/images/kongresartikler_men.jpg'))
     body = [
         {
             "line_1": "string",
@@ -95,7 +95,7 @@ def test_delete_sheet():
 
 
 def test_wrong_layout_sheet(removeOldSheets):
-    image = os.path.basename(newImage('./test/images/logo.jpg'))
+    image = os.path.basename(newImage('./test/images/kongresartikler_men.jpg'))
     body = [
         {
             "line_1": "string",
@@ -134,8 +134,8 @@ def test_get_sheets_access_rights():
 
 
 def test_post_sheets_access_rights():
-    image1 = os.path.basename(newImage('./test/images/Kongresartikler.png'))
-    image2 = os.path.basename(newImage('./test/images/logo.jpg'))
+    image1 = os.path.basename(newImage('./test/images/kongresartikler_men_rgba.png'))
+    image2 = os.path.basename(newImage('./test/images/kongresartikler_men.jpg'))
     body = [
         {
             "line_1": "string",
