@@ -21,6 +21,21 @@ from endpoint.name_tags_ws import getFilesInPrinterQueue, deleteFilesInPrinterQu
 from endpoint.authentication import AccessScope, authenticate_api_key
 from name_data import NameData
 
+def setDefaultNameData(nameData: NameData):
+    if nameData.image_name is None:
+        nameData.image_name = ""
+    if nameData.qr_code is None:
+        nameData.qr_code = ""
+    if nameData.line_1 is None:
+        nameData.line_1 = ""
+    if nameData.line_2 is None:
+        nameData.line_2 = ""
+    if nameData.line_3 is None:
+        nameData.line_3 = ""
+    if nameData.line_4 is None:
+        nameData.line_4 = ""
+    if nameData.line_5 is None:
+        nameData.line_5 = ""
 
 def checkImageFileExist(nameData: NameData):
     imageName = nameData.image_name
@@ -66,6 +81,8 @@ async def new_name_tag(booking_code: str, layout: Layout, name_data: NameData,
     if not os.path.exists(outputPath):
         os.makedirs(outputPath)
 
+    setDefaultNameData(name_data)
+    
     match nametag_type:
         case NameTagType._4786103:
             name_tag_4786103.create(output_filename, layout, name_data)
