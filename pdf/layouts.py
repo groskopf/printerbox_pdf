@@ -29,6 +29,16 @@ class Layout(str, Enum):
     LAYOUT_2PTR = "layout_2PTR"
     LAYOUT_2PBL = "layout_2PBL"
     LAYOUT_2PBR = "layout_2PBR"
+    LAYOUT_2QT = "layout_2QT"
+    LAYOUT_2QB = "layout_2QB"
+    LAYOUT_2QTL = "layout_2QTL"
+    LAYOUT_2QTR = "layout_2QTR"
+    LAYOUT_2QBL = "layout_2QBL"
+    LAYOUT_2QBR = "layout_2QBR"
+    LAYOUT_2PTLQ = "layout_2PTLQ"
+    LAYOUT_2PTRQ = "layout_2PTRQ"
+    LAYOUT_2PBLQ = "layout_2PBLQ"
+    LAYOUT_2PBRQ = "layout_2PBRQ"
     LAYOUT_3 = "layout_3"
     LAYOUT_3PT = "layout_3PT"
     LAYOUT_3PB = "layout_3PB"
@@ -36,6 +46,16 @@ class Layout(str, Enum):
     LAYOUT_3PTR = "layout_3PTR"
     LAYOUT_3PBL = "layout_3PBL"
     LAYOUT_3PBR = "layout_3PBR"
+    LAYOUT_3PTLQ = "layout_3PTLQ"
+    LAYOUT_3PTRQ = "layout_3PTRQ"
+    LAYOUT_3PBLQ = "layout_3PBLQ"
+    LAYOUT_3PBRQ = "layout_3PBRQ"
+    LAYOUT_3QT = "layout_3QT"
+    LAYOUT_3QB = "layout_3QB"
+    LAYOUT_3QTL = "layout_3QTL"
+    LAYOUT_3QTR = "layout_3QTR"
+    LAYOUT_3QBL = "layout_3QBL"
+    LAYOUT_3QBR = "layout_3QBR"
     LAYOUT_INVALID = "invalid"
 
 
@@ -88,8 +108,6 @@ class ImageAndParagraphTable(Table):
         if imageName and len(imageName):
             image = Image('images/' + imageName)
             image._restrictSize(height, height)
-        elif qrCode and len(qrCode):
-            image = QRCodeImage(qrCode, height)
         else:
             image = ""
 
@@ -109,6 +127,58 @@ class ImageAndParagraphTable(Table):
 
         self.setStyle(NoPaddingTableStyle())
 
+class QRAndParagraphTable(Table):
+    def __init__(self, width, height, text, nameData: NameData, justify: Justify):
+        qrCode = nameData.qr_code
+        if qrCode and len(qrCode):
+            qr_image = QRCodeImage(qrCode, height)
+        else:
+            qr_image = ""
+
+        paragraph = Paragraph(text, companyStyle)
+
+        if justify == Justify.Left:
+            cellContent = [[qr_image, paragraph]]
+            cellWidths = [height, width - height]
+        else:
+            cellContent = [[paragraph, qr_image]]
+            cellWidths = [width - height, height]
+
+        # Image is squared and the rest of the width is for text paragraph
+        cellHeights = [height]
+
+        Table.__init__(self, cellContent, cellWidths, cellHeights)
+
+        self.setStyle(NoPaddingTableStyle())
+
+class ImageAndQRTable(Table):
+    def __init__(self, width, height, nameData: NameData, justify: Justify):
+        imageName = nameData.image_name
+        qrCode = nameData.qr_code
+        if imageName and len(imageName):
+            image = Image('images/' + imageName)
+            image._restrictSize(width - height, height)
+        else:
+            image = ""
+        
+        if qrCode and len(qrCode):
+            qr_image = QRCodeImage(qrCode, height)
+        else:
+            qr_image = ""
+
+        if justify == Justify.Left:
+            cellContent = [[image, qr_image]]
+            cellWidths = [width - height, height]
+        else:
+            cellContent = [[qr_image, image]]
+            cellWidths = [height, width - height]
+
+        # QR COde Image is squared and the rest of the width is for the Image
+        cellHeights = [height]
+
+        Table.__init__(self, cellContent, cellWidths, cellHeights)
+
+        self.setStyle(NoPaddingTableStyle())
 
 class NameTagLayout1Table(UpsideDownTable):
     def __init__(self, width: float, height: float, nameData: NameData):
@@ -181,6 +251,25 @@ class NameTagLayout2PTTable(UpsideDownTable):
         NameTagLayout2BaseTable.__init__(self, width, lineHeights, lines)
 
 
+class NameTagLayout2QTTable(UpsideDownTable):
+    def __init__(self, width: float, height: float, nameData: NameData):
+
+        lineHeights = [height*(1/3), height*(2/3)]
+
+        qrCode = nameData.qr_code
+        image = QRCodeImage(qrCode, lineHeights[0])
+
+        lines = []
+        lines.append([image])
+        lines.append([Paragraph(nameData.line_1, nameStyle),
+                      Paragraph(nameData.line_2, titleStyle),
+                      Paragraph(nameData.line_3, companyStyle),
+                      Paragraph(nameData.line_4, smallCompanyStyle),
+                      Paragraph(nameData.line_5, smallCompanyStyle)
+                      ])
+
+        NameTagLayout2BaseTable.__init__(self, width, lineHeights, lines)
+
 class NameTagLayout2PBTable(UpsideDownTable):
     def __init__(self, width: float, height: float, nameData: NameData):
 
@@ -200,19 +289,78 @@ class NameTagLayout2PBTable(UpsideDownTable):
 
         NameTagLayout2BaseTable.__init__(self, width, lineHeights, lines)
 
+class NameTagLayout2QBTable(UpsideDownTable):
+    def __init__(self, width: float, height: float, nameData: NameData):
 
-class NameTagLayout3BaseTable(UpsideDownTable):
-    def __init__(self, width, lineHeights, lines):
-        linesContent = [[KeepInFrame(width, lineHeights[0], lines[0])],
-                        [KeepInFrame(width, lineHeights[1], lines[1])],
-                        [KeepInFrame(width, lineHeights[2], lines[2])]]
+        lineHeights = [height*(2/3), height*(1/3)]
 
-        lineWidths = [width]
+        qrCode = nameData.qr_code
+        image = QRCodeImage(qrCode, lineHeights[0])
 
-        UpsideDownTable.__init__(self, linesContent, lineWidths, lineHeights)
+        lines = []
+        lines.append([Paragraph(nameData.line_1, nameStyle),
+                      Paragraph(nameData.line_2, titleStyle),
+                      Paragraph(nameData.line_3, companyStyle),
+                      Paragraph(nameData.line_4, smallCompanyStyle),
+                      Paragraph(nameData.line_5, smallCompanyStyle)
+                      ])
+        lines.append([image])
 
-    def wrap(self, availWidth, availHeight):
-        return Table.wrap(self, availWidth, availHeight)
+        NameTagLayout2BaseTable.__init__(self, width, lineHeights, lines)
+
+
+class NameTagLayout2PTLTable(NameTagLayout2BaseTable):
+    def __init__(self, width: float, height: float, nameData: NameData):
+
+        lineHeights = [height*(1/3), height*(2/3)]
+
+        lines = []
+        lines.append([ImageAndParagraphTable(width, lineHeights[0],
+                                             nameData.line_3, nameData,
+                                             Justify.Left)])
+        lines.append([Paragraph(nameData.line_1, nameStyle),
+                      Paragraph(nameData.line_2, titleStyle),
+                      Paragraph(nameData.line_3, companyStyle),
+                      Paragraph(nameData.line_4, smallCompanyStyle),
+                      Paragraph(nameData.line_5, smallCompanyStyle)
+                      ])
+
+        NameTagLayout2BaseTable.__init__(self, width, lineHeights, lines)
+
+class NameTagLayout2PTLQTable(NameTagLayout2BaseTable):
+    def __init__(self, width: float, height: float, nameData: NameData):
+
+        lineHeights = [height*(1/3), height*(2/3)]
+
+        lines = []
+        lines.append([ImageAndQRTable(width, lineHeights[0],
+                                             nameData,
+                                             Justify.Left)])
+        lines.append([Paragraph(nameData.line_1, nameStyle),
+                      Paragraph(nameData.line_2, titleStyle),
+                      Paragraph(nameData.line_3, companyStyle),
+                      Paragraph(nameData.line_4, smallCompanyStyle),
+                      Paragraph(nameData.line_5, smallCompanyStyle)
+                      ])
+
+        NameTagLayout2BaseTable.__init__(self, width, lineHeights, lines)
+
+class NameTagLayout2PTRTable(NameTagLayout2BaseTable):
+    def __init__(self, width: float, height: float, nameData: NameData):
+
+        lineHeights = [height*(1/3), height*(2/3)]
+
+        lines = []
+        lines.append([ImageAndParagraphTable(width, lineHeights[0],
+                                             nameData.line_3, nameData,
+                                             Justify.Right)])
+        lines.append([Paragraph(nameData.line_1, nameStyle),
+                      Paragraph(nameData.line_2, titleStyle),
+                      Paragraph(nameData.line_4, smallCompanyStyle),
+                      Paragraph(nameData.line_5, smallCompanyStyle)
+                      ])
+
+        NameTagLayout2BaseTable.__init__(self, width, lineHeights, lines)
 
 
 class NameTagLayout2PBLTable(NameTagLayout2BaseTable):
@@ -251,13 +399,13 @@ class NameTagLayout2PBRTable(NameTagLayout2BaseTable):
         NameTagLayout2BaseTable.__init__(self, width, lineHeights, lines)
 
 
-class NameTagLayout2PTLTable(NameTagLayout2BaseTable):
+class NameTagLayout2QTLTable(NameTagLayout2BaseTable):
     def __init__(self, width: float, height: float, nameData: NameData):
 
         lineHeights = [height*(1/3), height*(2/3)]
 
         lines = []
-        lines.append([ImageAndParagraphTable(width, lineHeights[0],
+        lines.append([QRAndParagraphTable(width, lineHeights[0],
                                              nameData.line_3, nameData,
                                              Justify.Left)])
         lines.append([Paragraph(nameData.line_1, nameStyle),
@@ -265,19 +413,17 @@ class NameTagLayout2PTLTable(NameTagLayout2BaseTable):
                       Paragraph(nameData.line_4, smallCompanyStyle),
                       Paragraph(nameData.line_5, smallCompanyStyle)
                       ])
-        lines.append([Paragraph(nameData.line_1, nameStyle),
-                     Paragraph(nameData.line_2, titleStyle)])
 
         NameTagLayout2BaseTable.__init__(self, width, lineHeights, lines)
 
 
-class NameTagLayout2PTRTable(NameTagLayout2BaseTable):
+class NameTagLayout2QTRTable(NameTagLayout2BaseTable):
     def __init__(self, width: float, height: float, nameData: NameData):
 
         lineHeights = [height*(1/3), height*(2/3)]
 
         lines = []
-        lines.append([ImageAndParagraphTable(width, lineHeights[0],
+        lines.append([QRAndParagraphTable(width, lineHeights[0],
                                              nameData.line_3, nameData,
                                              Justify.Right)])
         lines.append([Paragraph(nameData.line_1, nameStyle),
@@ -287,6 +433,132 @@ class NameTagLayout2PTRTable(NameTagLayout2BaseTable):
                       ])
 
         NameTagLayout2BaseTable.__init__(self, width, lineHeights, lines)
+
+
+class NameTagLayout2QBLTable(NameTagLayout2BaseTable):
+    def __init__(self, width: float, height: float, nameData: NameData):
+
+        lineHeights = [height*(2/3), height*(1/3)]
+
+        lines = []
+        lines.append([Paragraph(nameData.line_1, nameStyle),
+                      Paragraph(nameData.line_2, titleStyle),
+                      Paragraph(nameData.line_4, smallCompanyStyle),
+                      Paragraph(nameData.line_5, smallCompanyStyle)
+                      ])
+        lines.append([QRAndParagraphTable(width, lineHeights[1],
+                                             nameData.line_3, nameData,
+                                             Justify.Left)])
+
+        NameTagLayout2BaseTable.__init__(self, width, lineHeights, lines)
+
+
+class NameTagLayout2QBRTable(NameTagLayout2BaseTable):
+    def __init__(self, width: float, height: float, nameData: NameData):
+
+        lineHeights = [height*(2/3), height*(1/3)]
+
+        lines = []
+        lines.append([Paragraph(nameData.line_1, nameStyle),
+                      Paragraph(nameData.line_2, titleStyle),
+                      Paragraph(nameData.line_4, smallCompanyStyle),
+                      Paragraph(nameData.line_5, smallCompanyStyle)
+                      ])
+        lines.append([QRAndParagraphTable(width, lineHeights[1],
+                                             nameData.line_3, nameData,
+                                             Justify.Right)])
+
+        NameTagLayout2BaseTable.__init__(self, width, lineHeights, lines)
+
+
+class NameTagLayout2PTLQTable(NameTagLayout2BaseTable):
+    def __init__(self, width: float, height: float, nameData: NameData):
+
+        lineHeights = [height*(1/3), height*(2/3)]
+
+        lines = []
+        lines.append([ImageAndQRTable(width, lineHeights[0],
+                                             nameData,
+                                             Justify.Left)])
+        lines.append([Paragraph(nameData.line_1, nameStyle),
+                      Paragraph(nameData.line_2, titleStyle),
+                      Paragraph(nameData.line_3, companyStyle),
+                      Paragraph(nameData.line_4, smallCompanyStyle),
+                      Paragraph(nameData.line_5, smallCompanyStyle)
+                      ])
+        
+        NameTagLayout2BaseTable.__init__(self, width, lineHeights, lines)
+
+
+class NameTagLayout2PTRQTable(NameTagLayout2BaseTable):
+    def __init__(self, width: float, height: float, nameData: NameData):
+
+        lineHeights = [height*(1/3), height*(2/3)]
+
+        lines = []
+        lines.append([ImageAndQRTable(width, lineHeights[0],
+                                             nameData,
+                                             Justify.Right)])
+        lines.append([Paragraph(nameData.line_1, nameStyle),
+                      Paragraph(nameData.line_2, titleStyle),
+                      Paragraph(nameData.line_3, companyStyle),
+                      Paragraph(nameData.line_4, smallCompanyStyle),
+                      Paragraph(nameData.line_5, smallCompanyStyle)
+                      ])
+        
+        NameTagLayout2BaseTable.__init__(self, width, lineHeights, lines)
+
+
+class NameTagLayout2PBLQTable(NameTagLayout2BaseTable):
+    def __init__(self, width: float, height: float, nameData: NameData):
+
+        lineHeights = [height*(2/3), height*(1/3)]
+
+        lines = []
+        lines.append([Paragraph(nameData.line_1, nameStyle),
+                      Paragraph(nameData.line_2, titleStyle),
+                      Paragraph(nameData.line_3, companyStyle),
+                      Paragraph(nameData.line_4, smallCompanyStyle),
+                      Paragraph(nameData.line_5, smallCompanyStyle)
+                      ])
+        lines.append([ImageAndQRTable(width, lineHeights[1],
+                                             nameData,
+                                             Justify.Left)])
+        
+        NameTagLayout2BaseTable.__init__(self, width, lineHeights, lines)
+
+
+class NameTagLayout2PBRQTable(NameTagLayout2BaseTable):
+    def __init__(self, width: float, height: float, nameData: NameData):
+
+        lineHeights = [height*(2/3), height*(1/3)]
+
+        lines = []
+        lines.append([Paragraph(nameData.line_1, nameStyle),
+                      Paragraph(nameData.line_2, titleStyle),
+                      Paragraph(nameData.line_3, companyStyle),
+                      Paragraph(nameData.line_4, smallCompanyStyle),
+                      Paragraph(nameData.line_5, smallCompanyStyle)
+                      ])
+        lines.append([ImageAndQRTable(width, lineHeights[1],
+                                             nameData,
+                                             Justify.Right)])
+
+        NameTagLayout2BaseTable.__init__(self, width, lineHeights, lines)
+
+
+class NameTagLayout3BaseTable(UpsideDownTable):
+    def __init__(self, width, lineHeights, lines):
+        linesContent = [[KeepInFrame(width, lineHeights[0], lines[0])],
+                        [KeepInFrame(width, lineHeights[1], lines[1])],
+                        [KeepInFrame(width, lineHeights[2], lines[2])]]
+
+        lineWidths = [width]
+
+        UpsideDownTable.__init__(self, linesContent, lineWidths, lineHeights)
+
+    def wrap(self, availWidth, availHeight):
+        return Table.wrap(self, availWidth, availHeight)
 
 
 class NameTagLayout3Table(NameTagLayout3BaseTable):
@@ -417,6 +689,214 @@ class NameTagLayout3PBRTable(NameTagLayout3BaseTable):
         NameTagLayout3BaseTable.__init__(self, width, lineHeights, lines)
 
 
+class NameTagLayout3PTLQTable(NameTagLayout3BaseTable):
+    def __init__(self, width: float, height: float, nameData: NameData):
+
+        lineHeights = [height*(1/4), height*(2/4), height*(1/4)]
+
+        lines = []
+        lines.append([ImageAndQRTable(width, lineHeights[2],
+                                             nameData,
+                                             Justify.Left)])
+        lines.append([Paragraph(nameData.line_1, nameStyle),
+                      Paragraph(nameData.line_2, titleStyle),
+                      Paragraph(nameData.line_4, smallCompanyStyle),
+                      Paragraph(nameData.line_5, smallCompanyStyle)
+                      ])
+        lines.append([Paragraph(nameData.line_3, companyStyle)])
+
+        NameTagLayout3BaseTable.__init__(self, width, lineHeights, lines)
+
+
+class NameTagLayout3PTRQTable(NameTagLayout3BaseTable):
+    def __init__(self, width: float, height: float, nameData: NameData):
+
+        lineHeights = [height*(1/4), height*(2/4), height*(1/4)]
+
+        lines = []
+        lines.append([ImageAndQRTable(width, lineHeights[2],
+                                             nameData,
+                                             Justify.Right)])
+        lines.append([Paragraph(nameData.line_1, nameStyle),
+                      Paragraph(nameData.line_2, titleStyle),
+                      Paragraph(nameData.line_4, smallCompanyStyle),
+                      Paragraph(nameData.line_5, smallCompanyStyle)
+                      ])
+        lines.append([Paragraph(nameData.line_3, companyStyle)])
+
+        NameTagLayout3BaseTable.__init__(self, width, lineHeights, lines)
+
+
+class NameTagLayout3PBLQTable(NameTagLayout3BaseTable):
+    def __init__(self, width: float, height: float, nameData: NameData):
+
+        lineHeights = [height*(2/4), height*(1/4), height*(1/4)]
+
+        lines = []
+        lines.append([Paragraph(nameData.line_1, nameStyle),
+                      Paragraph(nameData.line_2, titleStyle),
+                      Paragraph(nameData.line_4, smallCompanyStyle),
+                      Paragraph(nameData.line_5, smallCompanyStyle)
+                      ])
+        lines.append([Paragraph(nameData.line_3, companyStyle)])
+        lines.append([ImageAndQRTable(width, lineHeights[2],
+                                             nameData,
+                                             Justify.Left)])
+
+        NameTagLayout3BaseTable.__init__(self, width, lineHeights, lines)
+
+
+class NameTagLayout3PBRQTable(NameTagLayout3BaseTable):
+    def __init__(self, width: float, height: float, nameData: NameData):
+
+        lineHeights = [height*(2/4), height*(1/4), height*(1/4)]
+
+        lines = []
+        lines.append([Paragraph(nameData.line_1, nameStyle),
+                      Paragraph(nameData.line_2, titleStyle),
+                      Paragraph(nameData.line_4, smallCompanyStyle),
+                      Paragraph(nameData.line_5, smallCompanyStyle)
+                      ])
+        lines.append([Paragraph(nameData.line_3, companyStyle)])
+        lines.append([ImageAndQRTable(width, lineHeights[2],
+                                             nameData,
+                                             Justify.Right)])
+
+        NameTagLayout3BaseTable.__init__(self, width, lineHeights, lines)
+
+
+class NameTagLayout3QTTable(NameTagLayout3BaseTable):
+    def __init__(self, width: float, height: float, nameData: NameData):
+
+        lineHeights = [height*(1/4), height*(2/4), height*(1/4)]
+
+        image = Image('images/' + nameData.image_name)
+        image._restrictSize(width, lineHeights[2])
+
+        lines = []
+        lines.append([image])
+        lines.append([Paragraph(nameData.line_1, nameStyle),
+                      Paragraph(nameData.line_2, titleStyle),
+                      Paragraph(nameData.line_4, smallCompanyStyle),
+                      Paragraph(nameData.line_5, smallCompanyStyle)
+                      ])
+        lines.append([Paragraph(nameData.line_3, companyStyle)])
+
+        NameTagLayout3BaseTable.__init__(self, width, lineHeights, lines)
+
+
+class NameTagLayout3QTTable(NameTagLayout3BaseTable):
+    def __init__(self, width: float, height: float, nameData: NameData):
+
+        lineHeights = [height*(1/4), height*(2/4), height*(1/4)]
+
+        qrCode = nameData.qr_code
+        image = QRCodeImage(qrCode, lineHeights[0])
+
+        lines = []
+        lines.append([image])
+        lines.append([Paragraph(nameData.line_1, nameStyle),
+                      Paragraph(nameData.line_2, titleStyle),
+                      Paragraph(nameData.line_4, smallCompanyStyle),
+                      Paragraph(nameData.line_5, smallCompanyStyle)
+                      ])
+        lines.append([Paragraph(nameData.line_3, companyStyle)])
+
+        NameTagLayout3BaseTable.__init__(self, width, lineHeights, lines)
+
+
+class NameTagLayout3QBTable(NameTagLayout3BaseTable):
+    def __init__(self, width: float, height: float, nameData: NameData):
+
+        lineHeights = [height*(2/4), height*(1/4), height*(1/4)]
+
+        qrCode = nameData.qr_code
+        image = QRCodeImage(qrCode, lineHeights[0])
+
+        lines = []
+        lines.append([Paragraph(nameData.line_1, nameStyle),
+                      Paragraph(nameData.line_2, titleStyle),
+                      Paragraph(nameData.line_4, smallCompanyStyle),
+                      Paragraph(nameData.line_5, smallCompanyStyle)
+                      ])
+        lines.append([Paragraph(nameData.line_3, companyStyle)])
+        lines.append([image])
+
+        NameTagLayout3BaseTable.__init__(self, width, lineHeights, lines)
+
+
+class NameTagLayout3QTLTable(NameTagLayout3BaseTable):
+    def __init__(self, width: float, height: float, nameData: NameData):
+
+        lineHeights = [height*(1/4), height*(2/4), height*(1/4)]
+
+        lines = []
+        lines.append([QRAndParagraphTable(width, lineHeights[2],
+                                             nameData.line_4, nameData,
+                                             Justify.Left)])
+        lines.append([Paragraph(nameData.line_1, nameStyle),
+                      Paragraph(nameData.line_2, titleStyle),
+                      Paragraph(nameData.line_5, smallCompanyStyle)
+                      ])
+        lines.append([Paragraph(nameData.line_3, companyStyle)])
+
+        NameTagLayout3BaseTable.__init__(self, width, lineHeights, lines)
+
+
+class NameTagLayout3QTRTable(NameTagLayout3BaseTable):
+    def __init__(self, width: float, height: float, nameData: NameData):
+
+        lineHeights = [height*(1/4), height*(2/4), height*(1/4)]
+
+        lines = []
+        lines.append([QRAndParagraphTable(width, lineHeights[2],
+                                             nameData.line_4, nameData,
+                                             Justify.Right)])
+        lines.append([Paragraph(nameData.line_1, nameStyle),
+                      Paragraph(nameData.line_2, titleStyle),
+                      Paragraph(nameData.line_5, smallCompanyStyle)
+                      ])
+        lines.append([Paragraph(nameData.line_3, companyStyle)])
+
+        NameTagLayout3BaseTable.__init__(self, width, lineHeights, lines)
+
+
+class NameTagLayout3QBLTable(NameTagLayout3BaseTable):
+    def __init__(self, width: float, height: float, nameData: NameData):
+
+        lineHeights = [height*(2/4), height*(1/4), height*(1/4)]
+
+        lines = []
+        lines.append([Paragraph(nameData.line_1, nameStyle),
+                      Paragraph(nameData.line_2, titleStyle),
+                      Paragraph(nameData.line_5, smallCompanyStyle)
+                      ])
+        lines.append([Paragraph(nameData.line_3, companyStyle)])
+        lines.append([QRAndParagraphTable(width, lineHeights[2],
+                                             nameData.line_4, nameData,
+                                             Justify.Left)])
+
+        NameTagLayout3BaseTable.__init__(self, width, lineHeights, lines)
+
+
+class NameTagLayout3QBRTable(NameTagLayout3BaseTable):
+    def __init__(self, width: float, height: float, nameData: NameData):
+
+        lineHeights = [height*(2/4), height*(1/4), height*(1/4)]
+
+        lines = []
+        lines.append([Paragraph(nameData.line_1, nameStyle),
+                      Paragraph(nameData.line_2, titleStyle),
+                      Paragraph(nameData.line_5, smallCompanyStyle)
+                      ])
+        lines.append([Paragraph(nameData.line_3, companyStyle)])
+        lines.append([QRAndParagraphTable(width, lineHeights[2],
+                                             nameData.line_4, nameData,
+                                             Justify.Right)])
+
+        NameTagLayout3BaseTable.__init__(self, width, lineHeights, lines)
+
+
 def createNameTag(layout: Layout, width: float, height: float, nameData: NameData):
     match layout:
         case Layout.LAYOUT_1:
@@ -425,8 +905,12 @@ def createNameTag(layout: Layout, width: float, height: float, nameData: NameDat
             return NameTagLayout2Table(width, height, nameData)
         case Layout.LAYOUT_2PT:
             return NameTagLayout2PTTable(width, height, nameData)
+        case Layout.LAYOUT_2QT:
+            return NameTagLayout2QTTable(width, height, nameData)
         case Layout.LAYOUT_2PB:
             return NameTagLayout2PBTable(width, height, nameData)
+        case Layout.LAYOUT_2QB:
+            return NameTagLayout2QBTable(width, height, nameData)
         case Layout.LAYOUT_2:
             return NameTagLayout2Table(width, height, nameData)
         case Layout.LAYOUT_2PT:
@@ -441,6 +925,22 @@ def createNameTag(layout: Layout, width: float, height: float, nameData: NameDat
             return NameTagLayout2PBLTable(width, height, nameData)
         case Layout.LAYOUT_2PBR:
             return NameTagLayout2PBRTable(width, height, nameData)
+        case Layout.LAYOUT_2QTL:
+            return NameTagLayout2QTLTable(width, height, nameData)
+        case Layout.LAYOUT_2QTR:
+            return NameTagLayout2QTRTable(width, height, nameData)
+        case Layout.LAYOUT_2QBL:
+            return NameTagLayout2QBLTable(width, height, nameData)
+        case Layout.LAYOUT_2QBR:
+            return NameTagLayout2QBRTable(width, height, nameData)
+        case Layout.LAYOUT_2PTLQ:
+            return NameTagLayout2PTLQTable(width, height, nameData)
+        case Layout.LAYOUT_2PTRQ:
+            return NameTagLayout2PTRQTable(width, height, nameData)
+        case Layout.LAYOUT_2PBLQ:
+            return NameTagLayout2PBLQTable(width, height, nameData)
+        case Layout.LAYOUT_2PBRQ:
+            return NameTagLayout2PBRQTable(width, height, nameData)
         case Layout.LAYOUT_3:
             return NameTagLayout3Table(width, height, nameData)
         case Layout.LAYOUT_3PT:
@@ -455,6 +955,26 @@ def createNameTag(layout: Layout, width: float, height: float, nameData: NameDat
             return NameTagLayout3PBRTable(width, height, nameData)
         case Layout.LAYOUT_3PBL:
             return NameTagLayout3PBLTable(width, height, nameData)
+        case Layout.LAYOUT_3PTRQ:
+            return NameTagLayout3PTRQTable(width, height, nameData)
+        case Layout.LAYOUT_3PTLQ:
+            return NameTagLayout3PTLQTable(width, height, nameData)
+        case Layout.LAYOUT_3PBRQ:
+            return NameTagLayout3PBRQTable(width, height, nameData)
+        case Layout.LAYOUT_3PBLQ:
+            return NameTagLayout3PBLQTable(width, height, nameData)
+        case Layout.LAYOUT_3QT:
+            return NameTagLayout3QTTable(width, height, nameData)
+        case Layout.LAYOUT_3QB:
+            return NameTagLayout3QBTable(width, height, nameData)
+        case Layout.LAYOUT_3QTR:
+            return NameTagLayout3QTRTable(width, height, nameData)
+        case Layout.LAYOUT_3QTL:
+            return NameTagLayout3QTLTable(width, height, nameData)
+        case Layout.LAYOUT_3QBR:
+            return NameTagLayout3QBRTable(width, height, nameData)
+        case Layout.LAYOUT_3QBL:
+            return NameTagLayout3QBLTable(width, height, nameData)
 
 
 class SheetTable(Table):

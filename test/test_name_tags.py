@@ -110,10 +110,8 @@ def test_new_name_tag(deleteBookings, deleteAllNameTags):
 
 
 def test_name_tag_all_layouts(deleteBookings, deleteAllNameTags):
-    image = os.path.basename(newImage('./test/images/kongresartikler_blue_man.jpg'))
     body = {
-        "qr_code": "kongresartikler.dk",
-        "image_name": image
+        "qr_code": "kongresartikler.dk"
     }
 
     for kolonne in range(1, 6):
@@ -130,6 +128,49 @@ def test_name_tag_all_layouts(deleteBookings, deleteAllNameTags):
             for layout in layouts.layouts:
                 if layout == Layout.LAYOUT_INVALID:
                     continue
+                
+                image : str =""
+                if layout in (Layout.LAYOUT_2PB, 
+                              Layout.LAYOUT_2PT, 
+                              Layout.LAYOUT_2PTLQ, 
+                              Layout.LAYOUT_2PTRQ, 
+                              Layout.LAYOUT_2PBLQ, 
+                              Layout.LAYOUT_2PBRQ, 
+                              Layout.LAYOUT_3PTLQ, 
+                              Layout.LAYOUT_3PTRQ, 
+                              Layout.LAYOUT_3PBLQ, 
+                              Layout.LAYOUT_3PBRQ, 
+                              Layout.LAYOUT_3PB, 
+                              Layout.LAYOUT_3PT):
+                    image = os.path.basename(newImage('./test/images/big.jpg'))
+                else:
+                    image = os.path.basename(newImage('./test/images/small.jpg'))
+                    
+                body["image_name"] = image
+
+                # Create a name tag
+                filename = newNameTagWithLayout(bookingCode, layout, body)
+
+                # Do file exist locally
+                assert os.path.exists(filename) and os.path.isfile(filename)
+
+            deleteBooking(bookingCode)
+
+def test_name_tag_vcard(deleteBookings, deleteAllNameTags):
+    body = {
+        "qr_code": "BEGIN:VCARD\nVERSION:3.0\nN:Groskopf;A. D. Valdal\nORG:Kongresartikler.dk\nTITLE:CEO\nEMAIL:info@kongresartiler.dk\nTEL:+4543623210\nURL:www.kongresartikler.dk\nEND:VCARD"
+    }
+
+    for kolonne in range(1, 6):
+        body[f"line_{kolonne}"] = f"Kolonne {kolonne}"
+
+        for nameTagType in NameTagType:
+            # Today
+            bookingCode = newBooking(date.today(),
+                                    date.today(),
+                                    PrinterCode._1OPYKBGXVN_1,
+                                    nameTagType)
+            for layout in (Layout.LAYOUT_2QT,):
 
                 # Create a name tag
                 filename = newNameTagWithLayout(bookingCode, layout, body)
