@@ -5,8 +5,12 @@ from name_data import NameData
 from pdf.layouts import Layout, createNameTag
 
 
-def create(fileName: str, layout: Layout, nameData: NameData):
-
+def create(
+    fileName: str,
+    layout: Layout,
+    nameData: NameData,
+    single_page: bool = False,
+):
     leftPadding = 3*mm
     rightPadding = 3*mm
     topPadding = 16*mm
@@ -15,14 +19,25 @@ def create(fileName: str, layout: Layout, nameData: NameData):
     height = 86*mm - topPadding
     width = 103*mm - leftPadding - rightPadding
 
-    doc = NameTag4786103DocTemplate(fileName)
+    doc = NameTag4786103DocTemplate(fileName, single_page=single_page)
 
     story = []
 
-    front = createNameTag(layout, width=width, height=height, nameData=nameData)
-    back = createNameTag(layout, width=width, height=height, nameData=nameData)
-    back.upsideDown=True
-    story.append(front)                           
-    story.append(back)                           
+    front = createNameTag(
+        layout,
+        width=width,
+        height=height,
+        nameData=nameData,
+    )
+    story.append(front)
+    
+    if not single_page:
+        back = createNameTag(
+            layout,
+            width=width,
+            height=height,
+            nameData=nameData,
+        )
+        story.append(back)
 
     doc.build(story)
