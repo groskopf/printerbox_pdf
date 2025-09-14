@@ -2,10 +2,8 @@ import os
 import pytest
 from fastapi import status
 from fastapi.testclient import TestClient
-from endpoint.authentication import AccessScope
 
 from main import app
-from file_path import FilePath
 from site_paths import sheetsPath
 from test.test_images import newImage
 

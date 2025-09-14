@@ -13,8 +13,8 @@ from endpoint.booking_calendar import calendar
 from pdf.name_tag_type import NameTagType
 from pdf.layouts import Layout
 from printer_code import PrinterCode
-from test.test_bookings import getBookings, newBooking, deleteBooking, deleteBookings
-from test.test_images import deleteAllImages, newImage
+from test.test_bookings import newBooking, deleteBooking
+from test.test_images import newImage
 
 client = TestClient(app)
 

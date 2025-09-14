@@ -7,7 +7,6 @@ from fastapi.testclient import TestClient
 
 from main import app
 from site_paths import imagesPath
-from test.test_bookings import newBooking, deleteBookings
 
 client = TestClient(app)
 
