@@ -10,6 +10,7 @@ from file_path import FilePath
 from pdf.layouts import Layout
 from pdf.name_tag_type import NameTagType
 from pdf import name_tag_4786103
+from pdf import name_tag_4760100
 
 from details import Details
 from pdf.name_tag_layouts import getNameTagLayouts
@@ -20,6 +21,21 @@ from endpoint.name_tags_ws import getFilesInPrinterQueue, deleteFilesInPrinterQu
 from endpoint.authentication import AccessScope, authenticate_api_key
 from name_data import NameData
 
+def setDefaultNameData(nameData: NameData):
+    if nameData.image_name is None:
+        nameData.image_name = ""
+    if nameData.qr_code is None:
+        nameData.qr_code = ""
+    if nameData.line_1 is None:
+        nameData.line_1 = ""
+    if nameData.line_2 is None:
+        nameData.line_2 = ""
+    if nameData.line_3 is None:
+        nameData.line_3 = ""
+    if nameData.line_4 is None:
+        nameData.line_4 = ""
+    if nameData.line_5 is None:
+        nameData.line_5 = ""
 
 def checkImageFileExist(nameData: NameData):
     imageName = nameData.image_name
@@ -60,14 +76,18 @@ async def new_name_tag(booking_code: str, layout: Layout, name_data: NameData,
             status_code=status.HTTP_400_BAD_REQUEST, detail="Name tag layout not supported")
 
     outputPath = nameTagsPath + booking_code + '/'
-    output_filename = outputPath + nametag_type + '_' + uuid4().hex + '.pdf'
+    output_filename = outputPath + nametag_type + '_' + layout + '_' + uuid4().hex + '.pdf'
 
     if not os.path.exists(outputPath):
         os.makedirs(outputPath)
 
+    setDefaultNameData(name_data)
+    
     match nametag_type:
         case NameTagType._4786103:
             name_tag_4786103.create(output_filename, layout, name_data)
+        case NameTagType._4760100:
+            name_tag_4760100.create(output_filename, layout, name_data)
         case _:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="NameTagType not supported")

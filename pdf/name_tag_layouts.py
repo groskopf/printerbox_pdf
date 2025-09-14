@@ -21,13 +21,33 @@ nameTagLayoutsList: List[NameTagLayouts] = [
                  Layout.LAYOUT_2PTR,
                  Layout.LAYOUT_2PBL,
                  Layout.LAYOUT_2PBR,
+                 Layout.LAYOUT_2QT,
+                 Layout.LAYOUT_2QB,
+                 Layout.LAYOUT_2QTL,
+                 Layout.LAYOUT_2QTR,
+                 Layout.LAYOUT_2QBL,
+                 Layout.LAYOUT_2QBR,
+                 Layout.LAYOUT_2PTLQ,
+                 Layout.LAYOUT_2PTRQ,
+                 Layout.LAYOUT_2PBLQ,
+                 Layout.LAYOUT_2PBRQ,
                  Layout.LAYOUT_3,
                  Layout.LAYOUT_3PT,
                  Layout.LAYOUT_3PB,
                  Layout.LAYOUT_3PTL,
                  Layout.LAYOUT_3PTR,
                  Layout.LAYOUT_3PBL,
-                 Layout.LAYOUT_3PBR
+                 Layout.LAYOUT_3PBR,
+                 Layout.LAYOUT_3PTLQ,
+                 Layout.LAYOUT_3PTRQ,
+                 Layout.LAYOUT_3PBLQ,
+                 Layout.LAYOUT_3PBRQ,
+                 Layout.LAYOUT_3QT,
+                 Layout.LAYOUT_3QB,
+                 Layout.LAYOUT_3QTL,
+                 Layout.LAYOUT_3QTR,
+                 Layout.LAYOUT_3QBL,
+                 Layout.LAYOUT_3QBR
                  ]
     ),
     NameTagLayouts(
@@ -40,19 +60,40 @@ nameTagLayoutsList: List[NameTagLayouts] = [
                  Layout.LAYOUT_2PTR,
                  Layout.LAYOUT_2PBL,
                  Layout.LAYOUT_2PBR,
+                 Layout.LAYOUT_2QT,
+                 Layout.LAYOUT_2QB,
+                 Layout.LAYOUT_2QTL,
+                 Layout.LAYOUT_2QTR,
+                 Layout.LAYOUT_2QBL,
+                 Layout.LAYOUT_2QBR,
+                 Layout.LAYOUT_2PTLQ,
+                 Layout.LAYOUT_2PTRQ,
+                 Layout.LAYOUT_2PBLQ,
+                 Layout.LAYOUT_2PBRQ,
                  Layout.LAYOUT_3,
                  Layout.LAYOUT_3PT,
                  Layout.LAYOUT_3PB,
                  Layout.LAYOUT_3PTL,
                  Layout.LAYOUT_3PTR,
                  Layout.LAYOUT_3PBL,
-                 Layout.LAYOUT_3PBR
+                 Layout.LAYOUT_3PBR,
+                 Layout.LAYOUT_3PTLQ,
+                 Layout.LAYOUT_3PTRQ,
+                 Layout.LAYOUT_3PBLQ,
+                 Layout.LAYOUT_3PBRQ,
+                 Layout.LAYOUT_3QT,
+                 Layout.LAYOUT_3QB,
+                 Layout.LAYOUT_3QTL,
+                 Layout.LAYOUT_3QTR,
+                 Layout.LAYOUT_3QBL,
+                 Layout.LAYOUT_3QBR
                  ]
     ),
 ]
 
 
-def getNameTagLayouts(nameTagType: NameTagType):
-    nameTagLayouts = next(
-        (nameTagLayouts for nameTagLayouts in nameTagLayoutsList if nameTagLayouts.name_tag_type == nameTagType), None)
-    return nameTagLayouts
+def getNameTagLayouts(nameTagType: NameTagType) -> None | NameTagLayouts:
+    for nameTagLayouts in nameTagLayoutsList:
+        if nameTagLayouts.name_tag_type == nameTagType:
+            return nameTagLayouts
+    return None

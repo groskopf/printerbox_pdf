@@ -12,6 +12,11 @@ from endpoint.booking_calendar import calendar
 client = TestClient(app)
 
 
+def deleteBooking(bookingCode):
+    response = client.delete('/bookings/' + bookingCode, headers={'access_token': '123admin'})
+    assert response.status_code == 200
+
+
 @pytest.fixture
 def deleteBookings():
     # Get all bookings
@@ -21,9 +26,7 @@ def deleteBookings():
     # Delete all bookings
     bookings = response.json()
     for booking in bookings:
-        response = client.delete(
-            '/bookings/' + booking['booking_code'], headers={'access_token': '123admin'})
-        assert response.status_code == 200
+        deleteBooking(booking['booking_code'])
 
     calendar.load()
 
