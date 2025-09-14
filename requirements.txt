@@ -18,3 +18,4 @@ typing_extensions
 uvicorn[standard]
 websocket-client
 werkzeug
+svgutils
