@@ -76,7 +76,7 @@ async def new_name_tag(booking_code: str, layout: Layout, name_data: NameData,
             status_code=status.HTTP_400_BAD_REQUEST, detail="Name tag layout not supported")
 
     outputPath = nameTagsPath + booking_code + '/'
-    output_filename = outputPath + nametag_type + '_' + '_' + layout + '_' + uuid4().hex + '.pdf'
+    output_filename = outputPath + nametag_type + '_' + layout + '_' + uuid4().hex + '.pdf'
 
     if not os.path.exists(outputPath):
         os.makedirs(outputPath)

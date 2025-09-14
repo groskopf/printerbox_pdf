@@ -2,7 +2,6 @@ import os
 import shutil
 from name_data import NameData
 from pdf import name_tag_4760100, name_tag_4786103
-from pdf.name_tag_4786103 import create
 from pdf.layouts import Layout
 from pdf.name_tag_layouts import getNameTagLayouts
 from pdf.name_tag_type import NameTagType
