@@ -38,6 +38,7 @@ def create(
             height=height,
             nameData=nameData,
         )
+        back.upsideDown = True
         story.append(back)
 
     doc.build(story)
